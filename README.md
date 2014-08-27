@@ -5,7 +5,16 @@ In this project, students will use D3 to build stand-alone prototype visualizati
 
 ## Project Team ##
 
-Pending
+The co-sponsors of this project are:
+
+- Sophie Engle, University of San Francisco
+- Carrie Gates, Dell Research
+
+The students participating in this project are:
+
+- Wanzhang Sheng (@ranmocy)
+- Michelle Gao (@michellegg)
+- Kaiming Yang (@yaxum62)
 
 ## Project Timeline ##
 
