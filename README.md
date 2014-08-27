@@ -1,17 +1,29 @@
 Visualizing SonicWall Firewall Data
 ===================================
 
-In this project, students will use D3 to build stand-alone prototype visualizations of Dell SonicWall firewall data that could be integrated into their Dell SonicWall Analyzer product. 
+In this project, students will use D3 to build stand-alone prototype visualizations of Dell SonicWALL firewall data that could be integrated into their Dell SonicWALL Analyzer product. 
 
 ## Project Team ##
 
 Pending
 
+## Project Timeline ##
+
+| Month     | Description |
+|:----------|:------------|
+| August    | Project introduction and setup.
+| September | Learn D3 and create basic visualizations. |
+| October   | Learn SonicWALL data format, and integrate into visualizations. |
+| November  | Prepare deliverables for Supercomputing. |
+| December  | Present deliverables and results. |
+
 ## Project Resources ##
 
-This project will use primarily d3.js (or p5.js) for visualization, and any other JavaScript libraries necessary to parse and filter the data. The data will come from the Dell SonicWall line, and the visualizations should extend what is available in their analysis products.
+This project will use primarily d3.js (or p5.js) for visualization, and any other JavaScript libraries necessary to parse and filter the data. The data will come from the Dell SonicWALL line, and the visualizations should extend what is available in their analysis products.
 
 ## D3 Resources ##
+
+The following are some great resource for getting started:
 
 - <http://d3js.org/>
 - <http://alignedleft.com/tutorials/d3>
@@ -29,4 +41,11 @@ I especially encourage you to read the following articles by the creator of D3, 
 
 ## SonicWall Resources ##
 
-Pending.
+Here are some of the SonicWALL products we will get to work with: 
+
+- [Dell SonicWALL TZ Series (Small Business)](http://www.sonicwall.com/us/en/products/TZ-Series.html)
+- [Dell SonicWALL Supermassive Series (Enterprise)](http://www.sonicwall.com/us/en/products/network-security.html)
+- [Dell SonicWALL Analyzer](http://www.sonicwall.com/us/en/products/Firewall-Analyzer.html)
+- [Dell SonicWALL Srutinizer](http://www.sonicwall.com/us/en/products/Firewall-Analyzer.html)
+
+The Scrutinizer has a free trial, but until we have SonicWALL data please do not request one.
