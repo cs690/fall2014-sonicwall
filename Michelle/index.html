@@ -38,17 +38,18 @@ var color = d3.scale.category10();
 //var color = d3.scale.quantize().range(colorbrewer.Greens[7]);
 
 var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
-
+	.scale(x)
+    .orient("bottom")//the label will appear below the axis line
+	.ticks(24);
 var yAxis = d3.svg.axis()
     .scale(y)
-    .orient("left");
+	.orient("left")
+	.ticks(10);
 
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
-  .append("g")
+  .append("g")  //appended a new g group element to contain all of about-to-be-generated axis ele
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 d3.tsv("data.tsv", function(error, data) {
@@ -61,11 +62,12 @@ d3.tsv("data.tsv", function(error, data) {
   y.domain(d3.extent(data, function(d) { return d.sepalLength; })).nice();
 
   svg.append("g")
-      .attr("class", "x axis")
+  	  .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-    .append("text")
+      .call(xAxis) //xAxis is generated within the new "g"
+	.append("text")
       .attr("class", "label")
+	  .text("Loading ...")  //load the data asynchronously and tell using "loading"
       .attr("x", width)
       .attr("y", -6)
       .style("text-anchor", "end")
@@ -105,7 +107,7 @@ d3.tsv("data.tsv", function(error, data) {
 
   legend.append("text")
       .attr("x", width -30)
-      .attr("y", 9)
+	  .attr("y", 9)
       .attr("dy", ".35em")
       .style("text-anchor", "start")
       .text(function(d) { return d; });
