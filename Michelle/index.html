@@ -33,7 +33,6 @@ var y = d3.scale.linear()
     .range([height, 0]);
 
 var color = d3.scale.category10();
-//var color = d3.scale.quantize().range(colorbrewer.Greens[7]);
 
 var xAxis = d3.svg.axis()
     .scale(x)
@@ -89,11 +88,10 @@ d3.tsv("data.tsv", function(error, data) {
 	  .attr("cy", function(d) { return y(d.sepalLength); })
 	  .style("fill", function(d) { return color(d.species); })
 	  .on("mouseover", function(d) {
-	  	d3.select(this).attr("r",10).style("fill","red");
-	})
-	  .on("mouseout", function(d) {
-		  d3.select(this).attr("r",5.5).style("fill","yellow");
-	  });
+          tooltip.transition()
+               .duration(500)
+               .style("opacity", .8);
+      });
 
   var legend = svg.selectAll(".legend")
       .data(color.domain())
