@@ -3,18 +3,20 @@
 <style>
 
 body {
-	font: 10px sans-serif;
+  font: 10px sans-serif;
 }
 
 .axis path,
 .axis line {
   fill: none;
-  stroke: #000;
+  stroke: #A9A9A9;
+  stroke-width: 2px;
   shape-rendering: crispEdges;
 }
 
 .dot {
-  stroke: #000066;
+  stroke:#000;
+  stroke-width: 1px;
 }
 
 </style>
@@ -33,6 +35,7 @@ var y = d3.scale.linear()
     .range([height, 0]);
 
 var color = d3.scale.category10();
+//var color = d3.scale.quantize().range(colorbrewer.Greens[7]);
 
 var xAxis = d3.svg.axis()
     .scale(x)
@@ -83,34 +86,30 @@ d3.tsv("data.tsv", function(error, data) {
       .data(data)
     .enter().append("circle")
       .attr("class", "dot")
-      .attr("r", 7.0)
+      .attr("r", 3.5)
       .attr("cx", function(d) { return x(d.sepalWidth); })
-	  .attr("cy", function(d) { return y(d.sepalLength); })
-	  .style("fill", function(d) { return color(d.species); })
-	  .on("mouseover", function(d) {
-          tooltip.transition()
-               .duration(500)
-               .style("opacity", .8);
-      });
+      .attr("cy", function(d) { return y(d.sepalLength); })
+      .style("fill", function(d) { return color(d.species); });
 
   var legend = svg.selectAll(".legend")
       .data(color.domain())
     .enter().append("g")
       .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+      .attr("transform", function(d, i) { return "translate(0," + i * 40 + ")"; });
 
   legend.append("rect")
-      .attr("x", width - 18)
-      .attr("width", 18)
+      .attr("x", width-68)
+	  .attr("width", 18)
       .attr("height", 18)
       .style("fill", color);
 
   legend.append("text")
-      .attr("x", width - 24)
+      .attr("x", width -30)
       .attr("y", 9)
       .attr("dy", ".35em")
-      .style("text-anchor", "end")
+      .style("text-anchor", "start")
       .text(function(d) { return d; });
+
 });
 
 </script>
