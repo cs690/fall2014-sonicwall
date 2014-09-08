@@ -89,10 +89,11 @@ d3.tsv("data.tsv", function(error, data) {
 	  .attr("cy", function(d) { return y(d.sepalLength); })
 	  .style("fill", function(d) { return color(d.species); })
 	  .on("mouseover", function(d) {
-          tooltip.transition()
-               .duration(500)
-               .style("opacity", .8);
-      });
+	  	d3.select(this).attr("r",10).style("fill","red");
+	})
+	  .on("mouseout", function(d) {
+		  d3.select(this).attr("r",5.5).style("fill","yellow");
+	  });
 
   var legend = svg.selectAll(".legend")
       .data(color.domain())
