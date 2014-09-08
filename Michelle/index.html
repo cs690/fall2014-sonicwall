@@ -87,8 +87,12 @@ d3.tsv("data.tsv", function(error, data) {
       .attr("r", 7.0)
       .attr("cx", function(d) { return x(d.sepalWidth); })
 	  .attr("cy", function(d) { return y(d.sepalLength); })
-	  .style("opacity", .6);          
-      .style("fill", function(d) { return color(d.species); });
+	  .style("fill", function(d) { return color(d.species); })
+	  .on("mouseout", function(d) {
+          tooltip.transition()
+               .duration(500)
+               .style("opacity", 0);
+      });
 
   var legend = svg.selectAll(".legend")
       .data(color.domain())
