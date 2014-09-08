@@ -90,7 +90,7 @@ d3.tsv("data.tsv", function(error, data) {
 	  .on("mouseover", function(d) {
           tooltip.transition()
                .duration(500)
-               .style("opacity", 0);
+               .style("opacity", .8);
       });
 
   var legend = svg.selectAll(".legend")
