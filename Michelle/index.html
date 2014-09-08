@@ -91,8 +91,6 @@ d3.tsv("data.tsv", function(error, data) {
       .attr("r", 3.5)
       .attr("cx", function(d) { return x(d.sepalWidth); })
 	  .attr("cy", function(d) { return y(d.sepalLength); })
-	  //.append("svg:title")
-	  //.text(function(d) {return d.x;})
 	  .style("fill", function(d) { return color(d.species); });
 
 
