@@ -21,6 +21,7 @@ body {
 
 </style>
 <body>
+<h1> Scatterplot </h1>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
 
@@ -34,7 +35,8 @@ var x = d3.scale.linear()
 var y = d3.scale.linear()
     .range([height, 0]);
 
-var color = d3.scale.category10();
+/*Ordinal color scale*/
+var color = d3.scale.category10();  
 //var color = d3.scale.quantize().range(colorbrewer.Greens[7]);
 
 var xAxis = d3.svg.axis()
@@ -68,17 +70,17 @@ d3.tsv("data.tsv", function(error, data) {
 	.append("text")
       .attr("class", "label")
 	  .text("Loading ...")  //load the data asynchronously and tell using "loading"
-      .attr("x", width)
-      .attr("y", -6)
+      .attr("x", width/2)
+      .attr("y",+30)
       .style("text-anchor", "end")
       .text("Sepal Width (cm)");
 
   svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)
-    .append("text")
-      .attr("class", "label")
-      .attr("transform", "rotate(-90)")
+      .append("text")
+	  .attr("class", "label")
+	  .attr("transform", "rotate(-90)")
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
@@ -90,9 +92,10 @@ d3.tsv("data.tsv", function(error, data) {
       .attr("class", "dot")
       .attr("r", 3.5)
       .attr("cx", function(d) { return x(d.sepalWidth); })
-	  .attr("cy", function(d) { return y(d.sepalLength); })
-	  .style("fill", function(d) { return color(d.species); });
-
+      .attr("cy", function(d) { return y(d.sepalLength); })
+	  .style("fill", function(d) { return color(d.species); })
+	  .on("mouseover", function(){d3.select(this).style("fill", "yellow")})
+	  .on("mouseout", function(){d3.select(this).style("fill",function(d) {return color(d.species);})})
 
   var legend = svg.selectAll(".legend")
       .data(color.domain())
@@ -116,3 +119,5 @@ d3.tsv("data.tsv", function(error, data) {
 });
 
 </script>
+<!-- #TODO Add reference to README http://jsfiddle.net/eamonnmag/Q567s/
+http://bl.ocks.org/mbostock/3887118#data.tsv -- >
