@@ -44,16 +44,13 @@ body {
   box-sizing: border-box;
   display: inline;
   font-size: 10px;
-  width: 100%;
   line-height: 1;
   color: rgba(0, 0, 0, 0.8);
-  content: "\25BC";
+  content: "\25C0";
   position: absolute;
-  text-align: center;
 }
 /* Style northward tooltips differently */
-.tip.n:after {
-  margin: -1px 0 0 0;
-  top: 100%;
-  left: 0;
+.tip.e:after {
+  top: 40%;
+  left: -8px;
 }

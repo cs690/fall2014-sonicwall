@@ -25,7 +25,8 @@ $(document).ready(function() {
 
   var tip = d3.tip()
       .attr('class', 'tip')
-      .offset([-10, 0])
+      .offset([0, 10])
+      .direction('e')
       .html(function(d) {
         return "" +
         "<div>" + "Gold: "   + d.Gold   + "</div>" +
