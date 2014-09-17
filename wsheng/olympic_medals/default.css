@@ -21,6 +21,9 @@ body {
     fill: steelblue;
     fill-opacity: .9;
 }
+.bar:hover {
+    fill: brown;
+}
 
 /* Label */
 .label {
