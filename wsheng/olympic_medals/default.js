@@ -3,8 +3,6 @@ $(document).ready(function() {
       width = 960 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
-  var formatPercent = d3.format(".0%");
-
   var x = d3.scale.ordinal()
       .rangeRoundBands([0, width], .1, 1);
 
@@ -17,14 +15,24 @@ $(document).ready(function() {
 
   var yAxis = d3.svg.axis()
       .scale(y)
-      .orient("left")
-      .tickFormat(formatPercent);
+      .orient("left");
 
   var svg = d3.select("body").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var tip = d3.tip()
+      .attr('class', 'tip')
+      .offset([-10, 0])
+      .html(function(d) {
+        return "" +
+        "<div>" + "Gold: "   + d.Gold   + "</div>" +
+        "<div>" + "Silver: " + d.Silver + "</div>" +
+        "<div>" + "Bronze: " + d.Bronze + "</div>";
+      });
+
 
   d3.tsv("data.tsv", function(error, input_data) {
     // Athlete
@@ -67,7 +75,7 @@ $(document).ready(function() {
     });
 
     x.domain(keys);
-    y.domain([0, max_total]);
+    y.domain([0, d3.round(max_total * 1.1)]);
 
     svg.append("g")
         .attr("class", "x axis")
@@ -84,14 +92,20 @@ $(document).ready(function() {
         .style("text-anchor", "end")
         .text("Total");
 
+    svg.call(tip);
+
     svg.selectAll(".bar")
         .data(data)
-      .enter().append("rect")
+      .enter()
+      .append("rect")
         .attr("class", "bar")
         .attr("x", function(d) { return x(d.name); })
         .attr("width", x.rangeBand())
         .attr("y", function(d) { return y(d.Total); })
-        .attr("height", function(d) { return height - y(d.Total); });
+        .attr("height", function(d) { return height - y(d.Total); })
+        .on('mouseover', tip.show)
+        .on('mouseout', tip.hide);
+
 
     d3.select("input").on("change", change);
 
