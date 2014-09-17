@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+var framewidth = 1800,
+	frameheight = 800;
+var margin = {top: 20, right: 30, bottom: 100, left: 50},
+	width = framewidth - margin.left - margin.right,
+	height = frameheight - margin.top - margin.bottom;
+	
+var x = d3.scale.ordinal()
+	.rangeRoundBands([0, width]);
+
+var y = d3.scale.linear()
+	.range([height, 0]);
+
+var xAxis = d3.svg.axis()
+	.scale(x)
+	.orient('bottom');
+	
+var yAxis = d3.svg.axis()
+	.scale(y)
+	.orient('left');
+	
+var svg = d3.select('body')
+			.append('svg')
+			  .attr('width', framewidth)
+			  .attr('height', frameheight)
+			.append('g')
+			  .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+	
+var data = {};
+d3.csv('data.csv', function (err,rawdata){
+
+	// Prepareing data
+	rawdata.forEach(function(d){
+		if (!data.hasOwnProperty(d.Country))
+			data[d.Country]={Gold:0, Silver:0, Bronze:0, total:function(){return this.Gold+this.Silver+this.Bronze;}};
+		data[d.Country].Gold += +d['Gold Medals'];
+		data[d.Country].Silver += +d['Silver Medals'];
+		data[d.Country].Bronze += +d['Bronze Medals'];
+	});
+	x.domain(Object.keys(data));
+	y.domain([0, Math.max.apply(null, Object.keys(data).map(function(v,i){return data[v].total();}))]);
+	
+	svg.append("g")
+	  .attr("class", "x axis")
+	  .attr("transform", "translate(0," + height + ")")
+	  .call(xAxis)
+	.selectAll("text")
+	  .attr('y',0)
+	  .attr('x',10)
+	  .attr('transform','rotate(60)')
+	  .style("text-anchor", "start");
+	
+	svg.append("g")
+	  .attr("class", "y axis")
+	  .call(yAxis)
+	  
+	var bars = svg.selectAll('.bar')
+	  .data(Object.keys(data))
+	.enter().append('g')
+	.on('mouseover', function(d){
+		var bar = d3.select(this);
+		bar.select('.bar-bronze').style('fill','#CD7F32');
+		bar.select('.bar-silver').style('fill','#BFC1C2');
+		bar.select('.bar-gold').style('fill','#FFDF00');
+	})
+	.on('mouseout', function(d){
+		d3.select(this).selectAll('rect').style('fill','#000000');
+	});
+	
+	bars.append('rect')
+	  .attr('class','bar-bronze')
+	  .attr('x', function(d){return x(d);})
+	  .attr('width', x.rangeBand())
+	  .attr('y', function(d) {return y(data[d].Bronze);})
+	  .attr('height', function(d){return height-y(data[d].Bronze)});
+	  
+	  
+	bars.append('rect')	  
+	  .attr('class','bar-silver')
+	  .attr('x', function(d){return x(d);})
+	  .attr('width', x.rangeBand())
+	  .attr('y', function(d) {return y(data[d].Bronze + data[d].Silver);})
+	  .attr('height', function(d){return y(data[d].Bronze)-y(data[d].Bronze+data[d].Silver);});
+	  
+	bars.append('rect')	  
+	  .attr('class','bar-gold')
+	  .attr('x', function(d){return x(d);})
+	  .attr('width', x.rangeBand())
+	  .attr('y', function(d) {return y(data[d].total());})
+	  .attr('height', function(d){return y(data[d].Bronze + data[d].Silver)-y(data[d].total());});
+});
+</script>
+</body>
+</html>
