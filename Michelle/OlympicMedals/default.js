@@ -23,8 +23,8 @@ $(document).ready(function() {
   .offset([-10, 0])
   .html(function(d) {
     return "<strong>Year:</strong><span style='color:red'>"+d.year+"</span>"+"<br/>"+
-	"<strong>Medals:</strong> <span style='color:red'>" + d.medals + "</span>";})
-	//return "<strong>Frequency:</strong> <span style='color:red'>" + d.medals + "</span>";})
+	"<strong>Medals:</strong> <span style='color:red'>" + d.totalmedals + "</span>";})
+	//return "<strong>Frequency:</strong> <span style='color:red'>" + d.totalmedals + "</span>";})
 
 	var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -37,7 +37,7 @@ $(document).ready(function() {
 
 	d3.tsv("data.tsv", type, function(error, data) {
   x.domain(data.map(function(d) { return d.year; }));
-  y.domain([0, d3.max(data, function(d) { return d.medals; })]);
+  y.domain([0, d3.max(data, function(d) { return d.totalmedals; })]);
 
   svg.append("g")
       .attr("class", "x axis")
@@ -52,7 +52,7 @@ $(document).ready(function() {
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("medals");
+      .text("total medals");
 
   svg.selectAll(".bar")
       .data(data)
@@ -60,15 +60,15 @@ $(document).ready(function() {
       .attr("class", "bar")
       .attr("x", function(d) { return x(d.year); })
       .attr("width", x.rangeBand()/2)
-      .attr("y", function(d) { return y(d.medals); }) 
-	  .attr("height", function(d) { return height-y(d.medals); })
+      .attr("y", function(d) { return y(d.totalmedals); }) 
+	  .attr("height", function(d) { return height-y(d.totalmedals); })
 	  .on("mouseover", tip.show)
 	  .on("mouseout", tip.hide)
 	});
 
 
 function type(d) {
-  d.medals = +d.medals;
+  d.totalmedals = +d.totalmedals;
   return d;
 }		
 });
