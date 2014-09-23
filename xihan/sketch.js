@@ -1,28 +1,43 @@
 var center = [100, 500];
 
-var axisV = new Axis(center, 600, -5);
+var axisV = new Axis(center, 450, -5);
 axisV.rotation = -Math.PI/2;
-axisV.setMark(120);
+axisV.setMark(25);
+//axisV.showAxis = false;
+axisV.showFirstMark = true;
 
-var axisH = new Axis(center, 400, 5);
+var axisH = new Axis(center, 600, 5);
 axisH.setMark(6);
+axisH.showMark = false;
 
 //
 var bar1 = new Bar(local2GlobalPoint(center, axisH.rotation, axisH.markSlot[1]), 20, 200);
 bar1.rotation = axisV.rotation;
+bar1.color = [255,215,0];
 
 var bar2 = new Bar(local2GlobalPoint(bar1.startPoint, bar1.rotation, bar1.topPoint), 20, 100);
 bar2.rotation = axisV.rotation;
+bar2.color = [192,192,192];
+
+var bar3 = new Bar(local2GlobalPoint(bar2.startPoint, bar2.rotation, bar2.topPoint), 20, 50);
+bar3.rotation = axisV.rotation;
+bar3.color = [205,127,50];
+
+var tag = new Tag([100, 500], 60, 80);
+tag.rotation = -Math.PI/2;
+tag.startPoint = local2GlobalPoint(bar3.startPoint, bar3.rotation, bar3.topPoint);
+
 
 function setup()
 {
 	angleMode(RADIANS);
+	background(250);
 	createCanvas(800, 600);
 }
 
 function draw()
 {
-	background(255);
+	background(250);
 	if (mouseIsPressed)
 	{
 		//fill(0);
@@ -32,11 +47,16 @@ function draw()
 		//fill(255);
 	}
 	
+	
 	axisV.draw();
 	axisH.draw();
 	
 	bar1.draw();
 	bar2.draw();
+	bar3.draw();
+	
+	
+	tag.draw();
 }
 
 //Center means global center
@@ -59,6 +79,9 @@ function Axis(startPoint, length, markLength)
 	this.markSide = "left";//"left", "right", "both"
 	this.markSlot = [];
 	this.markLength = 0;
+	this.showAxis = true;
+	this.showMark = true;
+	this.showFirstMark = false;
 	
 	//Construction
 	this.construct = function (startPoint, length, markLength)
@@ -97,18 +120,28 @@ function Axis(startPoint, length, markLength)
 		//
 		Axis.prototype._drawAxis = function ()
 		{
-			line(0, 0, this.length, 0);
+			if(this.showAxis)line(0, 0, this.length, 0);
 		};
 		
 		//
 		Axis.prototype._drawMark = function ()
 		{
-			for( var i = 0; i < this.markSlot.length; i++)
+			if(this.showMark)
 			{
-				push();
-				translate(this.markSlot[i][0], this.markSlot[i][1]);
-				line(0, 0, 0, this.markLength);
-				pop();
+				for( var i = 0; i < this.markSlot.length; i++)
+				{
+					if(i == 0 && !this.showFirstMark)
+					{
+						continue;
+					}
+					else
+					{
+						push();
+						translate(this.markSlot[i][0], this.markSlot[i][1]);
+						line(0, 0, 0, this.markLength);
+						pop();
+					}
+				}
 			}
 		};
 		
@@ -144,11 +177,6 @@ function Bar(startPoint, width, height)
 	if (typeof this._initialized == "undefined")
 	{
 		
-		Bar.prototype.setstartPoint = function (startPoint)
-		{
-			this.startPoint = startPoint;
-		}
-		
 		Bar.prototype.setHeight = function (height)
 		{
 			this.height = height;
@@ -178,8 +206,51 @@ function Bar(startPoint, width, height)
 			push();
 			translate(this.startPoint[0], this.startPoint[1]);
 			rotate(this.rotation);
-			fill(127);
+			fill(this.color[0], this.color[1], this.color[2]);
 			rect(0, -this.width/2, this.height, this.width);
+			pop();
+		};
+		
+		this._initialized = true;
+	}
+	
+	//Call construct
+	this.construct(startPoint, width, height);
+}
+
+function Tag(startPoint, width, height)
+{
+	//Attributes
+	this.startPoint = [0, 0];
+	this.width = 0;
+	this.height = 0;
+	this.rotation = 0;
+	this.color = [127, 127, 127];
+	this.show = true;
+	
+	//Constructor
+	this.construct = function (startPoint, width, height)
+	{
+		this.startPoint = startPoint;
+		this.width = width;
+		this.height = height;
+	};
+	
+	//Methods
+	if (typeof this._initialized == "undefined")
+	{
+	
+		Tag.prototype.draw = function ()
+		{
+			push();
+			translate(this.startPoint[0], this.startPoint[1]);
+			rotate(this.rotation);
+			noStroke();
+			fill(this.color[0], this.color[1], this.color[2]);
+			//[2, 0]
+			triangle(6, 0, 12, 5, 12, -5);
+			//[6, 0]
+			rect(12, -this.width/2, this.height, this.width);
 			pop();
 		};
 		
