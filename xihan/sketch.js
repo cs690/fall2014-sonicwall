@@ -10,6 +10,7 @@ axisV.showFirstMark = true;
 var axisH = new Axis(origin, 600);
 axisH.setMark(6);
 axisH.showMark = false;
+//axisH.showFirstMark = true;
 
 var bar1 = new Bar(local2GlobalPoint(origin, axisH.rotation, axisH.markSlot[1]), 20, 200);
 bar1.rotation = axisV.rotation;
@@ -34,6 +35,8 @@ tag2.rotation = bar3.rotation;
 var label2 = new Label(local2GlobalPoint(tag2.startPoint, tag2.rotation, [26, 0]), "Total: ??");
 label2.align = constants.CENTER;
 
+var time = 0;
+
 function setup()
 {
 	angleMode(RADIANS);
@@ -43,6 +46,9 @@ function setup()
 
 function draw()
 {
+	//time += 0.01;
+	//axisV.rotation -= Math.PI/50 * 0.01;
+	//axisH.rotation -= Math.PI/50 * 0.01;
 	background(250);
 	if (mouseIsPressed)
 	{
@@ -67,6 +73,8 @@ function draw()
 	label1.draw();
 	label2.draw();
 }
+
+
 
 //Local coordinate always starts from [0, 0]
 function local2GlobalPoint(globalStartPoint, rotation, localPoint)
