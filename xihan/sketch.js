@@ -2,17 +2,24 @@ var origin = [100, 500];
 
 var axisV = new Axis(origin, 450);
 axisV.rotation = -Math.PI/2;
-axisV.setMark(25);
+axisV.setMark(50);
 axisV.markWidth = -5;
+axisV.setMarkLabel(0, 450, 5);
 //axisV.showAxis = false;
 axisV.showFirstMark = true;
 
 var axisH = new Axis(origin, 600);
 axisH.setMark(6);
-axisH.showMark = false;
+axisH.showMark = true;
+axisH.setMarkLabel(0, 60, 1);
+axisH.markLabels[1].info = "USA";
+axisH.markLabels[2].info = "Japan";
+axisH.markLabels[3].info = "China";
+axisH.markLabels[4].info = "Thai";
+axisH.markLabels[5].info = "Greece";
 //axisH.showFirstMark = true;
 
-var bar1 = new Bar(local2GlobalPoint(origin, axisH.rotation, axisH.markSlot[1]), 20, 200);
+var bar1 = new Bar(local2GlobalPoint(origin, axisH.rotation, axisH.markSlots[1]), 20, 200);
 bar1.rotation = axisV.rotation;
 bar1.color = [255,215,0];
 
@@ -92,11 +99,21 @@ function Axis(startPoint, length)
 	this.startPoint = [0, 0];
 	this.length = 0;
 	this.rotation = 0;
-	this.markSlot = [];
+	
+	this._markCount = 0;
+	this._markStep = 0;
 	this.markWidth = 5;
+	this.markSlots = [];
+	
+	this.markLabelStep = 0;
+	this.markLabels = [];
+	
+	
 	this.showAxis = true;
 	this.showMark = true;
+	this.showMarkLabel = true;
 	this.showFirstMark = false;
+	
 	
 	//Construction
 	this.construct = function (startPoint, length)
@@ -109,13 +126,47 @@ function Axis(startPoint, length)
 	if (typeof this._initialized == "undefined")
 	{
 	
-		Axis.prototype.setMark = function (step)
+		Axis.prototype.setMark = function (markCount)
 		{
-			var s = Math.round(this.length / step);
-			var tx = 0;
-			for(var i = 0; i < step; i++)
+			this._markCount = markCount;
+			this._markStep = Math.round(this.length / this._markCount);
+			for(var i = 0; i < this._markCount; i++)
 			{
-				this.markSlot[i] = [i * s, 0];
+				this.markSlots[i] = [i * this._markStep, 0];
+			}
+		}
+		
+		Axis.prototype.setMarkLabel = function (valueStart, valueStop, markLabelStep)
+		{
+			this.markLabelStep = markLabelStep;
+			for(var i = 0; i < this._markCount; i++)
+			{
+				var currentValue = valueStart + (valueStop - valueStart) / this._markCount * i;
+				if(i % markLabelStep == 0)
+				{
+					this.markLabels[i / markLabelStep] = new Label([0, 0], currentValue);
+				}
+			}
+			this._updateMarkLabel();
+			console.log(this.markLabels);
+		}
+		
+		Axis.prototype._updateMarkLabel = function ()
+		{
+			for(var i = 0; i < this.markLabels.length; i++)
+			{
+				/*
+				if(this.markWidth > 0)
+				{
+					this.markLabels[i].align = constants.CENTER;
+				}
+				else if(this.markWidth < 0)
+				{	
+					this.markLabels[i].align = constants.RIGHT;
+				}
+				*/
+				this.markLabels[i].rotation = this.rotation + Math.PI / 2;
+				this.markLabels[i].startPoint = [this.markSlots[i * this.markLabelStep][0], this.markSlots[i * this.markLabelStep][1] + this.markWidth * 2];
 			}
 		}
 		
@@ -127,13 +178,18 @@ function Axis(startPoint, length)
 			rotate(this.rotation);
 			this._drawAxis();
 			this._drawMark();
-			pop();			
+			this._drawMarkLabel();
+			pop();
 		}
 		
 		//
 		Axis.prototype._drawAxis = function ()
 		{
-			if(this.showAxis)line(0, 0, this.length, 0);
+			if(this.showAxis)
+			{
+				//noStroke();
+				line(0, 0, this.length, 0);
+			}
 		};
 		
 		//
@@ -141,7 +197,7 @@ function Axis(startPoint, length)
 		{
 			if(this.showMark)
 			{
-				for( var i = 0; i < this.markSlot.length; i++)
+				for( var i = 0; i < this.markSlots.length; i++)
 				{
 					if(i == 0 && !this.showFirstMark)
 					{
@@ -150,13 +206,31 @@ function Axis(startPoint, length)
 					else
 					{
 						push();
-						translate(this.markSlot[i][0], this.markSlot[i][1]);
+						translate(this.markSlots[i][0], this.markSlots[i][1]);
 						line(0, 0, 0, this.markWidth);
 						pop();
 					}
 				}
 			}
 		};
+		
+		Axis.prototype._drawMarkLabel = function ()
+		{
+			if(this.showMarkLabel)
+			{
+				for( var i = 0; i < this.markLabels.length; i++)
+				{
+					if(i == 0 && !this.showFirstMark)
+					{
+						continue;
+					}
+					else
+					{
+						this.markLabels[i].draw();
+					}
+				}
+			}			
+		}
 		
 		this._initialized = true;
 	}
@@ -320,6 +394,7 @@ function Label(startPoint, info)
 				fill(this.color[0], this.color[1], this.color[2]);
 				textAlign(this.align);
 				text(this.info, 0, 0);
+				//rect(0,0, 10, 10);
 				pop();
 			}
 		};
