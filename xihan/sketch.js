@@ -4,20 +4,18 @@ var axisV = new Axis(origin, 450);
 axisV.rotation = -Math.PI/2;
 axisV.setMark(50);
 axisV.markWidth = -5;
-axisV.setMarkLabel(0, 450, 5);
+axisV.initMarkLabel(0, 100, 5);
+axisV.setMarkLabelStyle([-6, axisV.markWidth * 2], Math.PI/2, constants.RIGHT);
 //axisV.showAxis = false;
-axisV.showFirstMark = true;
+axisV.showFirstAndLastMark = true;
 
 var axisH = new Axis(origin, 600);
 axisH.setMark(6);
 axisH.showMark = true;
-axisH.setMarkLabel(0, 60, 1);
-axisH.markLabels[1].info = "USA";
-axisH.markLabels[2].info = "Japan";
-axisH.markLabels[3].info = "China";
-axisH.markLabels[4].info = "Thai";
-axisH.markLabels[5].info = "Greece";
-//axisH.showFirstMark = true;
+axisH.initMarkLabel(0, 60, 1);
+axisH.setMarkLabelStyle([0, axisH.markWidth * 4], 0, constants.CENTER);
+axisH.setMarkLabelInfo(["", "USA", "Japan", "China", "Thai", "Greece"]);
+axisH.showFirstAndLastMark = false;
 
 var bar1 = new Bar(local2GlobalPoint(origin, axisH.rotation, axisH.markSlots[1]), 20, 200);
 bar1.rotation = axisV.rotation;
@@ -39,7 +37,7 @@ label1.align = constants.CENTER;
 var tag2 = new Tag(local2GlobalPoint(bar3.startPoint, bar3.rotation, bar3.topPoint), 80, 40);
 tag2.rotation = bar3.rotation;
 
-var label2 = new Label(local2GlobalPoint(tag2.startPoint, tag2.rotation, [26, 0]), "Total: ??");
+var label2 = new Label(local2GlobalPoint(tag2.startPoint, tag2.rotation, tag2.centerPoint), "Total: ??");
 label2.align = constants.CENTER;
 
 var time = 0;
@@ -81,8 +79,6 @@ function draw()
 	label2.draw();
 }
 
-
-
 //Local coordinate always starts from [0, 0]
 function local2GlobalPoint(globalStartPoint, rotation, localPoint)
 {
@@ -92,6 +88,20 @@ function local2GlobalPoint(globalStartPoint, rotation, localPoint)
 	return result;
 }
 
+//
+function valueInterpolate(valueStart, valueStop, count)
+{
+	var result = [];
+	for(var i = 0; i < count + 1; i++)
+	{
+		result[i] = valueStart + (valueStop - valueStart) / count * i;
+	}
+	return result;
+}
+
+//To do:
+//Change the setMarkLabel()
+//
 //Class Axis
 function Axis(startPoint, length)
 {
@@ -105,6 +115,9 @@ function Axis(startPoint, length)
 	this.markWidth = 5;
 	this.markSlots = [];
 	
+	this.markLabelRotation = 0;
+	this.markLabelOffset = [0, 0];
+	this.markLabelAlign = constants.CENTER;
 	this.markLabelStep = 0;
 	this.markLabels = [];
 	
@@ -112,7 +125,7 @@ function Axis(startPoint, length)
 	this.showAxis = true;
 	this.showMark = true;
 	this.showMarkLabel = true;
-	this.showFirstMark = false;
+	this.showFirstAndLastMark = false;
 	
 	
 	//Construction
@@ -126,47 +139,63 @@ function Axis(startPoint, length)
 	if (typeof this._initialized == "undefined")
 	{
 	
-		Axis.prototype.setMark = function (markCount)
+		Axis.prototype.setMark = function (count)
 		{
-			this._markCount = markCount;
+			this._markCount = count;
 			this._markStep = Math.round(this.length / this._markCount);
 			for(var i = 0; i < this._markCount; i++)
 			{
 				this.markSlots[i] = [i * this._markStep, 0];
 			}
+			this.markSlots[this._markCount] = [this._markCount * this._markStep, 0];
 		}
 		
-		Axis.prototype.setMarkLabel = function (valueStart, valueStop, markLabelStep)
+		Axis.prototype.initMarkLabel = function (valueStart, valueStop, step)
 		{
-			this.markLabelStep = markLabelStep;
-			for(var i = 0; i < this._markCount; i++)
+			this.markLabelStep = step;
+			var values = valueInterpolate(valueStart, valueStop, this._markCount);
+			console.log(values);
+			for(var i = 0; i < this._markCount + 1; i++)
 			{
-				var currentValue = valueStart + (valueStop - valueStart) / this._markCount * i;
-				if(i % markLabelStep == 0)
+				if(i % this.markLabelStep == 0)
 				{
-					this.markLabels[i / markLabelStep] = new Label([0, 0], currentValue);
+					this.markLabels[i / this.markLabelStep] = new Label([0, 0], values[i]);
 				}
 			}
 			this._updateMarkLabel();
-			console.log(this.markLabels);
+			//console.log(this.markLabels);
 		}
+
+		Axis.prototype.setMarkLabelStyle = function (offset, rotation, align)
+		{
+			this.markLabelAlign = align;
+			this.markLabelRotation = rotation;
+			this.markLabelOffset = offset;
+			this._updateMarkLabel();
+		}
+		
+		Axis.prototype.setMarkLabelInfo = function (infoList)
+		{
+			for(var i = 0; i < this.markLabels.length; i++)
+			{
+				if(i < infoList.length)
+				{
+					this.markLabels[i].info = infoList[i];
+				}
+				else
+				{
+					this.markLabels[i].info = "";
+				}
+			}
+		}			
 		
 		Axis.prototype._updateMarkLabel = function ()
 		{
 			for(var i = 0; i < this.markLabels.length; i++)
 			{
-				/*
-				if(this.markWidth > 0)
-				{
-					this.markLabels[i].align = constants.CENTER;
-				}
-				else if(this.markWidth < 0)
-				{	
-					this.markLabels[i].align = constants.RIGHT;
-				}
-				*/
-				this.markLabels[i].rotation = this.rotation + Math.PI / 2;
-				this.markLabels[i].startPoint = [this.markSlots[i * this.markLabelStep][0], this.markSlots[i * this.markLabelStep][1] + this.markWidth * 2];
+				this.markLabels[i].rotation = this.markLabelRotation;
+				this.markLabels[i].align = this.markLabelAlign;
+				this.markLabels[i].startPoint = [this.markSlots[i * this.markLabelStep][0] + this.markLabelOffset[0], this.markSlots[i * this.markLabelStep][1] + this.markLabelOffset[1]];
 			}
 		}
 		
@@ -199,7 +228,7 @@ function Axis(startPoint, length)
 			{
 				for( var i = 0; i < this.markSlots.length; i++)
 				{
-					if(i == 0 && !this.showFirstMark)
+					if((i == 0 || i == this.markSlots.length - 1) && !this.showFirstAndLastMark)
 					{
 						continue;
 					}
@@ -220,7 +249,7 @@ function Axis(startPoint, length)
 			{
 				for( var i = 0; i < this.markLabels.length; i++)
 				{
-					if(i == 0 && !this.showFirstMark)
+					if((i == 0 || i == this.markLabels.length - 1) && !this.showFirstAndLastMark)
 					{
 						continue;
 					}
@@ -322,6 +351,7 @@ function Tag(startPoint, width, height)
 	this.height = 0;
 	this.rotation = 0;
 	this.color = [127, 127, 127];
+	this.centerPoint = [0, 0];
 	this.show = true;
 	
 	//Constructor
@@ -330,11 +360,17 @@ function Tag(startPoint, width, height)
 		this.startPoint = startPoint;
 		this.width = width;
 		this.height = height;
+		this._updateCenterPoint();
 	};
 	
 	//Methods
 	if (typeof this._initialized == "undefined")
 	{
+	
+		Tag.prototype._updateCenterPoint = function ()
+		{
+			this.centerPoint = [12 + this.height/2, 0]
+		}
 	
 		Tag.prototype.draw = function ()
 		{
