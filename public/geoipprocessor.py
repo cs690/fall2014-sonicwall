@@ -37,7 +37,8 @@ for ip in ipList:
 	
 print "Finish loading, save to csv file"
 
-f = open("geoipresult\geoip.csv",'wb')
+f = open("geoip.csv",'wb')
+f.write("IP,Country Code,Country,Region Code,Region,City,Zip code,Latitude,Longitude,Area Code,Metro Code\n")
 f.write(content)
 f.close()
 print "Done"
