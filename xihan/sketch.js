@@ -1,49 +1,12 @@
 var origin = [100, 500];
-
-var axisV = new Axis(origin, 450);
-axisV.rotation = -Math.PI/2;
-axisV.setMark(50);
-axisV.markWidth = -5;
-axisV.initMarkLabel(0, 100, 5);
-axisV.setMarkLabelStyle([-6, axisV.markWidth * 2], Math.PI/2, constants.RIGHT);
-//axisV.showAxis = false;
-axisV.showFirstAndLastMark = true;
-
-var axisH = new Axis(origin, 600);
-axisH.setMark(6);
-axisH.showMark = true;
-axisH.initMarkLabel(0, 60, 1);
-axisH.setMarkLabelStyle([0, axisH.markWidth * 4], 0, constants.CENTER);
-axisH.setMarkLabelInfo(["", "USA", "Japan", "China", "Thai", "Greece"]);
-axisH.showFirstAndLastMark = false;
-
-var bar1 = new Bar(local2GlobalPoint(origin, axisH.rotation, axisH.markSlots[1]), 20, 200);
-bar1.rotation = axisV.rotation;
-bar1.color = [255,215,0];
-
-var bar2 = new Bar(local2GlobalPoint(bar1.startPoint, bar1.rotation, bar1.topPoint), 20, 100);
-bar2.rotation = axisV.rotation;
-bar2.color = [192,192,192];
-
-var bar3 = new Bar(local2GlobalPoint(bar2.startPoint, bar2.rotation, bar2.topPoint), 20, 50);
-bar3.rotation = axisV.rotation;
-bar3.color = [205,127,50];
-
-var tag1 = new Tag(local2GlobalPoint(bar1.startPoint, bar1.rotation, bar1.rightPoint), 60, 80);
-
-var label1 = new Label(local2GlobalPoint(tag1.startPoint, tag1.rotation, [12 + tag1.height/2, 5]), "Gold: ??");
-label1.align = constants.CENTER;
-
-var tag2 = new Tag(local2GlobalPoint(bar3.startPoint, bar3.rotation, bar3.topPoint), 80, 40);
-tag2.rotation = bar3.rotation;
-
-var label2 = new Label(local2GlobalPoint(tag2.startPoint, tag2.rotation, tag2.centerPoint), "Total: ??");
-label2.align = constants.CENTER;
-
 var time = 0;
+
+var p = new Scatter([400, 400]);
+p.size = 15;
 
 function setup()
 {
+	test("test.csv");
 	angleMode(RADIANS);
 	background(250);
 	createCanvas(800, 600);
@@ -51,9 +14,6 @@ function setup()
 
 function draw()
 {
-	//time += 0.01;
-	//axisV.rotation -= Math.PI/50 * 0.01;
-	//axisH.rotation -= Math.PI/50 * 0.01;
 	background(250);
 	if (mouseIsPressed)
 	{
@@ -63,20 +23,6 @@ function draw()
 	{
 		//fill(255);
 	}
-	
-	
-	axisV.draw();
-	axisH.draw();
-	
-	bar1.draw();
-	bar2.draw();
-	bar3.draw();
-	
-	tag1.draw();
-	tag2.draw();
-	
-	label1.draw();
-	label2.draw();
 }
 
 //Local coordinate always starts from [0, 0]
@@ -88,7 +34,7 @@ function local2GlobalPoint(globalStartPoint, rotation, localPoint)
 	return result;
 }
 
-//
+//Get a list of values from valueStart to valueStop
 function valueInterpolate(valueStart, valueStop, count)
 {
 	var result = [];
@@ -99,9 +45,6 @@ function valueInterpolate(valueStart, valueStop, count)
 	return result;
 }
 
-//To do:
-//Change the setMarkLabel()
-//
 //Class Axis
 function Axis(startPoint, length)
 {
@@ -261,6 +204,24 @@ function Axis(startPoint, length)
 			}			
 		}
 		
+		Axis.prototype._drawMarkLabel = function ()
+		{
+			if(this.showMarkLabel)
+			{
+				for( var i = 0; i < this.markLabels.length; i++)
+				{
+					if((i == 0 || i == this.markLabels.length - 1) && !this.showFirstAndLastMark)
+					{
+						continue;
+					}
+					else
+					{
+						this.markLabels[i].draw();
+					}
+				}
+			}
+		}		
+		
 		this._initialized = true;
 	}
 	
@@ -331,7 +292,7 @@ function Bar(startPoint, width, height)
 			push();
 			translate(this.startPoint[0], this.startPoint[1]);
 			rotate(this.rotation);
-			fill(this.color[0], this.color[1], this.color[2]);
+			fill(color(this.color));
 			rect(0, -this.width/2, this.height, this.width);
 			pop();
 		};
@@ -380,7 +341,7 @@ function Tag(startPoint, width, height)
 				translate(this.startPoint[0], this.startPoint[1]);
 				rotate(this.rotation);
 				noStroke();
-				fill(this.color[0], this.color[1], this.color[2]);
+				fill(color(this.color));
 				//[2, 0]
 				triangle(6, 0, 12, 5, 12, -5);
 				//[6, 0]
@@ -427,7 +388,7 @@ function Label(startPoint, info)
 				rotate(this.rotation);
 				noStroke();
 				textSize(this.size);
-				fill(this.color[0], this.color[1], this.color[2]);
+				fill(color(this.color));
 				textAlign(this.align);
 				text(this.info, 0, 0);
 				//rect(0,0, 10, 10);
@@ -442,3 +403,46 @@ function Label(startPoint, info)
 	this.construct(startPoint, info);	
 }
 
+function Scatter(startPoint)
+{
+	//Attributes
+	this.startPoint = [0, 0];
+	this.size = 15;
+	this.color = [127, 127, 127, 100];
+	this.show = true;
+	
+	//Constructor
+	this.construct = function (startPoint)
+	{
+		this.startPoint = startPoint;
+	};
+	
+	//Methods
+	if (typeof this._initialized == "undefined")
+	{
+	
+		Scatter.prototype.draw = function ()
+		{
+			if(this.show)
+			{
+				push();
+				translate(this.startPoint[0], this.startPoint[1]);
+				noStroke();
+				fill(color(this.color));
+				ellipse(0, 0, this.size, this.size);
+				pop();
+			}
+		};
+		
+		this._initialized = true;
+	}
+	
+	//Call construct
+	this.construct(startPoint);	
+}
+
+function test(path)
+{
+	var data = loadTable(path, "csv");
+	console.log(data);
+}
