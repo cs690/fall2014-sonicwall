@@ -4,9 +4,11 @@ var time = 0;
 var p = new Scatter([400, 400]);
 p.size = 15;
 
+var data = new p5.Table();
+
 function setup()
 {
-	test("test.csv");
+	data = loadTable("test.csv", "csv", print);
 	angleMode(RADIANS);
 	background(250);
 	createCanvas(800, 600);
@@ -23,6 +25,11 @@ function draw()
 	{
 		//fill(255);
 	}
+}
+
+function print(info)
+{
+	console.log(info);
 }
 
 //Local coordinate always starts from [0, 0]
@@ -441,8 +448,3 @@ function Scatter(startPoint)
 	this.construct(startPoint);	
 }
 
-function test(path)
-{
-	var data = loadTable(path, "csv");
-	console.log(data);
-}

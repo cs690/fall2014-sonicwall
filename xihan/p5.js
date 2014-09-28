@@ -2856,7 +2856,7 @@ var inputfiles = function (require, core, reqwest) {
           for (var k in arr) {
             ret[k] = arr[k];
           }
-          if (typeof callback !== 'undefined') {
+          if (typeof callback !== 'undefined' && callback != null) {
             var i, row;
             if (header) {
               t.columns = new p5.TableRow(ret[0]).arr;
