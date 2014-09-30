@@ -36,7 +36,6 @@ function draw()
 	}
 
 	bargraph.draw();
-	testTag.draw();
 }
 
 function print(info)
