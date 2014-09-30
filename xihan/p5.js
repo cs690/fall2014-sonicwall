@@ -2829,12 +2829,13 @@ var inputfiles = function (require, core, reqwest) {
     p5.prototype.loadTable = function (path) {
       var callback = null;
       var options = [];
-      var header = false;
+      var header = true;
       var sep = ',';
       for (var i = 1; i < arguments.length; i++) {
         if (typeof arguments[i] === 'function') {
           callback = arguments[i];
         } else if (typeof arguments[i] === 'string') {
+			
           options.push(arguments[i]);
           if (arguments[i] === 'header') {
             header = true;
@@ -2850,13 +2851,15 @@ var inputfiles = function (require, core, reqwest) {
       var t = new p5.Table();
       var req = new XMLHttpRequest();
       req.open('GET', path, true);
-      req.onreadystatechange = function () {
-        if (req.readyState === 4 && (req.status === 200 || req.status === 0)) {
+      req.onreadystatechange = function () 
+	  {
+        if (req.readyState === 4 && (req.status === 200 || req.status === 0))
+		{
           var arr = req.responseText.match(/[^\r\n]+/g);
           for (var k in arr) {
             ret[k] = arr[k];
           }
-          if (typeof callback !== 'undefined' && callback != null) {
+          if (typeof callback !== 'undefined') {
             var i, row;
             if (header) {
               t.columns = new p5.TableRow(ret[0]).arr;
