@@ -27,9 +27,10 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.tsv("data.csv", function(error, data) {
+d3.csv("data.csv", function(error, data) {
   data.forEach(function(d) {
     d.DNS = +d.DNS;
+	d.TIME_SPAM = +d.TIME_SPAN;
   });
 
   x.domain(d3.extent(data, function(d) { return d.TIME_SPAN; }));
