@@ -22,7 +22,13 @@ $(document).ready(function() {
       .attr('class', 'tip')
       .offset([0, 10])
       .direction('e')
-      .html(function(d) { return "Total: " + d.Total; });
+      .html(function(d) {
+        return "" +
+        "<div>Total: " + d.Total + "</div>" +
+        "<div>Gold: " + d.Gold + "</div>" +
+        "<div>Silver: " + d.Silver + "</div>" +
+        "<div>Bronze: " + d.Bronze + "</div>";
+      });
 
   var x = d3.scale.linear()
       .range([0, width]);
