@@ -30,13 +30,13 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.tsv("data.tsv", function(error, data) {
+d3.tsv("data.csv", function(error, data) {
   data.forEach(function(d) {
-    d.close = +d.close;
+    d.DNS = +d.DNS;
   });
 
-  x.domain(d3.extent(data, function(d) { return d.date; }));
-  y.domain([0, d3.max(data, function(d) { return d.close; })]);
+  x.domain(d3.extent(data, function(d) { return d.DNS; }));
+  y.domain([0, d3.max(data, function(d) { return d.TIME_SPAN; })]);
 
   svg.append("path")
       .datum(data)
@@ -56,5 +56,5 @@ d3.tsv("data.tsv", function(error, data) {
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("Price ($)");
+      .text("DNS");
 });
