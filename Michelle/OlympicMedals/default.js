@@ -25,6 +25,7 @@ $(document).ready(function() {
     return "<strong>Year:</strong><span style='color:red'>"+d.year+"</span>"+"<br/>"+
 	"<strong>Medals:</strong> <span style='color:red'>" + d.totalmedals + "</span>";})
 	//return "<strong>Frequency:</strong> <span style='color:red'>" + d.totalmedals + "</span>";})
+debugger
 
 	var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
