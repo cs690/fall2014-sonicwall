@@ -13,9 +13,8 @@ function preload()
 	createCanvas(800, 600);
 	angleMode(RADIANS);
 	background(250);	
-	tableData = loadTable('test.csv', 'header', 'csv');
-	
-	print(tableData);
+	data = loadTable('test.csv', 'header', 'csv');
+	bargraph.load(data);
 }
 
 function setup()
@@ -115,7 +114,6 @@ function Axis(startPoint, length)
 		{
 			this.markLabelStep = step;
 			var values = valueInterpolate(valueStart, valueStop, this._markCount);
-			console.log(values);
 			for(var i = 0; i < this._markCount + 1; i++)
 			{
 				if(i % this.markLabelStep == 0)
@@ -124,7 +122,6 @@ function Axis(startPoint, length)
 				}
 			}
 			this._updateMarkLabel();
-			//console.log(this.markLabels);
 		}
 
 		Axis.prototype.setMarkLabelStyle = function (offset, rotation, align)
@@ -498,6 +495,9 @@ function Bar_Graph(startPoint)
     //Constructor
     this.construct = function (startPoint)
     {
+		this._dataLoadCompleted = false;
+		this._table = null;
+	
         this.axisV = new Axis(startPoint, 450);
         this.axisV.rotation = -Math.PI / 2;
         this.axisV.setMark(50);
@@ -534,21 +534,25 @@ function Bar_Graph(startPoint)
     //Methods
     if (typeof this._initialized == "undefined")
 	{
-	
-        Bar_Graph.prototype.load = function ()
+		
+        Bar_Graph.prototype.load = function (table)
         {
-
+			this._table = table;
+			this._dataLoadCompleted = true;
         }
 		
         Bar_Graph.prototype.draw = function ()
         {	
-			for(var i = 0; i < this._axises.length; i++)
+			if(this._dataLoadCompleted)
 			{
-				this._axises[i].draw();
-			}
-			for(var i = 0; i < this._bars.length; i++)
-			{
-				this._bars[i].draw();
+				for(var i = 0; i < this._axises.length; i++)
+				{
+					this._axises[i].draw();
+				}
+				for(var i = 0; i < this._bars.length; i++)
+				{
+					this._bars[i].draw();
+				}
 			}
         }
 
