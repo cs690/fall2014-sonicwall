@@ -46,7 +46,7 @@ $(function() {
 
     color.domain(d3.keys(data[0]).filter(function(key) { return key !== "TIME_SPAN"; }));
 
-    var browsers = stack(color.domain().map(function(name) {
+    var protocols = stack(color.domain().map(function(name) {
       return {
         name: name,
         values: data.map(function(d) {
@@ -66,23 +66,41 @@ $(function() {
       return t;
     }));
 
-    var browser = svg.selectAll(".browser")
-        .data(browsers)
+    // Area
+    var protocol = svg.selectAll(".protocol")
+        .data(protocols)
       .enter().append("g")
-        .attr("class", "browser");
+        .attr("class", "protocol");
 
-    browser.append("path")
+    protocol.append("path")
         .attr("class", "area")
         .attr("d", function(d) { return area(d.values); })
         .style("fill", function(d) { return color(d.name); });
 
-    // browser.append("text")
-    //     .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-    //     .attr("transform", function(d) { return "translate(" + x(d.value.TIME_SPAN) + "," + y(d.value.y0 + d.value.y / 2) + ")"; })
-    //     .attr("x", -6)
-    //     .attr("dy", ".35em")
-    //     .text(function(d) { return d.name; });
+    // Legends
+    var protocol_names = d3.map(data[0]).keys();
+    var legend = svg.selectAll(".legend")
+        .data(protocol_names).enter()
+      .append("g")
+        .attr("class", "legend")
+        .attr("x", width - 65)
+        .attr("y", 25)
+        .attr("height", 300)
+        .attr("width", 300);
 
+    legend.append("rect")
+      .attr("x", width - 65)
+      .attr("y", function(name) { return 25 * protocol_names.indexOf(name); })
+      .attr("width", 10)
+      .attr("height", 10)
+      .style("fill", function(name) { return color(name) });
+
+    legend.append("text")
+      .attr("x", width - 65)
+      .attr("y", function(name) { return 25 * protocol_names.indexOf(name); })
+      .text(function(name) { return name; });
+
+    // Axises
     svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + height + ")")
@@ -148,12 +166,24 @@ $(function() {
         .attr("d", area)
         .style("fill", function(d) { return color(0); });
 
-    // svg.append("text")
-    //     .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-    //     .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y / 2) + ")"; })
-    //     .attr("x", -6)
-    //     .attr("dy", ".35em")
-    //     .text(function(d) { return d.name; });
+    var legend = svg.append("g")
+        .attr("class", "legend")
+        .attr("x", width - 65)
+        .attr("y", 25)
+        .attr("height", 300)
+        .attr("width", 300);
+
+    legend.append("rect")
+      .attr("x", width - 65)
+      .attr("y", 25)
+      .attr("width", 10)
+      .attr("height", 10)
+      .style("fill", color(0));
+
+    legend.append("text")
+      .attr("x", width - 65)
+      .attr("y", 25)
+      .text(target_protocol);
 
     svg.append("g")
         .attr("class", "x axis")
