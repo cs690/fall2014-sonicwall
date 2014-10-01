@@ -13,8 +13,8 @@ function preload()
 	createCanvas(800, 600);
 	angleMode(RADIANS);
 	background(250);	
-	data = loadTable('test.csv', 'header', 'csv');
-	bargraph.load(data);
+	tableData = loadTable('OlympicAthletes_0.csv', 'header', 'csv');
+	bargraph.load(tableData);
 }
 
 function setup()
@@ -70,6 +70,7 @@ function Axis(startPoint, length)
 	this.length = 0;
 	this.rotation = 0;
 	
+	this.markValueRange = 0;
 	this._markCount = 0;
 	this._markStep = 0;
 	this.markWidth = 5;
@@ -112,6 +113,7 @@ function Axis(startPoint, length)
 		
 		Axis.prototype.initMarkLabel = function (valueStart, valueStop, step)
 		{
+			this.markValueRange = valueStop - valueStart;
 			this.markLabelStep = step;
 			var values = valueInterpolate(valueStart, valueStop, this._markCount);
 			for(var i = 0; i < this._markCount + 1; i++)
@@ -237,8 +239,15 @@ function Axis(startPoint, length)
 			}
 		}		
 		
+		Axis.prototype.scale = function (value)
+		{
+			return this.length / this.markValueRange * value;
+		}
+		
 		this._initialized = true;
 	}
+	
+	//Static method
 	
 	//Call construct
 	this.construct(startPoint, length);
@@ -488,6 +497,14 @@ function Bar_Graph(startPoint)
     this.bar1 = null;
     this.bar2 = null;
     this.bar3 = null;
+    this.bar4 = null;
+    this.bar5 = null;
+    this.bar6 = null;
+	this.bar7 = null;
+    this.bar8 = null;
+    this.bar9 = null;
+	
+	this.tag1 = null;
 	
 	this._axises = [];
 	this._bars = [];
@@ -502,33 +519,65 @@ function Bar_Graph(startPoint)
         this.axisV.rotation = -Math.PI / 2;
         this.axisV.setMark(50);
         this.axisV.markWidth = -5;
-        this.axisV.initMarkLabel(0, 100, 5);
+        this.axisV.initMarkLabel(0, 1500, 5);
         this.axisV.setMarkLabelStyle([-6, this.axisV.markWidth * 2], Math.PI / 2, constants.RIGHT);
         //this.axisV.showAxis = false;
         this.axisV.showFirstAndLastMark = true;
 
         this.axisH = new Axis(startPoint, 600);
-        this.axisH.setMark(6);
-        this.axisH.showMark = true;
+        this.axisH.setMark(4);
+        this.axisH.showMark = false;
         this.axisH.initMarkLabel(0, 60, 1);
         this.axisH.setMarkLabelStyle([0, this.axisH.markWidth * 4], 0, constants.CENTER);
-        this.axisH.setMarkLabelInfo(["", "USA", "Japan", "China", "Thai", "Greece"]);
+        this.axisH.setMarkLabelInfo(["", "USA", "Russia", "Germany", "Thai", "Greece"]);
         this.axisH.showFirstAndLastMark = false;
 
-        this.bar1 = new Bar(local2GlobalPoint(startPoint, this.axisH.rotation, this.axisH.markSlots[1]), 20, 200);
+		//USA
+        this.bar1 = new Bar(local2GlobalPoint(startPoint, this.axisH.rotation, this.axisH.markSlots[1]), 20, this.axisV.scale(552));
         this.bar1.rotation = this.axisV.rotation;
         this.bar1.color = [255, 215, 0];
 
-        this.bar2 = new Bar(local2GlobalPoint(this.bar1.startPoint, this.bar1.rotation, this.bar1.topPoint), 20, 100);
+        this.bar2 = new Bar(local2GlobalPoint(this.bar1.startPoint, this.bar1.rotation, this.bar1.topPoint), 20, this.axisV.scale(440));
         this.bar2.rotation = this.axisV.rotation;
         this.bar2.color = [192, 192, 192];
 
-        this.bar3 = new Bar(local2GlobalPoint(this.bar2.startPoint, this.bar2.rotation, this.bar2.topPoint), 20, 50);
+        this.bar3 = new Bar(local2GlobalPoint(this.bar2.startPoint, this.bar2.rotation, this.bar2.topPoint), 20, this.axisV.scale(320));
         this.bar3.rotation = this.axisV.rotation;
         this.bar3.color = [205, 127, 50];
 		
+		//Russia
+        this.bar4 = new Bar(local2GlobalPoint(startPoint, this.axisH.rotation, this.axisH.markSlots[2]), 20, this.axisV.scale(234));
+        this.bar4.rotation = this.axisV.rotation;
+        this.bar4.color = [255, 215, 0];
+
+        this.bar5 = new Bar(local2GlobalPoint(this.bar4.startPoint, this.bar4.rotation, this.bar4.topPoint), 20, this.axisV.scale(221));
+        this.bar5.rotation = this.axisV.rotation;
+        this.bar5.color = [192, 192, 192];
+
+        this.bar6 = new Bar(local2GlobalPoint(this.bar5.startPoint, this.bar5.rotation, this.bar5.topPoint), 20, this.axisV.scale(313));
+        this.bar6.rotation = this.axisV.rotation;
+        this.bar6.color = [205, 127, 50];
+
+		//Germany
+        this.bar7 = new Bar(local2GlobalPoint(startPoint, this.axisH.rotation, this.axisH.markSlots[3]), 20, this.axisV.scale(223));
+        this.bar7.rotation = this.axisV.rotation;
+        this.bar7.color = [255, 215, 0];
+
+        this.bar8 = new Bar(local2GlobalPoint(this.bar7.startPoint, this.bar7.rotation, this.bar7.topPoint), 20, this.axisV.scale(183));
+        this.bar8.rotation = this.axisV.rotation;
+        this.bar8.color = [192, 192, 192];
+
+        this.bar9 = new Bar(local2GlobalPoint(this.bar8.startPoint, this.bar8.rotation, this.bar8.topPoint), 20, this.axisV.scale(223));
+        this.bar9.rotation = this.axisV.rotation;
+        this.bar9.color = [205, 127, 50];		
+		
+		this.tag1 = new Tag(local2GlobalPoint(this.bar3.startPoint, this.bar3.rotation, this.bar3.topPoint), 100, 60, "Total: 1312");
+		this.tag1.setRotation(this.bar3.rotation);
+		
+		this.tag2 = new Tag(local2GlobalPoint(this.bar1.startPoint, this.bar1.rotation, this.bar1.rightPoint), 40, 80, "Gold: 552");	
+		
 		this._axises = [this.axisV, this.axisH];
-		this._bars = [this.bar1, this.bar2, this.bar3];
+		this._bars = [this.bar1, this.bar2, this.bar3, this.bar4, this.bar5, this.bar6, this.bar7, this.bar8, this.bar9];
     };
 
     //Methods
@@ -539,6 +588,18 @@ function Bar_Graph(startPoint)
         {
 			this._table = table;
 			this._dataLoadCompleted = true;
+			this._precessData(2);
+        }
+		
+        Bar_Graph.prototype._precessData = function (index)
+        {
+			var colum = null;
+			if(this._dataLoadCompleted)
+			{
+				colum = this._table.getColumn(index);
+				console.log(this._table);
+				console.log(colum);
+			}
         }
 		
         Bar_Graph.prototype.draw = function ()
@@ -553,6 +614,8 @@ function Bar_Graph(startPoint)
 				{
 					this._bars[i].draw();
 				}
+				this.tag1.draw();
+				this.tag2.draw();
 			}
         }
 
