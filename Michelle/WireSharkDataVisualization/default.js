@@ -2,9 +2,6 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-//TODO 
-var parseDate = d3.time.format("%d-%b-%y").parse;
-
 var x = d3.time.scale()
     .range([0, width]);
 
@@ -35,8 +32,8 @@ d3.tsv("data.csv", function(error, data) {
     d.DNS = +d.DNS;
   });
 
-  x.domain(d3.extent(data, function(d) { return d.DNS; }));
-  y.domain([0, d3.max(data, function(d) { return d.TIME_SPAN; })]);
+  x.domain(d3.extent(data, function(d) { return d.TIME_SPAN; }));
+  y.domain([0, d3.max(data, function(d) { return d.DNS; })]);
 
   svg.append("path")
       .datum(data)
