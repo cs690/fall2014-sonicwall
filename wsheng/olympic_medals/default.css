@@ -12,7 +12,7 @@ body {
     stroke: #888;
     shape-rendering: crispEdges;
 }
-.x.axis path {
+.axis path {
     display: none;
 }
 
