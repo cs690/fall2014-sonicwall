@@ -84,6 +84,7 @@ $(document).ready(function() {
         Bronze: d.value.Bronze
       };
     });
+	debugger
 
     x.domain([0, d3.round(max_total * 1.1)]);
     y.domain(keys);
