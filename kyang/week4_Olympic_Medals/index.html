@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html>
+<head>
+<link rel=stylesheet href="style.css">
+</head>
 <body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="tip.js"></script>
 <script>
 
 var framewidth = 1800,
@@ -24,6 +28,12 @@ var yAxis = d3.svg.axis()
 	.scale(y)
 	.orient('left');
 	
+var tooltip = d3.select("body")
+      .append("div")
+      .style("position", "absolute")
+      .style("z-index", "10")
+      .style("visibility", "hidden");
+	
 var svg = d3.select('body')
 			.append('svg')
 			  .attr('width', framewidth)
@@ -32,6 +42,17 @@ var svg = d3.select('body')
 			  .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
 	
 var data = {};
+
+var tip = d3.tip()
+      .attr('class', 'tip')
+      .offset([0, 10])
+      .direction('e')
+      .html(function(d) {
+        return "" +
+        "<div>" + "Gold: "   + data[d].Gold   + "</div>" +
+        "<div>" + "Silver: " + data[d].Silver + "</div>" +
+        "<div>" + "Bronze: " + data[d].Bronze + "</div>";
+      });
 d3.csv('data.csv', function (err,rawdata){
 
 	// Prepareing data
@@ -42,8 +63,9 @@ d3.csv('data.csv', function (err,rawdata){
 		data[d.Country].Silver += +d['Silver Medals'];
 		data[d.Country].Bronze += +d['Bronze Medals'];
 	});
+	var max_val = Math.max.apply(null, Object.keys(data).map(function(v,i){return data[v].total();}));
 	x.domain(Object.keys(data));
-	y.domain([0, Math.max.apply(null, Object.keys(data).map(function(v,i){return data[v].total();}))]);
+	y.domain([0, max_val]);
 	
 	svg.append("g")
 	  .attr("class", "x axis")
@@ -59,40 +81,43 @@ d3.csv('data.csv', function (err,rawdata){
 	  .attr("class", "y axis")
 	  .call(yAxis)
 	  
+    svg.call(tip);
+	  
 	var bars = svg.selectAll('.bar')
 	  .data(Object.keys(data))
-	.enter().append('g')
-	.on('mouseover', function(d){
-		var bar = d3.select(this);
-		bar.select('.bar-bronze').style('fill','#CD7F32');
-		bar.select('.bar-silver').style('fill','#BFC1C2');
-		bar.select('.bar-gold').style('fill','#FFDF00');
-	})
-	.on('mouseout', function(d){
-		d3.select(this).selectAll('rect').style('fill','#000000');
-	});
+	.enter().append('g');
+
 	
-	bars.append('rect')
-	  .attr('class','bar-bronze')
-	  .attr('x', function(d){return x(d);})
-	  .attr('width', x.rangeBand())
-	  .attr('y', function(d) {return y(data[d].Bronze);})
-	  .attr('height', function(d){return height-y(data[d].Bronze)});
-	  
-	  
-	bars.append('rect')	  
-	  .attr('class','bar-silver')
-	  .attr('x', function(d){return x(d);})
-	  .attr('width', x.rangeBand())
-	  .attr('y', function(d) {return y(data[d].Bronze + data[d].Silver);})
-	  .attr('height', function(d){return y(data[d].Bronze)-y(data[d].Bronze+data[d].Silver);});
-	  
+	
 	bars.append('rect')	  
 	  .attr('class','bar-gold')
 	  .attr('x', function(d){return x(d);})
 	  .attr('width', x.rangeBand())
 	  .attr('y', function(d) {return y(data[d].total());})
-	  .attr('height', function(d){return y(data[d].Bronze + data[d].Silver)-y(data[d].total());});
+	  .attr('height', function(d){return y(0)-y(data[d].total());});
+	bars.append('rect')	  
+	  .attr('class','bar-silver')
+	  .attr('x', function(d){return x(d);})
+	  .attr('width', x.rangeBand())
+	  .attr('y', function(d) {return y(data[d].Bronze + data[d].Silver);})
+	  .attr('height', function(d){return y(0)-y(data[d].Bronze+data[d].Silver);});
+	bars.append('rect')
+	  .attr('class','bar-bronze')
+	  .attr('x', function(d){return x(d);})
+	  .attr('width', x.rangeBand())
+	  .attr('y', function(d) {return y(data[d].Bronze);})
+	  .attr('height', function(d){return y(0)-y(data[d].Bronze)});
+	bars.append('rect')
+	  .attr('class','bar-invis')
+	  .attr('x', function(d){return x(d);})
+	  .attr('width', x.rangeBand())
+	  .attr('y', function(d) {return y(max_val);})
+	  .attr('height', function(d){return y(0)-y(max_val)})
+	  .on('mouseover.tip', tip.show)
+      .on('mouseout', tip.hide)
+	  
+	  
+	  
 });
 </script>
 </body>

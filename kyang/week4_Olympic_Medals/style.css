@@ -1,0 +1,22 @@
+.bar-gold {
+	fill:#FFDF00
+}
+.bar-bronze{
+	fill:#CD7F32
+}
+.bar-silver{
+	fill:#BFC1C2
+}
+.bar-invis{
+	opacity: 0.0;
+}
+
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+		
