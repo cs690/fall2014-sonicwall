@@ -3,16 +3,26 @@ $(document).ready(function() {
       width = 960 - margin.left - margin.right,
       height = 3000 - margin.top - margin.bottom;
 
-  var tip = d3.tip()
+  var gold_tip = d3.tip()
       .attr('class', 'tip')
       .offset([0, 10])
       .direction('e')
-      .html(function(d) {
-        return "" +
-        "<div>" + "Gold: "   + d.Gold   + "</div>" +
-        "<div>" + "Silver: " + d.Silver + "</div>" +
-        "<div>" + "Bronze: " + d.Bronze + "</div>";
-      });
+      .html(function(d) { return "Gold: " + d.Gold; });
+  var silver_tip = d3.tip()
+      .attr('class', 'tip')
+      .offset([0, 10])
+      .direction('e')
+      .html(function(d) { return "Silver: " + d.Silver; });
+  var bronze_tip = d3.tip()
+      .attr('class', 'tip')
+      .offset([0, 10])
+      .direction('e')
+      .html(function(d) { return "Bronze: " + d.Bronze; });
+  var total_tip = d3.tip()
+      .attr('class', 'tip')
+      .offset([0, 10])
+      .direction('e')
+      .html(function(d) { return "Total: " + d.Total; });
 
   var x = d3.scale.linear()
       .range([0, width]);
@@ -86,38 +96,46 @@ $(document).ready(function() {
         .attr("class", "y axis")
         .call(yAxis);
 
-    svg.call(tip);
+    svg.call(gold_tip);
+    svg.call(silver_tip);
+    svg.call(bronze_tip);
+    svg.call(total_tip);
 
     var bars = svg.selectAll(".bar")
         .data(data).enter()
       .append("g")
-        .on('mouseover', tip.show)
-        .on('mouseout', tip.hide);
+        .attr("class", "bars");
 
     bars.append("rect")
         .attr("class", "bar bar-gold")
         .attr("x", function(d) { return x(2); })
         .attr("y", function(d) { return y(d.name); })
         .attr("height", y.rangeBand())
-        .attr("width", function(d) { return x(d.Gold); });
+        .attr("width", function(d) { return x(d.Gold); })
+        .on('mouseover', gold_tip.show)
+        .on('mouseout', gold_tip.hide);
 
     bars.append("rect")
         .attr("class", "bar bar-silver")
         .attr("x", function(d) { return x(2 + d.Gold); })
         .attr("y", function(d) { return y(d.name); })
         .attr("height", y.rangeBand())
-        .attr("width", function(d) { return x(d.Silver); });
+        .attr("width", function(d) { return x(d.Silver); })
+        .on('mouseover', silver_tip.show)
+        .on('mouseout', silver_tip.hide);
 
     bars.append("rect")
         .attr("class", "bar bar-bronze")
         .attr("x", function(d) { return x(2 + d.Gold + d.Silver); })
         .attr("y", function(d) { return y(d.name); })
         .attr("height", y.rangeBand())
-        .attr("width", function(d) { return x(d.Bronze); });
+        .attr("width", function(d) { return x(d.Bronze); })
+        .on('mouseover', bronze_tip.show)
+        .on('mouseout', bronze_tip.hide);
 
     svg.select("g.y.axis").selectAll("g.tick")
-        .on('mouseover', tip.show)
-        .on('mouseout', tip.hide);
+        .on('mouseover', total_tip.show)
+        .on('mouseout', total_tip.hide);
 
     d3.select("input").on("change", change);
 
