@@ -88,6 +88,8 @@ d3.csv('data.csv', function (err,rawdata){
 	.enter().append('g');
 
 	
+	var base = y(max_val)
+	var hei = y(0) - y(max_val)
 	
 	bars.append('rect')	  
 	  .attr('class','bar-gold')
@@ -114,7 +116,29 @@ d3.csv('data.csv', function (err,rawdata){
 	  .attr('y', function(d) {return y(max_val);})
 	  .attr('height', function(d){return y(0)-y(max_val)})
 	  .on('mouseover.tip', tip.show)
-      .on('mouseout', tip.hide)
+	  .on('mouseover.resize', function(){
+		d3.select(this.parentNode).select('.bar-gold').transition()
+		.attr('y',function(d){return base})
+		.attr('height',function(){return hei})
+		d3.select(this.parentNode).select('.bar-silver').transition()
+		.attr('y',function(d){return base + hei * data[d].Gold / data[d].total()})
+		.attr('height',function(d){return hei*(data[d].Silver+data[d].Bronze)/data[d].total()})
+		d3.select(this.parentNode).select('.bar-bronze').transition()
+		.attr('y',function(d){return base + hei * (data[d].Gold + data[d].Silver)/data[d].total()})
+		.attr('height',function(d){return hei*data[d].Bronze/data[d].total()})
+	  })
+      .on('mouseout.tip', tip.hide)
+	  .on('mouseout.resize', function(){
+	  d3.select(this.parentNode).select('.bar-gold').transition()
+		.attr('y',function(d){return y(data[d].total())})
+		.attr('height',function(d){return y(0) - y(data[d].total())})
+		d3.select(this.parentNode).select('.bar-silver').transition()
+		.attr('y',function(d){return y(data[d].Silver + data[d].Bronze)})
+		.attr('height',function(d){return y(0) - y(data[d].Silver + data[d].Bronze)})
+		d3.select(this.parentNode).select('.bar-bronze').transition()
+		.attr('y',function(d){return y(data[d].Bronze)})
+		.attr('height',function(d){return y(0) - y(data[d].Bronze)})
+	  })
 	  
 	  
 	  
