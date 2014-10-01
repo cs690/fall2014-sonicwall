@@ -18,11 +18,19 @@ body {
 
 /* Bar */
 .bar {
-    fill: steelblue;
-    fill-opacity: .9;
+    fill-opacity: .7;
 }
 .bar:hover {
-    fill: brown;
+    fill-opacity: 1;
+}
+.bar-gold {
+    fill: #FFDF00;
+}
+.bar-silver {
+    fill: #BFC1C2;
+}
+.bar-bronze {
+    fill: #CD7F32;
 }
 
 /* Label */
