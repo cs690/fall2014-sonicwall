@@ -2850,7 +2850,7 @@ var inputfiles = function (require, core, reqwest) {
       var ret = [];
       var t = new p5.Table();
       var req = new XMLHttpRequest();
-      req.open('GET', path, true);
+      req.open('GET', path, false);
       req.onreadystatechange = function () 
 	  {
         if (req.readyState === 4 && (req.status === 200 || req.status === 0))
