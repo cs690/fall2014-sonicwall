@@ -29,7 +29,6 @@ debugger
 
 	var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
-	//.attr("width", width/2)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -42,7 +41,7 @@ debugger
 
   svg.append("g")
       .attr("class", "x axis")
-      .attr("transform", "translate(-30," + height + ")")
+      .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
 
   svg.append("g")
@@ -59,10 +58,10 @@ debugger
       .data(data)
     .enter().append("rect")
       .attr("class", "bar")
-      .attr("x", function(d) { return x(d.year); })
+      .attr("x", function(d) { return x(d.year)+x.rangeBand()/4; })
       .attr("width", x.rangeBand()/2)
       .attr("y", function(d) { return y(d.totalmedals); }) 
-	  .attr("height", function(d) { return height-y(d.totalmedals); })
+	  .attr("height", function(d) { return y(0)-y(d.totalmedals); })
 	  .on("mouseover", tip.show)
 	  .on("mouseout", tip.hide)
 	});
