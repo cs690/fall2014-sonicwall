@@ -1,0 +1,30 @@
+import sys
+import math
+
+bin_size = float(sys.argv[3])
+max_time = 0
+
+first_line = True
+with open(sys.argv[1]) as f:
+    for line in f:
+        if first_line:
+            first_line = False
+            continue
+        items = line[:-1].split(',')
+        max_time = float(items[1])
+
+num_bins = int(math.ceil(max_time / bin_size) + 1)
+traffic = [0] * num_bins
+
+first_line = True
+with open(sys.argv[1]) as f:
+    for line in f:
+        if first_line:
+            first_line = False
+            continue
+        items = line[:-1].split(',')
+        traffic[int(math.floor(float(items[1]) / bin_size))] += float(items[5])
+
+with open(sys.argv[2], 'w') as f:
+    for i in range(0, num_bins):
+        f.write('{0}\t{1}\n'.format(i, traffic[i]))
