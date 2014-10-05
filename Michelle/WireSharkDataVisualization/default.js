@@ -32,7 +32,7 @@ $(function() {
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  d3.tsv("HTTP.tsv", function(error, data) {
+  d3.tsv("MultipleProtocol.tsv", function(error, data) {
     data = data.map(function(d) {
       d.x = parseInt(d.TIME_SPAN);
       d.y = parseInt(d.HTTP);
@@ -114,7 +114,7 @@ $(function() {
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  d3.tsv("DNS.tsv", function(error, data) {
+  d3.tsv("MultipleProtocol.tsv", function(error, data) {
     data = data.map(function(d) {
       d.x = parseInt(d.TIME_SPAN);
       d.y = parseInt(d.DNS);
@@ -196,7 +196,7 @@ $(function() {
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  d3.tsv("TCP.tsv", function(error, data) {
+  d3.tsv("MultipleProtocol.tsv", function(error, data) {
     data = data.map(function(d) {
       d.x = parseInt(d.TIME_SPAN);
       d.y = parseInt(d.TCP);
