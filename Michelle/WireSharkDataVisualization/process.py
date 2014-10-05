@@ -36,8 +36,10 @@ with open(sys.argv[1]) as f:
             DNStraffic[int(math.floor(float(items[1]) / bin_size))] += float(items[5])
 
 with open(sys.argv[2], 'w') as f:
-    f.write('{0}\t{1}\t{2}\t{3}\n'.format('TIME_SPAN','HTTP','DNS','TCP'))
+    f.write('{0},{1},{2},{3}\n'.format('TIME_SPAN','HTTP','DNS','TCP'))
     for i in range(0, num_bins):
         #f.write('{0}\t{1}\n'.format(i, TCPtraffic[i]))
-        f.write('{0}\t{1}\t{2}\t{3}\n'.format(i,HTTPtraffic[i],DNStraffic[i],TCPtraffic[i]))
+        f.write('{0},{1},{2},{3}\n'.format(i,HTTPtraffic[i],DNStraffic[i],TCPtraffic[i]))
 
+
+           

@@ -21,6 +21,15 @@ $(function() {
 
   var color = d3.scale.category20();
 
+  var HTTP_tip = d3.tip()
+	  .attr('class','d3-tip')
+	  .offset([0,10])
+	  .html(function(d) {
+		  return ""+
+		  "<div>HTTP: "+d.HTTP+"</div>"
+	});
+
+
   var area = d3.svg.area()
       .x(function(d) { return x(d.x); })
       .y0(height)
@@ -39,6 +48,8 @@ $(function() {
       return d;
     });
 
+	svg.call(HTTP_tip);
+
     x.domain(d3.extent(data, function(d) { return d.x; }));
     y.domain([0, d3.max(data.map(function(d) { return d.y; })) * 1.1]);
 
@@ -46,7 +57,9 @@ $(function() {
         .datum(data)
         .attr("class", "area")
         .attr("d", area)
-        .style("fill", function(d) { return color(18); });
+        .style("fill", function(d) { return color(18); })
+	  	.on('mouseover', HTTP_tip.show)
+	  	.on('mouseout', HTTP_tip.hide);
 
     var legend = svg.append("g")
         .attr("class", "legend")
@@ -54,6 +67,7 @@ $(function() {
         .attr("y", 25)
         .attr("height", 300)
         .attr("width", 300);
+	
 
     legend.append("rect")
       .attr("x", width - 65)
@@ -61,8 +75,8 @@ $(function() {
       .attr("width", 14)
       .attr("height", 14)
       .style("fill", color(18));
-
-    legend.append("text")
+	  
+  	  legend.append("text")
       .attr("x", width-65)
       .attr("y", 25)
 	  .style("font-size","16px")
@@ -113,6 +127,7 @@ $(function() {
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	
 
   d3.tsv("MultipleProtocol.tsv", function(error, data) {
     data = data.map(function(d) {
@@ -137,7 +152,7 @@ $(function() {
         .attr("height", 300)
         .attr("width", 300);
 
-    legend.append("rect")
+  legend.append("rect")
       .attr("x", width - 65)
       .attr("y", 25)
       .attr("width", 14)
