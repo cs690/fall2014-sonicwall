@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Learned a lot from http://jsfiddle.net/7HZcR/3/ -->
+ <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+var framewidth = 1660,
+	frameheight = 840;
+var margin = {top: 20, right: 30, bottom: 20, left: 30},
+	width = framewidth - margin.left - margin.right,
+	height = frameheight - margin.top - margin.bottom;
+	
+var x = d3.scale.linear()
+	.range([0, width]);
+
+var y = d3.scale.linear()
+	.range([height, 0]);
+
+var xAxis = d3.svg.axis()
+	.scale(x)
+	.orient('bottom');
+	
+var yAxis = d3.svg.axis()
+	.scale(y)
+	.orient('left');
+	
+var svg = d3.select('body')
+			.append('svg')
+			  .attr('width', framewidth)
+			  .attr('height', frameheight)
+			.append('g')
+			  .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+
+iploc = {};
+Protocol = ["DNS", "TCP", "HTTP"];
+d3.csv("../../public/geoip.csv", function(err,ipdata){
+	ipdata.forEach(function(ip){
+		iploc[ip.IP] = {Longitude:+ip.Longitude, Latitude:+ip.Latitude};
+	});
+	
+	d3.csv("../../public/sfgate.csv", function(err,data){
+		data.sort(function(a,b){
+			if(a.Source > b.Source){return 1;}
+			if (a.Source < b.Source){return -1;}
+			if (a.Destination > b.Destination){return 1;}
+			if (a.Destination < b.Destination){return -1;}
+			return 0;
+		});
+		data[0].linknum = 1;
+		for (var i = 1; i < data.length; i++){
+			if (data[i].Source == data[i-1].Source && data[i].Destination == data[i-1].Destination){
+				data[i].linknum = data[i-1].linknum + 1;
+			}else
+				data[i].linknum = 1;
+		};
+
+		
+	x.domain([-180,180]);
+	y.domain([-90,90])
+		
+		svg.append("defs").selectAll("marker")
+		  .data(Protocol)
+		.enter().append("marker")
+		  .attr("id", String)
+		  .attr("viewBox", "0 -5 10 10")
+		  .attr("refX", 15)
+		  .attr("refY", -1.5)
+		  .attr("markerWidth",6)
+		  .attr("markerHeight",6)
+		  .attr("orient","auto")
+		.append("path")
+		  .attr("d", "M0,-5L10,0L0,5");
+		
+		var path = svg.append("g").selectAll("path")
+		  .data(data)
+		.enter().append("path")
+		  .attr("class", function(d){return "link "+d.Protocol;})
+		  .attr("marker-end", function(d){return "url(#"+d.Protocol +")";})
+		  .attr("d",function(d){
+			dr = 1000-d.linknum*2;
+			return "M" + x(iploc[d.Source].Longitude) + "," + y(iploc[d.Source].Latitude)+"A"+dr+","+dr+" 0 0,1"+x(iploc[d.Destination].Longitude)+","+y(iploc[d.Destination].Latitude);
+		  });
+		  
+		var circle=svg.append("g").selectAll("circle")
+		  .data(Object.keys(iploc))
+		.enter().append("circle")
+		  .attr("r",6)
+		  .attr("cx", function(d){return x(iploc[d].Longitude)})
+		  .attr("cy", function(d){return y(iploc[d].Latitude)})
+	});
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+body {
+    font: 12px sans-serif;
+}
+
+/* Axis */
+.axis text {
+    font: 10px sans-serif;
+}
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #888;
+    shape-rendering: crispEdges;
+}
+.axis path {
+    display: none;
+}
+
+/* Bar */
+.bar {
+    fill-opacity: .7;
+}
+.bar:hover {
+    fill-opacity: 1;
+}
+.bar-gold {
+    fill: #FFDF00;
+}
+.bar-silver {
+    fill: #BFC1C2;
+}
+.bar-bronze {
+    fill: #CD7F32;
+}
+
+/* Label */
+.label {
+    font-size: 16px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Tip */
+.tip {
+    line-height: 1;
+    font-weight: bold;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 2px;
+}
+/* Creates a small triangle extender for the tooltip */
+.tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25C0";
+  position: absolute;
+}
+/* Style northward tooltips differently */
+.tip.e:after {
+  top: 40%;
+  left: -8px;
+}

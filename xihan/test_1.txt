@@ -1,0 +1,60 @@
+/*
+
+var axisV = new Axis(origin, 450);
+axisV.rotation = -Math.PI/2;
+axisV.setMark(50);
+axisV.markWidth = -5;
+axisV.initMarkLabel(0, 100, 5);
+axisV.setMarkLabelStyle([-6, axisV.markWidth * 2], Math.PI/2, constants.RIGHT);
+//axisV.showAxis = false;
+axisV.showFirstAndLastMark = true;
+
+var axisH = new Axis(origin, 600);
+axisH.setMark(6);
+axisH.showMark = true;
+axisH.initMarkLabel(0, 60, 1);
+axisH.setMarkLabelStyle([0, axisH.markWidth * 4], 0, constants.CENTER);
+axisH.setMarkLabelInfo(["", "USA", "Japan", "China", "Thai", "Greece"]);
+axisH.showFirstAndLastMark = false;
+
+var bar1 = new Bar(local2GlobalPoint(origin, axisH.rotation, axisH.markSlots[1]), 20, 200);
+bar1.rotation = axisV.rotation;
+bar1.color = [255,215,0];
+
+var bar2 = new Bar(local2GlobalPoint(bar1.startPoint, bar1.rotation, bar1.topPoint), 20, 100);
+bar2.rotation = axisV.rotation;
+bar2.color = [192,192,192];
+
+var bar3 = new Bar(local2GlobalPoint(bar2.startPoint, bar2.rotation, bar2.topPoint), 20, 50);
+bar3.rotation = axisV.rotation;
+bar3.color = [205,127,50];
+
+var tag1 = new Tag(local2GlobalPoint(bar1.startPoint, bar1.rotation, bar1.rightPoint), 60, 80);
+
+var label1 = new Label(local2GlobalPoint(tag1.startPoint, tag1.rotation, tag1.centerPoint), "Gold: ??");
+label1.align = constants.CENTER;
+
+var tag2 = new Tag(local2GlobalPoint(bar3.startPoint, bar3.rotation, bar3.topPoint), 80, 40);
+tag2.rotation = bar3.rotation;
+
+var label2 = new Label(local2GlobalPoint(tag2.startPoint, tag2.rotation, tag2.centerPoint), "Total: ??");
+label2.align = constants.CENTER;
+
+*/
+
+	/*
+	
+	axisV.draw();
+	axisH.draw();
+	
+	bar1.draw();
+	bar2.draw();
+	bar3.draw();
+	
+	tag1.draw();
+	tag2.draw();
+	
+	label1.draw();
+	label2.draw();
+	
+	*/
