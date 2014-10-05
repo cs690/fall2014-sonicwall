@@ -46,7 +46,7 @@ $(function() {
         .datum(data)
         .attr("class", "area")
         .attr("d", area)
-        .style("fill", function(d) { return color(0); });
+        .style("fill", function(d) { return color(18); });
 
     var legend = svg.append("g")
         .attr("class", "legend")
@@ -58,14 +58,14 @@ $(function() {
     legend.append("rect")
       .attr("x", width - 65)
       .attr("y", 25)
-      .attr("width", 10)
-      .attr("height", 10)
-      .style("fill", color(0));
+      .attr("width", 14)
+      .attr("height", 14)
+      .style("fill", color(18));
 
     legend.append("text")
       .attr("x", width-65)
       .attr("y", 25)
-	  .style("font-size","20px")
+	  .style("font-size","16px")
       .text("HTTP");
 
     svg.append("g")
@@ -128,7 +128,7 @@ $(function() {
         .datum(data)
         .attr("class", "area")
         .attr("d", area)
-        .style("fill", function(d) { return color(10); });
+        .style("fill", function(d) { return color(2); });
 
     var legend = svg.append("g")
         .attr("class", "legend")
@@ -140,14 +140,14 @@ $(function() {
     legend.append("rect")
       .attr("x", width - 65)
       .attr("y", 25)
-      .attr("width", 10)
-      .attr("height", 10)
-      .style("fill", color(10));
+      .attr("width", 14)
+      .attr("height", 14)
+      .style("fill", color(2));
 
     legend.append("text")
       .attr("x", width-65)
       .attr("y", 25)
-	  .style("font-size","20px")
+	  .style("font-size","16px")
       .text("DNS");
 
     svg.append("g")
@@ -222,14 +222,14 @@ $(function() {
     legend.append("rect")
       .attr("x", width - 65)
       .attr("y", 25)
-      .attr("width", 10)
-      .attr("height", 10)
+      .attr("width", 14)
+      .attr("height", 14)
       .style("fill", color(0));
 
     legend.append("text")
       .attr("x", width-65)
       .attr("y", 25)
-	  .style("font-size","20px")
+	  .style("font-size","16px")
       .text(target_protocol);
 
     svg.append("g")
