@@ -1,7 +1,9 @@
+#Usage: python process.py sfgate_with_geoip.csv output.tsv 1 TCP
 import sys
 import math
 
 bin_size = float(sys.argv[3])
+target_protocol = sys.argv[4]
 max_time = 0
 
 first_line = True
@@ -23,8 +25,10 @@ with open(sys.argv[1]) as f:
             first_line = False
             continue
         items = line[:-1].split(',')
-        traffic[int(math.floor(float(items[1]) / bin_size))] += float(items[5])
+        if(items[4] == target_protocol):
+            traffic[int(math.floor(float(items[1]) / bin_size))] += float(items[5])
 
 with open(sys.argv[2], 'w') as f:
+    f.write('{0}\t{1}\n'.format('TIME_SPAN',target_protocol))
     for i in range(0, num_bins):
         f.write('{0}\t{1}\n'.format(i, traffic[i]))

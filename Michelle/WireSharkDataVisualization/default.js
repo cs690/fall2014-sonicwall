@@ -122,7 +122,7 @@ $(function() {
     x.domain(d3.extent(data, function(d) { return d.x; }));
     y.domain([0, d3.max(data.map(function(d) { return d.y; })) * 1.1]);
 
-    svg.append("pathh")
+    svg.append("path")
         .datum(data)
         .attr("class", "area")
         .attr("d", area)
