@@ -61,6 +61,22 @@ function update_count_domain(){
 	svg.select(".yaxis").transition()
 	  .call(yAxis)
 }
+
+var drag_src;
+function update_legend(){
+	svg.selectAll(".legendItem")
+		.transition()
+		.attr("transform", function(d,i){
+			return "translate(0,"+protocol[i].Priority*20+")";
+		})
+}
+
+function get_idx(y){
+	var proi = Math.floor(y/20);
+	for (var i=0; i< protocol.length;i++)
+		if (protocol[i].Priority==proi)
+			return i;
+}
 d3.csv("../../public/sfgate.csv", function(err,data){
 	var time_domain = [+data[0].Time, +data[data.length-1].Time];
 	data.forEach(function(d){
@@ -128,14 +144,34 @@ d3.csv("../../public/sfgate.csv", function(err,data){
 	
 	var legendItem = legend.selectAll(".legendItem")
 	  .data(protocol).enter()
-	  .append("g");
+	  .append("g")
+	  .attr("class","legendItem");
 	  
 	legendItem.append("rect")
+	
 	  .attr("x", 0)
-	  .attr("y", function(d,i){ return i * 20;})
+	  .attr("y", 0)
 	  .attr("width", 15)
 	  .attr("height", 15)
 	  .style("fill", function(d,i){return color(i);})
+	  .on("dragstart",function(d){
+		drag_src = get_idx(d3.mouse(this.parentNode.parentNode)[1]);
+	  })
+	  .on("drag", function(d){
+		var mouseloc = d3.mouse(this.parentNode.parentNode)
+		var tar = get_idx(mouseloc[1]);
+		if (tar >= 0 && tar < protocol.length && tar != drag_src){
+			var tmp = protocol[tar].Priority;
+			protocol[tar].Priority = protocol[drag_src].Priority;
+			protocol[drag_src].Priority = tmp;
+			update_legend();
+			update_count_domain();
+		}
+		d3.select(this.parentNode).attr("transform", "translate("+(mouseloc[0]- 10) + "," + (mouseloc[1]-10)+")")
+	  })
+	  .on("dragend",function(d){
+		update_legend();
+	  })
 	  .on("click", function(){
 		var p = d3.select(this).data()[0];
 		p.Visible = !p.Visible;
@@ -148,9 +184,10 @@ d3.csv("../../public/sfgate.csv", function(err,data){
 	  
 	legendItem.append("text")
 	  .attr("x", 20)
-	  .attr("y", function(d,i){return i * 20+12;})
+	  .attr("y", function(d,i){return 12;})
 	  .html(function(d){return d.Name;})
-	  
+	
+	update_legend();
 	update_count_domain();
 	
 });

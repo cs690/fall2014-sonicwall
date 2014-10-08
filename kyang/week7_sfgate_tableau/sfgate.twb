@@ -6,7 +6,7 @@
   </preferences>
   <datasources>
     <datasource caption='sfgate+' inline='true' name='textscan.41919.871137465278' version='8.3'>
-      <connection class='textscan' directory='D:/sync/Source_Code/git_repo/cs690-sonicwall/public' filename='sfgate.csv'>
+      <connection class='textscan' directory='../../public' filename='sfgate.csv'>
         <relation join='inner' type='join'>
           <clause type='join'>
             <expression op='='>
