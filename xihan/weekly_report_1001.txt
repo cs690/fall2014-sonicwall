@@ -1,5 +1,0 @@
-Sep. 26		Implement two python files to pre-process geo-related csv data.
-Sep. 27-28	Improving basic components for visualization: Axis, Bar, Tag.
-Sep. 29		Try loading csv file into p5.Table object, but find error. Report this issue to github.
-Sep. 30		1. Contributors don't really get what's wrong with their code and they just modify the document and say "Don't do this". So I fix the issue in the source code by myself. 
-			2. Implement class Bar_Graph combining Axis and Bar together.
