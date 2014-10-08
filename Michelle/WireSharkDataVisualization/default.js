@@ -148,7 +148,7 @@ $(function() {
         .attr("class", "area")
         .attr("d", area)
         .style("fill", function(d) { 
-			console.log(color(2);
+			console.log(color(2));
 			return color(2); });
 
     var legend = svg.append("g")
