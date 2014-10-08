@@ -64,7 +64,7 @@ $(function() {
         };
       });
       return t;
-    }));
+    }).map(function(limit) { return limit * 1.1; }));
 
     // Area
     var protocol = svg.selectAll(".protocol")
