@@ -517,7 +517,7 @@ function Scatter(startPoint)
 {
 	//Attributes
 	this.startPoint = [0, 0];
-	this.size = 15;
+	this.size = 10;
 	this.color = [127, 127, 127, 100];
 	this.show = true;
 	
@@ -568,30 +568,6 @@ function Scatter_Graph(startPoint, width, height)
 		this._height = height;
 		
 		this._axises = [new Axis(startPoint, this._width), new Axis(startPoint, this._height)];
-		
-        this._axises[0].setMarkSlotsCount(50);
-        this._axises[0].markWidth = 5;
-        this._axises[0].setLabel(valueInterpolate(0, 1500, this._axises[0].getMarkSlotsCount()), 5);
-		this._axises[0].setValueRange(0, 1500);
-		this._axises[0].setLabelStyle([0, this._axises[0].markWidth * 4], 0, constants.CENTER);
-        this._axises[0].showAxis = true;
-		this._axises[0].showFirstLabel = false;
-		
-        this._axises[1].rotation = -Math.PI / 2;
-        this._axises[1].setMarkSlotsCount(50);
-        this._axises[1].markWidth = -5;
-		this._axises[1].scaleFactor = -1;
-        this._axises[1].setLabel(valueInterpolate(0, 1500, this._axises[1].getMarkSlotsCount()), 5);
-		this._axises[1].setValueRange(0, 1500);
-        this._axises[1].setLabelStyle([-6, this._axises[1].markWidth * 2], Math.PI / 2, constants.RIGHT);
-        this._axises[1].showAxis = true;
-		
-		this.AddScatter([100, 100]);
-		this.AddScatter([150, 150]);
-		this.AddScatter([300, 400]);
-		this.AddScatter([500, 670]);
-		this.AddScatter([760, 980]);
-		this.AddScatter([990, 1200]);
 	}
 
     //Methods

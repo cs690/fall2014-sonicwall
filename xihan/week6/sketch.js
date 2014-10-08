@@ -8,8 +8,8 @@ function preload()
 	createCanvas(800, 600);
 	angleMode(RADIANS);
 	background(250);
-	tableData = loadTable('OlympicAthletes_0.csv', 'header', 'csv');
-	bargraph.load(tableData);
+	//tableData = loadTable('OlympicAthletes_0.csv', 'header', 'csv');
+	//bargraph.load(tableData);
 	
 	bargraph._axises[0].setMarkSlotsCount(10);
 	bargraph._axises[0].showMark = false;
