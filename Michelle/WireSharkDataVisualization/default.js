@@ -147,9 +147,10 @@ $(function() {
         .datum(data)
         .attr("class", "area")
         .attr("d", area)
-        .style("fill", function(d) { 
+	  	.style("fill",'#2ECCFA')
+        /*.style("fill", function(d) { 
 			console.log(color(2));
-			return color(2); });
+			return color(2); });  */
 
     var legend = svg.append("g")
         .attr("class", "legend")
@@ -163,7 +164,7 @@ $(function() {
       .attr("y", 25)
       .attr("width", 14)
       .attr("height", 14)
-      .style("fill", color(2));
+      .style("fill", '#2ECCFA');
 
     legend.append("text")
       .attr("x", width-65)
@@ -232,7 +233,8 @@ $(function() {
         .datum(data)
         .attr("class", "area")
         .attr("d", area)
-        .style("fill", function(d) { return color(0); });
+	  	.style("fill", '#2ECCFA');
+        //.style("fill", function(d) { return color(0); });
 
     var legend = svg.append("g")
         .attr("class", "legend")
@@ -246,7 +248,7 @@ $(function() {
       .attr("y", 25)
       .attr("width", 14)
       .attr("height", 14)
-      .style("fill", color(0));
+      .style("fill", '2ECCFA');
 
     legend.append("text")
       .attr("x", width-65)
