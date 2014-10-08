@@ -1,7 +1,8 @@
+var maxheight = 15000;
 // HTTP protocol
 $(function() {
   var target_protocol = "HTTP";
-  var margin = {top: 20, right: 20, bottom: 30, left: 50},
+  var margin = {top: 20, right: 20, bottom: 30, left: 70},
       width = 960 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
@@ -21,14 +22,14 @@ $(function() {
 
   var color = d3.scale.category20();
 
-  var HTTP_tip = d3.tip()
+  /*var HTTP_tip = d3.tip()
 	  .attr('class','d3-tip')
 	  .offset([0,10])
 	  .html(function(d) {
 		  return ""+
-		  "<div>HTTP: "+d.HTTP+"</div>"
-	});
-
+		  "<strong>Year:</strong><span style='color:red'>"+d.ekei+"</span>"+"<br/>"
+		  //"<div>HTTP: "+d.HTTP+"</div>"
+	}); */
 
   var area = d3.svg.area()
       .x(function(d) { return x(d.x); })
@@ -48,18 +49,20 @@ $(function() {
       return d;
     });
 
-	svg.call(HTTP_tip);
+	//svg.call(HTTP_tip);
 
     x.domain(d3.extent(data, function(d) { return d.x; }));
     y.domain([0, d3.max(data.map(function(d) { return d.y; })) * 1.1]);
+	//y.domain([0,3500000]);
 
     svg.append("path")
         .datum(data)
         .attr("class", "area")
         .attr("d", area)
-        .style("fill", function(d) { return color(18); })
-	  	.on('mouseover', HTTP_tip.show)
-	  	.on('mouseout', HTTP_tip.hide);
+	  	.style("fill", '#2ECCFA');
+        //.style("fill", function(d) { return color(18); });
+	  	//.on('mouseover', HTTP_tip.show)
+	  	//.on('mouseout', HTTP_tip.hide);
 
     var legend = svg.append("g")
         .attr("class", "legend")
@@ -74,7 +77,7 @@ $(function() {
       .attr("y", 25)
       .attr("width", 14)
       .attr("height", 14)
-      .style("fill", color(18));
+      .style("fill", '#2ECCFA');
 	  
   	  legend.append("text")
       .attr("x", width-65)
@@ -97,7 +100,7 @@ $(function() {
 // DNS protocol 
 $(function() {
   var target_protocol = "DNS";
-  var margin = {top: 20, right: 20, bottom: 30, left: 50},
+  var margin = {top: 20, right: 20, bottom: 30, left: 70},
       width = 960 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
@@ -138,12 +141,15 @@ $(function() {
 
     x.domain(d3.extent(data, function(d) { return d.x; }));
     y.domain([0, d3.max(data.map(function(d) { return d.y; })) * 1.1]);
+	//y.domain([0,3500000]);
 
     svg.append("path")
         .datum(data)
         .attr("class", "area")
         .attr("d", area)
-        .style("fill", function(d) { return color(2); });
+        .style("fill", function(d) { 
+			console.log(color(2);
+			return color(2); });
 
     var legend = svg.append("g")
         .attr("class", "legend")
@@ -180,7 +186,7 @@ $(function() {
 // TCP protocol.
 $(function() {
   var target_protocol = "TCP";
-  var margin = {top: 20, right: 20, bottom: 30, left: 50},
+  var margin = {top: 20, right: 20, bottom: 30, left: 70},
       width = 960 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
@@ -219,7 +225,8 @@ $(function() {
     });
 
     x.domain(d3.extent(data, function(d) { return d.x; }));
-    y.domain([0, d3.max(data.map(function(d) { return d.y; })) * 1.1]);
+   	y.domain([0, d3.max(data.map(function(d) { return d.y; })) * 1.1]);
+	//y.domain([0,3500000]);
 
     svg.append("path")
         .datum(data)
