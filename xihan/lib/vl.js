@@ -434,26 +434,6 @@ function Bar_Graph(startPoint, width, height)
 		this.barWidth = 20;
 		
 		this._axises = [new Axis(startPoint, this._width), new Axis(startPoint, this._height)];
-        
-		this._axises[0].setMarkSlotsCount(10);
-        this._axises[0].showMark = false;
-        this._axises[0].setLabel(["", "USA", "Russia", "Germany", "Thai", "Greece"], 1);
-        this._axises[0].setLabelStyle([0, this._axises[0].markWidth * 4], 0, constants.CENTER);
-        this._axises[0].showFirstMark = false;
-		this._axises[0].showLastMark = false;
-		
-		this._axises[1].rotation = -Math.PI / 2;
-        this._axises[1].setMarkSlotsCount(50);
-        this._axises[1].markWidth = -5;
-        this._axises[1].setLabel(valueInterpolate(0, 1500, this._axises[1].getMarkSlotsCount()), 5);
-		this._axises[1].setValueRange(0, 1500);
-        this._axises[1].setLabelStyle([-6, this._axises[1].markWidth * 2], Math.PI / 2, constants.RIGHT);
-        this._axises[1].showAxis = false;
-
-		this.addBars(this._axises[0], this._axises[1], [552, 234, 223], [255, 215, 0]);
-		this.addBars(this._axises[0], this._axises[1], [320, 313, 223], [205, 127, 50]);
-		this.addBars(this._axises[0], this._axises[1], [440, 221, 183], [192, 192, 192]);
-		
     };
 
     //Methods
