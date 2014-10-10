@@ -10,8 +10,9 @@ body {
   stroke: #000;
   shape-rendering: crispEdges;
 }
-.area {
-  fill: steelblue;
+
+.browser text {
+	text-anchor:end;
 }
 
 /* Tip */
