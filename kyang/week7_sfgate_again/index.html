@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<p>You can click the bar in legend to toggle if a protocol is visible</p>
+<p>You can also drag the bar in legend to reorder the protocol(You need to double click on the bar to select the item, which will high light the text, before you start dragging)</p>
+<script>
+
+var framewidth = 1000,
+	frameheight = 750;
+var margin = {top: 20, right: 30, bottom: 20, left: 50},
+	width = framewidth - margin.left - margin.right,
+	height = frameheight - margin.top - margin.bottom;
+	
+var x = d3.scale.linear()
+	.range([0, width]);
+
+var y = d3.scale.linear()
+	.range([height, 0]);
+
+var xAxis = d3.svg.axis()
+	.scale(x)
+	.orient('bottom');
+	
+var yAxis = d3.svg.axis()
+	.scale(y)
+	.orient('left');
+	
+var svg = d3.select('body')
+			.append('svg')
+			  .attr('width', framewidth)
+			  .attr('height', frameheight)
+			.append('g')
+			  .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+var color = d3.scale.category10();
+var protocol = [];
+var protocol_inv = {};
+var slice = 20;
+var time_tick = new Array(slice);
+for (var i = 0; i < time_tick.length; i++)
+		time_tick[i] = i;
+function update_count_domain(){
+	var max = 0;
+	for (var i = 0; i < slice; i++){
+		var sum = 0;
+		protocol.forEach(function(d){
+			if (d.Visible)
+				sum += d.Data[i];
+		});
+		if (max < sum)
+			max = sum;
+	}
+	y.domain([0,max]);
+	var t = svg.transition().duration(750);
+	for (var i = 0; i < protocol.length; i++)
+		t.select(".p"+i).attr("d",protocol[i].Area(time_tick))
+		
+	svg.select(".xaxis").transition()
+	  .call(xAxis)
+	svg.select(".yaxis").transition()
+	  .call(yAxis)
+}
+
+var drag_src;
+function update_legend(){
+	svg.selectAll(".legendItem")
+		.transition()
+		.attr("transform", function(d,i){
+				return "translate(0,"+protocol[i].Priority*20+")";
+		})
+}
+
+function get_idx(y){
+	var proi = Math.floor(y/20);
+	for (var i=0; i< protocol.length;i++)
+		if (protocol[i].Priority==proi)
+			return i;
+}
+d3.csv("../../public/sfgate.csv", function(err,data){
+	var time_domain = [+data[0].Time, +data[data.length-1].Time];
+	data.forEach(function(d){
+		var idx
+		if (!(d.Protocol in protocol_inv)){
+			idx = protocol.length;
+			protocol_inv[d.Protocol] = idx;
+			protocol.push({Name:d.Protocol, 
+			               Visible:true, 
+						   Priority:idx, 
+						   Data:Array.apply(null, new Array(slice)).map(Number.prototype.valueOf,0),
+						   Area:d3.svg.area()
+							.x(function(t){return x(t);})
+							.y0(function(t){
+								if (this.Visible){
+									var cur = this;
+									var sum = 0;
+									protocol.forEach(function(d){
+										if (cur.Priority < d.Priority && d.Visible)
+											sum += d.Data[t];
+									});
+									return y(sum);
+								}else
+									return y(0);
+							})
+							.y1(function(t){
+								if (this.Visible){
+									var cur = this;
+									var sum = 0;
+									protocol.forEach(function(d){
+										if (cur.Priority <= d.Priority && d.Visible)
+											sum += d.Data[t];
+									});
+									return y(sum);
+								}else
+									return y(0);
+							})
+			});
+		}else
+			idx = protocol_inv[d.Protocol]
+		var t = Math.floor((+d.Time - time_domain[0]) * slice / (time_domain[1] - time_domain[0]));
+		if (t == slice)
+			t = slice -1;
+		protocol[idx].Data[t] += 1;
+	})
+	
+	x.domain([0,slice-1])
+	y.domain([0,1])
+	
+	svg.append("g")
+	  .attr("class", "yaxis")
+	svg.append("g")
+	  .attr("class", "xaxis")
+	  .attr("transform", "translate(0,"+height+")")
+	for (var idx = 0; idx < protocol.length; idx++){
+		svg.append("path")
+			.attr("class","p"+idx)
+			.style("fill", color(idx))
+			.attr("d", protocol[idx].Area(time_tick));
+	}
+	
+	var legend = svg.append("g")
+	  .attr("class", "legend")
+	  .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+	
+	var legendItem = legend.selectAll(".legendItem")
+	  .data(protocol).enter()
+	  .append("g")
+	  .attr("class","legendItem");
+	  
+	legendItem.append("rect")
+	
+	  .attr("x", 0)
+	  .attr("y", 0)
+	  .attr("width", 15)
+	  .attr("height", 15)
+	  .style("fill", function(d,i){return color(i);})
+	  .on("dragstart",function(d){
+		drag_src = get_idx(d3.mouse(this.parentNode.parentNode)[1]);
+	  })
+	  .on("drag", function(d){
+		var mouseloc = d3.mouse(this.parentNode.parentNode)
+		var tar = get_idx(mouseloc[1]);
+		if (tar >= 0 && tar < protocol.length && tar != drag_src){
+			var tmp = protocol[tar].Priority;
+			protocol[tar].Priority = protocol[drag_src].Priority;
+			protocol[drag_src].Priority = tmp;
+			update_legend();
+			update_count_domain();
+		}
+		d3.select(this.parentNode).transition().duration(0).attr("transform", "translate("+(mouseloc[0]- 10) + "," + (mouseloc[1]-10)+")")
+	  })
+	  .on("dragend",function(d){
+		drag_src = -1;
+		update_legend();
+	  })
+	  .on("click", function(){
+		var p = d3.select(this).data()[0];
+		p.Visible = !p.Visible;
+		update_count_domain();
+		if (!p.Visible)
+			d3.select(this).transition().style("fill","#888888")
+		else
+			d3.select(this).transition().style("fill",color(protocol_inv[p.Name]))
+	  })
+	  
+	legendItem.append("text")
+	  .attr("x", 20)
+	  .attr("y", function(d,i){return 12;})
+	  .html(function(d){return d.Name;})
+	
+	update_legend();
+	update_count_domain();
+	
+});
+</script>
+</body>
+</html>
