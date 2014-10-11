@@ -1,0 +1,40 @@
+Markdown notes:
+
+italic:
+_this_
+
+Header:
+#header1
+##header2 
+….. 
+######header6
+
+
+Hyperlink:
+create a hyperlink to www.github.com, with a link text that says, Visit GitHub!, you'd write this in Markdown: [Visit GitHub!](www.github.com)
+Create links with a pic :
+![pic](www.github.com)
+
+Block quote: (special attention):
+> this……..
+
+
+List:
+unordered list: 
+	*  list1   (a space between * and list1)
+numbered list :
+1.  list1
+2.  list2
+
+Break:
+hard break (insert a new line)
+soft break : insert two space after each new line :
+Do I contradict myself?··
+Very well then I contradict myself,··
+(I am large, I contain multitudes.)
+the dot is a space.
+
+
+
+
+

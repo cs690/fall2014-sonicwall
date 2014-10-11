@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Visualizing SonicWall Firewall Data
 ===================================
 
@@ -58,3 +59,17 @@ Here are some of the SonicWALL products we will get to work with:
 - [Dell SonicWALL Srutinizer](http://www.sonicwall.com/us/en/products/Firewall-Analyzer.html)
 
 The Scrutinizer has a free trial, but until we have SonicWALL data please do not request one.
+=======
+cs690-sonicwall
+===============
+
+GitHub repository for the "Visualizing SonicWall Firewall Data" group in CS 690.
+
+Home page: http://sjengle.cs.usfca.edu/cs690-sonicwall/
+
+Examples:
+* http://sjengle.cs.usfca.edu/cs690-sonicwall/wsheng/
+* http://sjengle.cs.usfca.edu/cs690-sonicwall/kyang/
+* http://sjengle.cs.usfca.edu/cs690-sonicwall/Michelle/
+* http://sjengle.cs.usfca.edu/cs690-sonicwall/xihan/
+>>>>>>> 64893d740c8c452484f55224405ca93377741cdd
