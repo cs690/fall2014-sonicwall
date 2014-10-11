@@ -60,14 +60,14 @@ d3.tsv("data.tsv", function(error, data) {
 	color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
 	
 	data.forEach(function(d) {
-    	d.date = parseInt(d.Date);
+    	d.date = parseInt(d.date);
   	});
 
     var browsers = stack(color.domain().map(function(name) {
     return {
       name: name,
       values: data.map(function(d) {
-        return {date: d.date, y: d[name] / 100};
+        return {date: d.date, y: d[name] / 3000000};
       })
     };
   }));
