@@ -20,8 +20,8 @@ $(function() {
 		/*Manipulate multidimensional data: 
 		 * get two columns and do ratio of two numbers(one from each column):
 		 * e.g.  get "Inning" vs "Avg"*/
-	d3.csv("data_as_giants.csv", function(data) {
-		/*Return a new array to save Inning and Avg: and then access by key 'Inning' and 'Avg'*/
+	/*d3.csv("data_as_giants.csv", function(data) {
+		//Return a new array to save Inning and Avg: and then access by key 'Inning' and 'Avg'
 		xy_pairs = data.map(function(d) {
 			if(d['Inning'] != 'Total'){  //filter rows that Inning is 'Total'. 
 				var result = {Inning: +d['Inning'],
@@ -30,11 +30,11 @@ $(function() {
 				return result
 			}
 		});
-		//xy_pairs = cleanArray(xy_pairs);  remove the undefined pair(with the Inning = 'Total')
-		//After get pairs(each pair has two value) then return the value d['0'] d['1']
+		xy_pairs = cleanArray(xy_pairs);  remove the undefined pair(with the Inning = 'Total')
+		After get pairs(each pair has two value) then return the value d['0'] d['1']
 			 xy_pairs.map(function(d) { 
 				console.log( 'Inning ' + d['Inning'] + ' - Avg ' + d['Avg']); });
-		});
+		});  */
 		
 	/*forEach()  : executes a provided function once per array element
 	 * arr.forEach(callback,[thisArg]) 
@@ -49,6 +49,7 @@ $(function() {
 				   result = { TIME:+d['TIMESPAN'], DNS: +d['DNS']}
 						return result;
 				}
+			  console.log(result);
 			});
 					});
 

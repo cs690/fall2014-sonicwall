@@ -1,10 +1,8 @@
-/* HTTP protocol */
+/*Stacked Area Chart.*/
 $(function() {
-  var target_protocol = "HTTP";
   var margin = {top: 20, right: 20, bottom: 30, left: 50},
       width = 960 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
-
   var x = d3.scale.linear()
       .range([0, width]);
   var y = d3.scale.linear()
@@ -16,14 +14,14 @@ $(function() {
       .scale(y)
       .orient("left");
   var color = d3.scale.category20();
-
   var area = d3.svg.area()
       .x(function(d) { return x(d.TIME_SPAN); })
       .y0(function(d) {return y(d.y0); })
       .y1(function(d) { return y(d.y0 + d.y); });
 
   var stack = d3.layout.stack()
-	  .values(function(d) {return d.values; });
+	  .values(function(d) {
+		  return d.values; });
 
   var svg = d3.select("body").append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -32,25 +30,28 @@ $(function() {
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   d3.tsv("MultipleProtocol.tsv", function(error, data) {
-  	color.domain(d3.keys(data[0]).filter(function(k) {return k != "TIME_SPAN"; }));
-	  
+  	color.domain(d3.keys(data[0]).filter(function(key) {return key != "TIME_SPAN"; }));
+
+    data.forEach(function(d) {
+		d.TIME_SPAN = parseInt(d.date);
+	});
   	  //TODO what does name and d[name] means???   and browsers???
 	  var browsers = stack(color.domain().map(function(name) {
 		  return {
 			  name : name,
 		      values : data.map(function(d) {
-				  return {date: d.TIME_SPAN, y:d[name]/100};
+				  return {TIME_SPAN: d.TIME_SPAN, y:d[name]/2900000};
 			  })
 		  };
 	  }));
-
+	  //	console.log(browsers);
     x.domain(d3.extent(data, function(d) { return d.TIME_SPAN; }));
     //TODO  what does this browser mean?
 	var browser = svg.selectAll(".browser")
 			.data(browsers)
 			.enter().append("g")
 			.attr("class","browser");
-  
+	
 	browser.append("path")
 			.attr("class", "area")
 			.attr("d", function(d) {return area(d.values); })
