@@ -27,14 +27,14 @@ function render_legends (svg, names, color, width) {
 
   legend.append("rect")
     .attr("x", width - 65)
-    .attr("y", function(name) { return 25 * names.indexOf(name); })
+    .attr("y", function(name) { return 15 * names.indexOf(name) - 10; })
     .attr("width", 10)
     .attr("height", 10)
     .style("fill", function(name) { return color(name) });
 
   legend.append("text")
-    .attr("x", width - 65)
-    .attr("y", function(name) { return 25 * names.indexOf(name); })
+    .attr("x", width - 45)
+    .attr("y", function(name) { return 15 * names.indexOf(name); })
     .text(function(name) { return name; });
 }
 
