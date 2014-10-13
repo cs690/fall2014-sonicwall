@@ -33,7 +33,7 @@ $(function() {
   	color.domain(d3.keys(data[0]).filter(function(key) {return key != "TIME_SPAN"; }));
 
     data.forEach(function(d) {
-		d.TIME_SPAN = parseInt(d.date);
+		d.TIME_SPAN = parseInt(d.TIME_SPAN);
 	});
   	  //TODO what does name and d[name] means???   and browsers???
 	  var browsers = stack(color.domain().map(function(name) {
@@ -59,7 +59,7 @@ $(function() {
 
 	browser.append("text")
 		.datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-		.attr("transform", function(d) { return "translate(" + x(d.value.TIME_SPAN) + "," + y(d.value.y0 + d.value.y / 2) + ")"; })
+		.attr("transform", function(d) { return "translate(" + x(d.value.TIME_SPAN) + "," + y(d.value.y0 + d.value.y/2) + ")"; })
         .attr("x", -6)
 		.attr("dy", ".35em")
         .text(function(d) { return d.name; });
