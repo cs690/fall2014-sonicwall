@@ -111,10 +111,6 @@ $(function() {
 
     // Stack protocols
     render_area_chart(margin, width, height, x, y, data, protocol_names, color);
-
-    // Single protocol
-    render_area_chart(margin, width, height, x, y, data, ["TCP"], color)
-    render_area_chart(margin, width, height, x, y, data, ["TCP", "HTTP"], color)
   });
 
 });
