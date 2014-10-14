@@ -1,4 +1,5 @@
-/*Reference: render function from wsheng.*/
+
+//  Reference: render function from wsheng.  stacked area chart:  http://bl.ocks.org/mbostock/3885211
 function render_axises(svg, x, y, height) {
 	var xAxis = d3.svg.axis()
       .scale(x)
@@ -53,7 +54,8 @@ $(function() {
       .range([0, width]);
   var y = d3.scale.linear()
       .range([height, 0]);
-    var color = d3.scale.category20();
+    
+  var color = d3.scale.category20();
   var area = d3.svg.area()
       .x(function(d) { return x(d.TIME_SPAN); })
       .y0(function(d) {return y(d.y0); })
@@ -70,13 +72,14 @@ $(function() {
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   d3.tsv("MultipleProtocol.tsv", function(error, data) {
-  	color.domain(d3.keys(data[0]).filter(function(key) {return key != "TIME_SPAN"; }));
-
-    data.forEach(function(d) {
+	data.forEach(function(d) {
 		d.TIME_SPAN = parseInt(d.TIME_SPAN);
-	});
-  	  //TODO what does name and d[name] means???   and browsers???
-	  var browsers = stack(color.domain().map(function(name) {
+	});  
+	var protocol_names = d3.keys(data[0]).filter(function(key) {return key != "TIME_SPAN"; });
+	color.domain(protocol_names);
+
+	 
+	var protocols = stack(color.domain().map(function(name) {
 		  return {
 			  name : name,
 		      values : data.map(function(d) {
@@ -84,28 +87,24 @@ $(function() {
 			  })
 		  };
 	  }));
-	  //	console.log(browsers);
     x.domain(d3.extent(data, function(d) { return d.TIME_SPAN; }));
-    //TODO  what does this browser mean?
-	var browser = svg.selectAll(".browser")
-			.data(browsers)
+	
+	var browsers = svg.selectAll(".browser")
+			.data(protocols)
 			.enter().append("g")
 			.attr("class","browser");
 	
-	browser.append("path")
+	browsers.append("path")
 			.attr("class", "area")
 			.attr("d", function(d) {return area(d.values); })
 			.style("fill", function(d) {return color(d.name); });
 
-	browser.append("text")
-		.datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-		.attr("transform", function(d) { return "translate(" + x(d.value.TIME_SPAN) + "," + y(d.value.y0 + d.value.y/2) + ")"; })
-        .attr("x", -6)
-		.attr("dy", ".35em")
-        .text(function(d) { return d.name; });
-		});
+
+	 render_legends(svg, protocol_names, color,width);
   	 render_axises(svg,x,y,height);
-});
+	});
+  });
+
 
 // DNS protocol 
 $(function() {
