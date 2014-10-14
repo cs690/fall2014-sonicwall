@@ -39,6 +39,7 @@ function render_legends (svg, names, color, width, callback) {
         // enable it
         this.style.opacity = 1;
         svg.enabledNames.push(name);
+        svg.enabledNames.sort();
         if (callback) {
           callback(svg);
         }
@@ -62,6 +63,12 @@ function render_legends (svg, names, color, width, callback) {
 }
 
 function render_area_chart (svg, margin, width, height, x, y, data, color) {
+  svg.selectAll(".protocol").remove();
+
+  if (svg.enabledNames.length === 0) {
+    return;
+  };
+
   var area = d3.svg.area()
       .x(function(d) { return x(d.x); })
       .y0(function(d) { return y(d.y0); })
@@ -88,8 +95,6 @@ function render_area_chart (svg, margin, width, height, x, y, data, color) {
   });
   y.domain(d3.extent(y_values));
 
-  svg.selectAll(".protocol").remove();
-
   svg.selectAll(".protocol")
       .data(protocols).enter()
     .append("g")
@@ -103,6 +108,11 @@ function render_area_chart (svg, margin, width, height, x, y, data, color) {
 }
 
 function render_100_area_chart (svg, margin, width, height, x, y, data, color) {
+  svg.selectAll(".protocol").remove();
+  if (svg.enabledNames.length === 0) {
+    return;
+  };
+
   var y_sum = {};
   data.forEach(function(d) {
     y_sum[d.TIME_SPAN] = d3.sum(svg.enabledNames.map(function(name) { return d[name]; }));
@@ -129,8 +139,6 @@ function render_100_area_chart (svg, margin, width, height, x, y, data, color) {
   }));
 
   y.domain([0, 1]);
-
-  svg.selectAll(".protocol").remove();
 
   svg.selectAll(".protocol")
       .data(protocols).enter()
@@ -180,7 +188,7 @@ $(function() {
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    svg.enabledNames = protocol_names.slice(0);
+    svg.enabledNames = protocol_names.slice(0).sort();
     render_legends(svg, protocol_names, color, width, function(svg) {
       render_area_chart(svg, margin, width, height, x, y, data, color);
     });
@@ -192,7 +200,7 @@ $(function() {
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    svg2.enabledNames = protocol_names.slice(0);
+    svg2.enabledNames = protocol_names.slice(0).sort();
     render_legends(svg2, protocol_names, color, width, function(svg) {
       render_100_area_chart(svg2, margin, width, height, x, y, data, color);
     });
