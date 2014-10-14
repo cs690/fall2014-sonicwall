@@ -6,16 +6,19 @@ function render_axises (svg, x, y, height) {
       .scale(y)
       .orient("left");
 
+  svg.selectAll(".x.axis").remove();
   svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
+
+  svg.selectAll(".y.axis").remove();
   svg.append("g")
       .attr("class", "y axis")
       .call(yAxis);
 }
 
-function render_legends (svg, names, color, width) {
+function render_legends (svg, names, color, width, callback) {
   var legend = svg.selectAll(".legend")
       .data(names).enter()
     .append("g")
@@ -30,7 +33,27 @@ function render_legends (svg, names, color, width) {
     .attr("y", function(name) { return 15 * names.indexOf(name) - 10; })
     .attr("width", 10)
     .attr("height", 10)
-    .style("fill", function(name) { return color(name) });
+    .style("fill", function(name) { return color(name) })
+    .on("click", function(name) {
+      if (this.style.opacity == 0.1) {
+        // enable it
+        this.style.opacity = 1;
+        svg.enabledNames.push(name);
+        if (callback) {
+          callback(svg);
+        }
+      } else {
+        // disable it
+        this.style.opacity = 0.1;
+        var index = svg.enabledNames.indexOf(name);
+        if (index > -1) {
+          svg.enabledNames.splice(index, 1);
+        };
+        if (callback) {
+          callback(svg);
+        };
+      };
+    });
 
   legend.append("text")
     .attr("x", width - 45)
@@ -47,7 +70,7 @@ function render_area_chart (svg, margin, width, height, x, y, data, names, color
   var stack = d3.layout.stack()
       .values(function(d) { return d.values; });
 
-  var protocols = stack(names.map(function(name) {
+  var protocols = stack(svg.enabledNames.map(function(name) {
     return {
       name: name,
       values: data.map(function(d) {
@@ -64,6 +87,8 @@ function render_area_chart (svg, margin, width, height, x, y, data, names, color
     });
   });
   y.domain(d3.extent(y_values));
+
+  svg.selectAll(".protocol").remove();
 
   svg.selectAll(".protocol")
       .data(protocols).enter()
@@ -150,7 +175,10 @@ $(function() {
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    render_legends(svg, protocol_names, color, width);
+    svg.enabledNames = protocol_names.slice(0);
+    render_legends(svg, protocol_names, color, width, function(svg) {
+      render_area_chart(svg, margin, width, height, x, y, data, protocol_names, color);
+    });
     render_area_chart(svg, margin, width, height, x, y, data, protocol_names, color);
 
     // 100% stacked area plot
@@ -159,6 +187,7 @@ $(function() {
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    svg.enabledNames = protocol_names.slice(0);
     render_legends(svg2, protocol_names, color, width);
     render_100_area_chart(svg2, margin, width, height, x, y, data, protocol_names, color);
   });
