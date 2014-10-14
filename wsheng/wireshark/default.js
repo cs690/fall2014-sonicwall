@@ -56,6 +56,15 @@ function render_area_chart (svg, margin, width, height, x, y, data, names, color
     };
   }));
 
+  var y_values = [];
+  protocols.forEach(function(protocol) {
+    protocol.values.forEach(function(value) {
+      y_values.push(value.y0);
+      y_values.push((value.y0 + value.y) * 1.1);
+    });
+  });
+  y.domain(d3.extent(y_values));
+
   svg.selectAll(".protocol")
       .data(protocols).enter()
     .append("g")
@@ -104,10 +113,6 @@ $(function() {
     color.domain(protocol_names);
     x.domain(d3.extent(data, function(d) { return d.TIME_SPAN; }));
     render_legends(svg, protocol_names, color, width);
-
-    y.domain(d3.extent(data, function(d) {
-      return d3.sum(protocol_names.map(function(name) { return d[name]; })) * 1.1;
-    }));
 
     // Stack protocols
     render_area_chart(svg, margin, width, height, x, y, data, protocol_names, color);
