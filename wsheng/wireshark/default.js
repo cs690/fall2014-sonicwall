@@ -77,6 +77,43 @@ function render_area_chart (svg, margin, width, height, x, y, data, names, color
   render_axises(svg, x, y, height);
 }
 
+function render_100_area_chart (svg, margin, width, height, x, y, data, names, color) {
+  var y_sum = {};
+  data.forEach(function(d) {
+    y_sum[d.TIME_SPAN] = d3.sum(names.map(function(name) { return d[name]; }));
+  });
+
+  var area = d3.svg.area()
+      .x(function(d) { return x(d.x); })
+      .y0(function(d) { return y(d.y0 / y_sum[d.x]); })
+      .y1(function(d) { return y((d.y0 + d.y) / y_sum[d.x]); });
+
+  var stack = d3.layout.stack()
+      .values(function(d) { return d.values; });
+
+  var protocols = stack(names.map(function(name) {
+    return {
+      name: name,
+      values: data.map(function(d) {
+        return {x: d.TIME_SPAN, y: d[name]};
+      })
+    };
+  }));
+
+  y.domain([0, 1]);
+
+  svg.selectAll(".protocol")
+      .data(protocols).enter()
+    .append("g")
+      .attr("class", "protocol")
+    .append("path")
+      .attr("class", "area")
+      .attr("d", function(d) { return area(d.values); })
+      .style("fill", function(d) { return color(d.name); });
+
+  render_axises(svg, x, y, height);
+}
+
 
 $(function() {
 
@@ -92,12 +129,6 @@ $(function() {
 
   var color = d3.scale.category20();
 
-  var svg = d3.select("body").append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
   d3.csv("data.csv", function(error, data) {
     // change value from string to int
     data = data.map(function(d) {
@@ -111,11 +142,25 @@ $(function() {
     // setup
     var protocol_names = d3.keys(data[0]).filter(function(key) { return key !== "TIME_SPAN"; });
     color.domain(protocol_names);
-    x.domain(d3.extent(data, function(d) { return d.TIME_SPAN; }));
-    render_legends(svg, protocol_names, color, width);
+    x.domain(d3.extent(data, function(d) { return d.TIME_SPAN * 1.1; }));
 
     // Stack protocols
+    var svg = d3.select("body").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    render_legends(svg, protocol_names, color, width);
     render_area_chart(svg, margin, width, height, x, y, data, protocol_names, color);
+
+    // 100% stacked area plot
+    var svg2 = d3.select("body").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    render_legends(svg2, protocol_names, color, width);
+    render_100_area_chart(svg2, margin, width, height, x, y, data, protocol_names, color);
   });
 
 });
