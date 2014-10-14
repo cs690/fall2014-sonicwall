@@ -1,3 +1,21 @@
+/*Reference: render function from wsheng.*/
+function render_axises(svg, x, y, height) {
+	var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom");
+ 	 var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left");
+	
+	 svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+     svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+}
 /*Stacked Area Chart.*/
 $(function() {
   var margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -7,13 +25,7 @@ $(function() {
       .range([0, width]);
   var y = d3.scale.linear()
       .range([height, 0]);
-  var xAxis = d3.svg.axis()
-      .scale(x)
-      .orient("bottom");
-  var yAxis = d3.svg.axis()
-      .scale(y)
-      .orient("left");
-  var color = d3.scale.category20();
+    var color = d3.scale.category20();
   var area = d3.svg.area()
       .x(function(d) { return x(d.TIME_SPAN); })
       .y0(function(d) {return y(d.y0); })
@@ -63,16 +75,8 @@ $(function() {
         .attr("x", -6)
 		.attr("dy", ".35em")
         .text(function(d) { return d.name; });
-	
-	svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
-
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis);
-	});
+		});
+  	 render_axises(svg,x,y,height);
 });
 
 // DNS protocol 
@@ -88,14 +92,6 @@ $(function() {
   var y = d3.scale.linear()
       .range([height, 0]);
 
-  var xAxis = d3.svg.axis()
-      .scale(x)
-      .orient("bottom");
-
-  var yAxis = d3.svg.axis()
-      .scale(y)
-      .orient("left");
-
   var color = d3.scale.category20();
 
   var area = d3.svg.area()
@@ -108,8 +104,8 @@ $(function() {
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-	
 
+	
   d3.tsv("MultipleProtocol.tsv", function(error, data) {
     data = data.map(function(d) {
       d.x = parseInt(d.TIME_SPAN);
@@ -145,17 +141,9 @@ $(function() {
       .attr("y", 25)
 	  .style("font-size","16px")
       .text("DNS");
-
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
-
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis);
-  });
-
+	
+	render_axises(svg,x,y,height);
+	});
 });
 
 // TCP protocol.
@@ -170,14 +158,6 @@ $(function() {
 
   var y = d3.scale.linear()
       .range([height, 0]);
-
-  var xAxis = d3.svg.axis()
-      .scale(x)
-      .orient("bottom");
-
-  var yAxis = d3.svg.axis()
-      .scale(y)
-      .orient("left");
 
   var color = d3.scale.category20();
 
@@ -227,16 +207,9 @@ $(function() {
       .attr("y", 25)
 	  .style("font-size","16px")
       .text(target_protocol);
-
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
-
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis);
-  });
+	
+	 render_axises(svg,x,y,height);
+ });
 
 });
 
