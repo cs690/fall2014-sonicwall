@@ -5,8 +5,9 @@
 </head>
 <body>
 <script src="http://d3js.org/d3.v3.min.js"></script>
-<p>You can click the bar in legend to toggle if a protocol is visible</p>
-<p>You can also drag the bar in legend to reorder the protocol(You need to double click on the bar to select the item, which will high light the text, before you start dragging)</p>
+<p>You can click the bar in legend to toggle if a protocol is visible.</p>
+<p>You can also drag the bar in legend to reorder the protocol.</p>
+<p>Try move mouse over the chart and click on it.</p>
 <script>
 
 var framewidth = 1000,
@@ -20,6 +21,9 @@ var x = d3.scale.linear()
 
 var y = d3.scale.linear()
 	.range([height, 0]);
+	
+var detail = d3.scale.linear()
+	.range([0,width/2]);
 
 var xAxis = d3.svg.axis()
 	.scale(x)
@@ -28,6 +32,10 @@ var xAxis = d3.svg.axis()
 var yAxis = d3.svg.axis()
 	.scale(y)
 	.orient('left');
+	
+var detailAxis = d3.svg.axis()
+	.scale(detail)
+	.orient("top");
 	
 var svg = d3.select('body')
 			.append('svg')
@@ -38,10 +46,36 @@ var svg = d3.select('body')
 var color = d3.scale.category10();
 var protocol = [];
 var protocol_inv = {};
-var slice = 20;
+var slice = 80;
 var time_tick = new Array(slice);
 for (var i = 0; i < time_tick.length; i++)
 		time_tick[i] = i;
+		
+function round(v){
+	if (v <= 0)
+		return v;
+	var i = Math.floor(Math.log(v)/Math.log(10));
+	v = Math.ceil(v / Math.pow(10,i-1))*Math.pow(10,i-1);
+	return v;
+}
+
+function get_total_down(pro,t){
+	var sum = 0;
+	protocol.forEach(function(d){
+		if (pro.Priority < d.Priority && d.Visible)
+			sum += d.Data[t];
+	})
+	return sum;
+}
+
+function get_total_up(pro,t){
+	var sum = 0;
+	protocol.forEach(function(d){
+		if (pro.Priority <= d.Priority && d.Visible)
+			sum += d.Data[t];
+	})
+	return sum;
+}
 function update_count_domain(){
 	var max = 0;
 	for (var i = 0; i < slice; i++){
@@ -53,7 +87,13 @@ function update_count_domain(){
 		if (max < sum)
 			max = sum;
 	}
-	y.domain([0,max]);
+	y.domain([0,round(max)]);
+	max = 0;
+	protocol.forEach(function(d){
+		if (d.Visible && d.Max > max)
+			max = d.Max;
+	})
+	detail.domain([0,round(max)])
 	var t = svg.transition().duration(750);
 	for (var i = 0; i < protocol.length; i++)
 		t.select(".p"+i).attr("d",protocol[i].Area(time_tick))
@@ -62,15 +102,73 @@ function update_count_domain(){
 	  .call(xAxis)
 	svg.select(".yaxis").transition()
 	  .call(yAxis)
+	svg.select(".detailaxis").transition()
+	  .call(detailAxis)
+	svg.select(".detailaxis").selectAll("text")
+	  .style("text-anchor","start")
 }
 
 var drag_src;
 function update_legend(){
-	svg.selectAll(".legendItem")
+	d3.selectAll(".legendItem")
 		.transition()
 		.attr("transform", function(d,i){
 				return "translate(0,"+protocol[i].Priority*20+")";
 		})
+}
+
+
+var detail_lvl = 0;
+var last_slice = -1;
+
+var detail_width = 6;
+function update_detail(t){
+	if (detail_lvl != 0 && t >= 0 && t < slice){
+		if  (t != last_slice){
+			svg.select(".fade").transition().attr("visibility", "visible");
+			last_slice = t;
+			if (detail_lvl == 1){
+				svg.selectAll(".detailrect").transition()
+					.attr("visibility", "visible")
+					.attr("x", function(d){return x(t)-detail_width/2;})
+					.attr("y",function(d){return y(get_total_up(d,t));})
+					.attr("width",detail_width)
+					.attr("height",function(d){return y(0)-y(d.Visible?d.Data[t]:0);})
+				svg.selectAll(".detailtext").transition()
+					.attr("visibility","hidden")
+				svg.select(".detailaxis").transition()
+					.attr("visibility","hidden")
+			}else{
+				svg.selectAll(".detailrect").transition()
+					.attr("visibility", "visible")
+					.attr("x", function(d){return (t>slice/2)?x(t)-detail(d.Data[t]):x(t);})
+					.attr("y",function(d){return height + (d.Priority - protocol.length) * 20;})
+					.attr("width",function(d){return d.Visible?detail(d.Data[t]):0})
+					.attr("height",15)
+				
+				svg.selectAll(".detailtext").transition()
+					.attr("visibility","visible")
+					.attr("x",function(d){return x(t) + (t>slice/2?-1:1)*((d.Visible?detail(d.Data[t]):0)+5)})
+					.attr("y",function(d){return height + (d.Priority - protocol.length) * 20 +15})
+					.attr("text-anchor",t > slice/2?"end":"start")
+					.text(function(d){return d.Data[t].toString()})
+				
+				var axis = svg.select(".detailaxis").transition()
+					.attr("visibility","visible")
+					.attr("transform","translate("+x(t) + "," + (height - protocol.length * 20-3)+")" + (t > slice/2?" scale(-1,1)":""))
+				axis.selectAll("text")
+					.attr("transform", t > slice/2?"scale(-1,1)":null)
+				axis.select(".baseline")
+					.attr("y1","-1000")
+					.attr("y2","1000")
+			}
+		}
+	}else{
+		svg.select(".fade").transition().attr("visibility", "hidden");
+		svg.selectAll(".detailrect").transition().attr("visibility","hidden")
+		svg.selectAll(".detailtext").transition().attr("visibility","hidden")
+		svg.select(".detailaxis").transition().attr("visibility","hidden")
+	}
 }
 
 function get_idx(y){
@@ -79,6 +177,7 @@ function get_idx(y){
 		if (protocol[i].Priority==proi)
 			return i;
 }
+
 d3.csv("../../public/sfgate.csv", function(err,data){
 	var time_domain = [+data[0].Time, +data[data.length-1].Time];
 	data.forEach(function(d){
@@ -90,29 +189,18 @@ d3.csv("../../public/sfgate.csv", function(err,data){
 			               Visible:true, 
 						   Priority:idx, 
 						   Data:Array.apply(null, new Array(slice)).map(Number.prototype.valueOf,0),
+						   Max:0,
 						   Area:d3.svg.area()
 							.x(function(t){return x(t);})
 							.y0(function(t){
 								if (this.Visible){
-									var cur = this;
-									var sum = 0;
-									protocol.forEach(function(d){
-										if (cur.Priority < d.Priority && d.Visible)
-											sum += d.Data[t];
-									});
-									return y(sum);
+									return y(get_total_up(this,t));
 								}else
 									return y(0);
 							})
 							.y1(function(t){
 								if (this.Visible){
-									var cur = this;
-									var sum = 0;
-									protocol.forEach(function(d){
-										if (cur.Priority <= d.Priority && d.Visible)
-											sum += d.Data[t];
-									});
-									return y(sum);
+									return y(get_total_down(this,t));
 								}else
 									return y(0);
 							})
@@ -123,9 +211,10 @@ d3.csv("../../public/sfgate.csv", function(err,data){
 		if (t == slice)
 			t = slice -1;
 		protocol[idx].Data[t] += 1;
+		protocol[idx].Max = Math.max(protocol[idx].Max, protocol[idx].Data[t]);
 	})
 	
-	x.domain([0,slice-1])
+	x.domain([0,slice - 1])
 	y.domain([0,1])
 	
 	svg.append("g")
@@ -140,26 +229,25 @@ d3.csv("../../public/sfgate.csv", function(err,data){
 			.attr("d", protocol[idx].Area(time_tick));
 	}
 	
-	var legend = svg.append("g")
+	var legend = d3.select("svg").append("g")
 	  .attr("class", "legend")
-	  .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+	  .attr('transform', 'translate(' + (framewidth - margin.right) + ', ' + margin.top + ')');
 	
 	var legendItem = legend.selectAll(".legendItem")
 	  .data(protocol).enter()
 	  .append("g")
 	  .attr("class","legendItem");
-	  
-	legendItem.append("rect")
 	
-	  .attr("x", 0)
-	  .attr("y", 0)
-	  .attr("width", 15)
-	  .attr("height", 15)
-	  .style("fill", function(d,i){return color(i);})
+
+	var isDragging = false;	
+	  
+	var drag = d3.behavior.drag()
 	  .on("dragstart",function(d){
+		d3.event.sourceEvent.stopPropagation();
 		drag_src = get_idx(d3.mouse(this.parentNode.parentNode)[1]);
 	  })
 	  .on("drag", function(d){
+		isDragging = true;
 		var mouseloc = d3.mouse(this.parentNode.parentNode)
 		var tar = get_idx(mouseloc[1]);
 		if (tar >= 0 && tar < protocol.length && tar != drag_src){
@@ -169,13 +257,24 @@ d3.csv("../../public/sfgate.csv", function(err,data){
 			update_legend();
 			update_count_domain();
 		}
-		d3.select(this.parentNode).transition().duration(0).attr("transform", "translate("+(mouseloc[0]- 10) + "," + (mouseloc[1]-10)+")")
+		d3.select(this.parentNode).transition().duration(0).attr("transform", "translate("+(mouseloc[0]+ 10) + "," + (mouseloc[1]-10)+")")
 	  })
 	  .on("dragend",function(d){
 		drag_src = -1;
 		update_legend();
 	  })
+	
+	legendItem.append("rect")
+	  .attr("x", -15)
+	  .attr("y", 0)
+	  .attr("width", 15)
+	  .attr("height", 15)
+	  .style("fill", function(d,i){return color(i);})
 	  .on("click", function(){
+		if (isDragging){
+			isDragging = false;
+			return;
+		}
 		var p = d3.select(this).data()[0];
 		p.Visible = !p.Visible;
 		update_count_domain();
@@ -184,15 +283,72 @@ d3.csv("../../public/sfgate.csv", function(err,data){
 		else
 			d3.select(this).transition().style("fill",color(protocol_inv[p.Name]))
 	  })
+	  .call(drag)
 	  
 	legendItem.append("text")
-	  .attr("x", 20)
+	  .attr("text-anchor","end")
+	  .attr("x", -20)
 	  .attr("y", function(d,i){return 12;})
 	  .html(function(d){return d.Name;})
+	  
+	var fade = svg.append("rect")
+		.attr("class","fade")
+		.attr("x",0)
+		.attr("y",0)
+		.attr("width",width)
+		.attr("height",height)
+		.style("fill","#ffffff")
+		.style("opacity","0.7")
+		
+	svg.selectAll(".detailrect")
+		.data(protocol).enter()
+		.append("rect")
+		.attr("class","detailrect")
+		.attr("fill",function(d,i){return color(i)})
+	svg.selectAll(".detailtext")
+		.data(protocol).enter()
+		.append("text")
+		.attr("class","detailtext")
+		.style("fill",function(d,i){return color(i)})
+	svg.append("g")
+		.attr("class","detailaxis")
+		.append("line")
+			.attr("class","baseline")
+			.attr("x1","0")
+			.attr("x2","0");
+		
+	svg.append("rect")
+		.attr("class","fade")
+		.attr("x",0)
+		.attr("y",0)
+		.attr("width",width)
+		.attr("height",height)
+		.style("opacity","0")
+		.on("mousemove",function(){
+			var t = Math.floor(x.invert(d3.mouse(this)[0])+0.5);
+			update_detail(t)
+		})
+		.on("mouseout",function(){
+			detail_lvl = 0;
+			last_slice = -1;
+			update_detail(-1);
+		})
+		.on("mouseover", function(){
+			detail_lvl = 1;
+			last_slice = -1;
+			var t = Math.floor(x.invert(d3.mouse(this)[0])+0.5);
+			update_detail(t);
+		})
+		.on("click",function(){
+			detail_lvl = 3 - detail_lvl;
+			last_slice = -1;
+			var t = Math.floor(x.invert(d3.mouse(this)[0])+0.5);
+			update_detail(t);
+		})
 	
 	update_legend();
 	update_count_domain();
-	
+	update_detail(-1);
 });
 </script>
 </body>
