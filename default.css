@@ -19,3 +19,11 @@ footer.well {
     color: #888;
     margin: 100px 0;
 }
+
+
+/* Visual */
+.visual .panel {
+    width: 50%;
+    margin: auto;
+    margin-bottom: 40px;
+}
