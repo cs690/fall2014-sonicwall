@@ -38,13 +38,7 @@ function render_legends (svg, names, color, width) {
     .text(function(name) { return name; });
 }
 
-function render_area_chart (margin, width, height, x, y, data, names, color) {
-  var svg = d3.select("body").append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+function render_area_chart (svg, margin, width, height, x, y, data, names, color) {
   var area = d3.svg.area()
       .x(function(d) { return x(d.x); })
       .y0(function(d) { return y(d.y0); })
@@ -71,7 +65,6 @@ function render_area_chart (margin, width, height, x, y, data, names, color) {
       .attr("d", function(d) { return area(d.values); })
       .style("fill", function(d) { return color(d.name); });
 
-  render_legends(svg, names, color, width);
   render_axises(svg, x, y, height);
 }
 
@@ -90,6 +83,12 @@ $(function() {
 
   var color = d3.scale.category20();
 
+  var svg = d3.select("body").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
   d3.csv("data.csv", function(error, data) {
     // change value from string to int
     data = data.map(function(d) {
@@ -100,17 +99,18 @@ $(function() {
       return v;
     });
 
+    // setup
     var protocol_names = d3.keys(data[0]).filter(function(key) { return key !== "TIME_SPAN"; });
-
-    // setup domains
     color.domain(protocol_names);
     x.domain(d3.extent(data, function(d) { return d.TIME_SPAN; }));
+    render_legends(svg, protocol_names, color, width);
+
     y.domain(d3.extent(data, function(d) {
       return d3.sum(protocol_names.map(function(name) { return d[name]; })) * 1.1;
     }));
 
     // Stack protocols
-    render_area_chart(margin, width, height, x, y, data, protocol_names, color);
+    render_area_chart(svg, margin, width, height, x, y, data, protocol_names, color);
   });
 
 });
