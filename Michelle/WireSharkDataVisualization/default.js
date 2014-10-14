@@ -16,6 +16,34 @@ function render_axises(svg, x, y, height) {
         .attr("class", "y axis")
         .call(yAxis);
 }
+
+function render_legends(svg, protocol_names, color, width)  {
+	    var legend = svg.selectAll(".legend")
+	  			.data(protocol_names).enter()
+	  			.append("g")
+		        .attr("class", "legend")
+        		.attr("x", width-65)
+		        .attr("y", 25)
+		        .attr("height", 300)
+        		.attr("width", 300);
+
+        legend.append("text")
+		      .attr("x", width-65)
+      		  .attr("y", function(target_protocol) {
+				  //console.log(15*protocol_names.indexOf(target_protocol));
+				  return 15*protocol_names.indexOf(target_protocol);})
+			  .text(function(target_protocol) {return target_protocol;});
+		
+		legend.append("rect")
+			  .attr("x", width-35)
+			  .attr("y",function(target_protocol) {return (15*protocol_names.indexOf(target_protocol)-10);})
+			  .attr("width",12)
+			  .attr("height",12)
+			  .style("fill",function(target_protocol) {
+				  //console.log(target_protocol+","+color(target_protocol));
+				  return color(target_protocol);});
+}
+
 /*Stacked Area Chart.*/
 $(function() {
   var margin = {top: 20, right: 20, bottom: 30, left: 50},
@@ -85,63 +113,43 @@ $(function() {
   var margin = {top: 20, right: 20, bottom: 30, left: 50},
       width = 960 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
-
   var x = d3.scale.linear()
       .range([0, width]);
-
   var y = d3.scale.linear()
       .range([height, 0]);
-
   var color = d3.scale.category20();
-
-  var area = d3.svg.area()
-      .x(function(d) { return x(d.x); })
-      .y0(height)
-      .y1(function(d) { return y(d.y); });
-
   var svg = d3.select("body").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
 	
   d3.tsv("MultipleProtocol.tsv", function(error, data) {
     data = data.map(function(d) {
-      d.x = parseInt(d.TIME_SPAN);
-      d.y = parseInt(d.DNS);
+      d.TIME_SPAN = parseInt(d.TIME_SPAN);
+      d.DNS = parseInt(d.DNS);
       return d;
     });
 
-    x.domain(d3.extent(data, function(d) { return d.x; }));
-    y.domain([0, d3.max(data.map(function(d) { return d.y; })) * 1.1]);
+	var area = d3.svg.area()
+      .x(function(d) { return x(d.TIME_SPAN); })
+      .y0(height)
+      .y1(function(d) { return y(d.DNS); });
+
+    var protocol_names = d3.keys(data[0]).filter(function(key) {return key != "TIME_SPAN"; });
+    	x.domain(d3.extent(data, function(d) { return d.TIME_SPAN; }));
+    	y.domain([0, d3.max(data.map(function(d) { return d.DNS; })) * 1.1]);
+		color.domain(protocol_names);
+    x.domain(d3.extent(data, function(d) { return d.TIME_SPAN; }));
+    y.domain([0, d3.max(data.map(function(d) { return d.DNS; })) * 1.1]);
 
     svg.append("path")
         .datum(data)
         .attr("class", "area")
         .attr("d", area)
-        .style("fill", function(d) { return color(2); });
+		.style("fill",color("DNS"));
 
-    var legend = svg.append("g")
-        .attr("class", "legend")
-        .attr("x", width-65)
-        .attr("y", 25)
-        .attr("height", 300)
-        .attr("width", 300);
-
-  legend.append("rect")
-      .attr("x", width - 65)
-      .attr("y", 25)
-      .attr("width", 14)
-      .attr("height", 14)
-      .style("fill", color(2));
-
-    legend.append("text")
-      .attr("x", width-65)
-      .attr("y", 25)
-	  .style("font-size","16px")
-      .text("DNS");
-	
+   	render_legends(svg, protocol_names, color,width);
 	render_axises(svg,x,y,height);
 	});
 });
@@ -149,9 +157,9 @@ $(function() {
 // TCP protocol.
 $(function() {
   var target_protocol = "TCP";
-  var margin = {top: 20, right: 20, bottom: 30, left: 50},
+  var margin = {top: 20, right: 20, bottom: 30, left: 60},
       width = 960 - margin.left - margin.right,
-      height = 500 - margin.top - margin.bottom;
+      height = 400 - margin.top - margin.bottom;
 
   var x = d3.scale.linear()
       .range([0, width]);
@@ -161,11 +169,6 @@ $(function() {
 
   var color = d3.scale.category20();
 
-  var area = d3.svg.area()
-      .x(function(d) { return x(d.x); })
-      .y0(height)
-      .y1(function(d) { return y(d.y); });
-
   var svg = d3.select("body").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -174,43 +177,30 @@ $(function() {
 
   d3.tsv("MultipleProtocol.tsv", function(error, data) {
     data = data.map(function(d) {
-      d.x = parseInt(d.TIME_SPAN);
-      d.y = parseInt(d.TCP);
+      d.TIME_SPAN = parseInt(d.TIME_SPAN);
+      d.TCP= parseInt(d.TCP);
       return d;
     });
+	
+  var area = d3.svg.area()
+      .x(function(d) { return x(d.TIME_SPAN); })
+      .y0(height)
+      .y1(function(d) { return y(d.TCP); });
 
-    x.domain(d3.extent(data, function(d) { return d.x; }));
-    y.domain([0, d3.max(data.map(function(d) { return d.y; })) * 1.1]);
+	var protocol_names = d3.keys(data[0]).filter(function(key) {return key != "TIME_SPAN"; });
+    x.domain(d3.extent(data, function(d) { return d.TIME_SPAN; }));
+    y.domain([0, d3.max(data.map(function(d) { return d.TCP; })) * 1.1]);
+	color.domain(protocol_names);
 
     svg.append("path")
         .datum(data)
         .attr("class", "area")
         .attr("d", area)
-        .style("fill", function(d) { return color(0); });
+        .style("fill", color("TCP"));
 
-    var legend = svg.append("g")
-        .attr("class", "legend")
-        .attr("x", width-65)
-        .attr("y", 25)
-        .attr("height", 300)
-        .attr("width", 300);
-
-    legend.append("rect")
-      .attr("x", width - 65)
-      .attr("y", 25)
-      .attr("width", 14)
-      .attr("height", 14)
-      .style("fill", color(0));
-
-    legend.append("text")
-      .attr("x", width-65)
-      .attr("y", 25)
-	  .style("font-size","16px")
-      .text(target_protocol);
-	
-	 render_axises(svg,x,y,height);
- });
-
+	render_legends(svg, protocol_names, color,width);
+	render_axises(svg,x,y,height);
+ 	});
 });
 
 
