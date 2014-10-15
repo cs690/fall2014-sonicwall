@@ -20,10 +20,17 @@ footer.well {
     margin: 100px 0;
 }
 
-
-/* Visual */
-.visual .panel {
+.half {
     width: 50%;
     margin: auto;
     margin-bottom: 40px;
+}
+
+/* Team */
+.panel img {
+    height: 100px;
+}
+
+.panel span.desc {
+    margin: 0 2em;
 }
