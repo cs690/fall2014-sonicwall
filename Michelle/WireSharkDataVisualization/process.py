@@ -1,3 +1,5 @@
+# this will convert tsv to json in this format using in the tutorial: http://flowingdata.com/2013/01/17/how-to-animate-transitions-between-multiple-charts/
+
 import sys
 
 data = {}

@@ -10,7 +10,7 @@ duration = 750
 
 # the domain of our scales will be set
 # once we have loaded the data
-x = d3.time.scale()
+x = d3.scale.linear()
   .range([0, width])
 
 y = d3.scale.linear()
@@ -23,29 +23,27 @@ color = d3.scale.category10()
 # charts
 area = d3.svg.area()
     .interpolate("basis")
-    .x((d) -> x(d.date))
+    .x((d) -> x(d.time_span))
 
 # line generator to be used
 # for the Area Chart edges
 line = d3.svg.line()
     .interpolate("basis")
-    .x((d) -> x(d.date))
+    .x((d) -> x(d.time_span))
 
 # stack layout for streamgraph
 # and stacked area chart
 stack = d3.layout.stack()
   .values((d) -> d.values)
-  .x((d) -> d.date)
-  .y((d) -> d.count)
-  .out((d,y0,y) -> d.count0 = y0)
+  .x((d) -> d.time_span)
+  .y((d) -> d.length)
+  .out((d,y0,y) -> d.length0 = y0)
   .order("reverse")
 
 # axis to simplify the construction of
 # the day lines
 xAxis = d3.svg.axis()
   .scale(x)
-  .tickSize(-height)
-  .tickFormat(d3.time.format('%a %d'))
 
 # we will populate this variable with our
 # data array, once its been loaded
@@ -77,10 +75,10 @@ transitionTo = (name) ->
 # ---
 start = () ->
   # first, lets setup our x scale domain
-  # this assumes that the dates in our data are in order
-  minDate = d3.min(data, (d) -> d.values[0].date)
-  maxDate = d3.max(data, (d) -> d.values[d.values.length - 1].date)
-  x.domain([minDate, maxDate])
+  # this assumes that the time_spans in our data are in order
+  mintime_span = d3.min(data, (d) -> d.values[0].time_span)
+  maxtime_span = d3.max(data, (d) -> d.values[d.values.length - 1].time_span)
+  x.domain([mintime_span, maxtime_span])
 
   # D3's axis functionality usually works great
   # however, I was having some aesthetic issues
@@ -88,13 +86,12 @@ start = () ->
   # here I extract out every other day - and 
   # manually specify these values as the tick 
   # values
-  dates = data[0].values.map((v) -> v.date)
+  time_spans = data[0].values.map((v) -> v.time_span)
   index = 0
-  dates = dates.filter (d) ->
+  time_spans = time_spans.filter (d) ->
     index += 1
     (index % 2) == 0
 
-  xAxis.tickValues(dates)
 
   # the axis lines will go behind
   # the rest of the display, so create
@@ -153,13 +150,13 @@ streamgraph = () ->
   # for streamgraphs.
   stack.offset("wiggle")
 
-  # the stack layout will set the count0 attribute
+  # the stack layout will set the length0 attribute
   # of our data
   stack(data)
 
   # reset our y domain and range so that it 
   # accommodates the highest value + offset
-  y.domain([0, d3.max(data[0].values.map((d) -> d.count0 + d.count))])
+  y.domain([0, d3.max(data[0].values.map((d) -> d.length0 + d.length))])
     .range([height, 0])
 
   # the line will be placed along the 
@@ -167,13 +164,13 @@ streamgraph = () ->
   # be faded away by the transition below.
   # this positioning is just for smooth transitioning
   # from the area chart
-  line.y((d) -> y(d.count0))
+  line.y((d) -> y(d.length0))
 
   # setup the area generator to utilize
-  # the count0 values created from the stack
+  # the length0 values created from the stack
   # layout
-  area.y0((d) -> y(d.count0))
-    .y1((d) -> y(d.count0 + d.count))
+  area.y0((d) -> y(d.length0))
+    .y1((d) -> y(d.length0 + d.length))
 
   # here we create the transition
   # and modify the area and line for
@@ -210,20 +207,20 @@ stackedAreas = () ->
   # change on our stack layout to have a completely
   # different type of chart!
   stack.offset("zero")
-  # re-run the layout on the data to modify the count0
+  # re-run the layout on the data to modify the length0
   # values
   stack(data)
 
   # the rest of this is the same as the streamgraph - but
-  # because the count0 values are now set for stacking, 
+  # because the length0 values are now set for stacking, 
   # we will get a Stacked Area chart.
-  y.domain([0, d3.max(data[0].values.map((d) -> d.count0 + d.count))])
+  y.domain([0, d3.max(data[0].values.map((d) -> d.length0 + d.length))])
     .range([height, 0])
 
-  line.y((d) -> y(d.count0))
+  line.y((d) -> y(d.length0))
 
-  area.y0((d) -> y(d.count0))
-    .y1((d) -> y(d.count0 + d.count))
+  area.y0((d) -> y(d.length0))
+    .y1((d) -> y(d.length0 + d.length))
 
   t = svg.selectAll(".request")
     .transition()
@@ -247,25 +244,25 @@ areas = () ->
   # line to be on the top part of the areas.
   # then it is immediately hidden so that it
   # can fade in during the transition below
-  line.y((d) -> y(d.count0 + d.count))
+  line.y((d) -> y(d.length0 + d.length))
   g.select("path.line")
     .attr("d", (d) -> line(d.values))
     .style("stroke-opacity", 1e-6)
 
  
   # as there is no stacking in this chart, the maximum
-  # value of the input domain is simply the maximum count value,
+  # value of the input domain is simply the maximum length value,
   # which we precomputed in the display function 
-  y.domain([0, d3.max(data.map((d) -> d.maxCount))])
+  y.domain([0, d3.max(data.map((d) -> d.maxlength))])
     .range([height, 0])
 
   # the baseline of this chart will always
   # be at the bottom of the display, so we
   # can set y0 to a constant.
   area.y0(height)
-    .y1((d) -> y(d.count))
+    .y1((d) -> y(d.length))
 
-  line.y((d) -> y(d.count))
+  line.y((d) -> y(d.length))
 
   t = g.transition()
     .duration(duration)
@@ -355,23 +352,21 @@ createLegend = () ->
 display = (error, rawData) ->
   # a quick way to manually select which calls to display. 
   # feel free to pick other keys and explore the less frequent call types.
-  filterer = {"Heating": 1, "Damaged tree": 1, "Noise": 1, "Traffic signal condition": 1, "General construction":1, "Street light condition":1}
+  filterer = {"DNS": 1, "HTTP": 1, "TCP": 1}
   data = rawData.filter((d) -> filterer[d.key] == 1)
 
-  # a parser to convert our date string into a JS time object.
-  parseTime = d3.time.format.utc("%x").parse
 
   # go through each data entry and set its
-  # date and count property
+  # time_span and length property
   data.forEach (s) ->
     s.values.forEach (d) ->
-      d.date = parseTime(d.date)
-      d.count = parseFloat(d.count)
+      d.time_span = +d.time_span
+      d.length = parseFloat(d.length)
 
-    # precompute the largest count value for each request type
-    s.maxCount = d3.max(s.values, (d) -> d.count)
+    # precompute the largest length value for each request type
+    s.maxlength = d3.max(s.values, (d) -> d.length)
 
-  data.sort((a,b) -> b.maxCount - a.maxCount)
+  data.sort((a,b) -> b.maxlength - a.maxlength)
 
   start()
 
@@ -385,5 +380,5 @@ $ ->
     transitionTo(id)
 
   # load the data and call 'display'
-  d3.json("data/requests.json", display)
+  d3.json("data/output.json", display)
 
