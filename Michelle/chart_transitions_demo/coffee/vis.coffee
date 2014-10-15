@@ -109,12 +109,7 @@ start = () ->
     .attr("transform", "translate(0," + height + ")")
     .call(xAxis)
 
-  svg.append("g")
-	.attr("class", "y axis")
-	.attr("transform", "translate(0," + height + ")")
- 	.call(yAxis)
-
-  # I want the streamgraph to emanate from the
+    # I want the streamgraph to emanate from the
   # middle of the chart. 
   # we can set the area's y0 and y1 values to 
   # constants to achieve this effect.
