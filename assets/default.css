@@ -26,6 +26,11 @@ footer.well {
     margin-bottom: 40px;
 }
 
+/* Data*/
+.panel ul {
+    margin: 0 9em;
+}
+
 /* Team */
 .panel img {
     height: 100px;
