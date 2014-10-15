@@ -1,45 +1,27 @@
-#Usage: python process.py sfgate_with_geoip.csv output.tsv 1 TCP
 import sys
-import math
 
-bin_size = float(sys.argv[3])
-#target_protocol = sys.argv[4]
-max_time = 0
-
-first_line = True
-with open(sys.argv[1]) as f:
-    for line in f:
-        if first_line:
-            first_line = False
-            continue
-        items = line[:-1].split(',')
-
-        max_time = float(items[1])
-
-num_bins = int(math.ceil(max_time / bin_size) + 1)
-HTTPtraffic = [0] * num_bins
-DNStraffic = [0] * num_bins
-TCPtraffic = [0] * num_bins
+data = {}
+types = ['HTTP', 'DNS', 'TCP']
+for t in types:
+  data[t] = {}
 
 first_line = True
 with open(sys.argv[1]) as f:
-    for line in f:
-        if first_line:
-            first_line = False
-            continue
-        items = line[:-1].split(',')
-        if(items[4] == 'TCP'):
-            TCPtraffic[int(math.floor(float(items[1]) / bin_size))] += float(items[5])
-        if(items[4] == 'HTTP'):
-            HTTPtraffic[int(math.floor(float(items[1]) / bin_size))] += float(items[5])
-        if(items[4] == 'DNS'):
-            DNStraffic[int(math.floor(float(items[1]) / bin_size))] += float(items[5])
-
+  for line in f:
+    if first_line:
+      first_line = False
+      continue
+    (ts, l1, l2, l3) = line[:-1].split('\t')
+    data['HTTP'][ts] = l1
+    data['DNS'][ts] = l2
+    data['TCP'][ts] = l3
+print(data)
 with open(sys.argv[2], 'w') as f:
-    f.write('{0},{1},{2},{3}\n'.format('TIME_SPAN','HTTP','DNS','TCP'))
-    for i in range(0, num_bins):
-        #f.write('{0}\t{1}\n'.format(i, TCPtraffic[i]))
-        f.write('{0},{1},{2},{3}\n'.format(i,HTTPtraffic[i],DNStraffic[i],TCPtraffic[i]))
-
-
-           
+  parts = []
+  for t in types:
+    objs = ['\t{{\n\t\t"time_span" : {0},\n\t\t"length" : {1}\n\t}}'.format(ts, l) for (ts, l) in data[t].items()]
+    values = '"values" : [\n' + ',\n'.join(objs)
+    s = '{{"key" : "{0}",\n'.format(t) + values + '\n]}'
+    parts.append(s)
+  output = '[{0}]'.format(',\n'.join(parts))
+  f.write(output)

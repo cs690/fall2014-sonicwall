@@ -1,0 +1,57 @@
+[{"key" : "HTTP",
+"values" : [
+	{
+		"time_span" : 1,
+		"length" : 69456.0
+	},
+	{
+		"time_span" : 0,
+		"length" : 42862.0
+	},
+	{
+		"time_span" : 3,
+		"length" : 51739.0
+	},
+	{
+		"time_span" : 2,
+		"length" : 21886.0
+	}
+]},
+{"key" : "DNS",
+"values" : [
+	{
+		"time_span" : 1,
+		"length" : 14116.0
+	},
+	{
+		"time_span" : 0,
+		"length" : 8820.0
+	},
+	{
+		"time_span" : 3,
+		"length" : 6393.0
+	},
+	{
+		"time_span" : 2,
+		"length" : 4470.0
+	}
+]},
+{"key" : "TCP",
+"values" : [
+	{
+		"time_span" : 1,
+		"length" : 413482.0
+	},
+	{
+		"time_span" : 0,
+		"length" : 258704.0
+	},
+	{
+		"time_span" : 3,
+		"length" : 161885.0
+	},
+	{
+		"time_span" : 2,
+		"length" : 71088.0
+	}
+]}]

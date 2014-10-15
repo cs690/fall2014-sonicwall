@@ -41,5 +41,3 @@ with open(sys.argv[2], 'w') as f:
         #f.write('{0}\t{1}\n'.format(i, TCPtraffic[i]))
         f.write('{0},{1},{2},{3}\n'.format(i,HTTPtraffic[i],DNStraffic[i],TCPtraffic[i]))
 
-
-           

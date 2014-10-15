@@ -1,5 +1,13 @@
 .domain {
 	fill: none;
     stroke: #000;
-    shape-rendering: crispEdges;
+}
+
+line{
+	stroke:#000;
+	stroke-width:"1";
+}
+
+.detailaxis text{
+	text-anchor: start;
 }

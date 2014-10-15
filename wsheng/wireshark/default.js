@@ -6,16 +6,19 @@ function render_axises (svg, x, y, height) {
       .scale(y)
       .orient("left");
 
+  svg.selectAll(".x.axis").remove();
   svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
+
+  svg.selectAll(".y.axis").remove();
   svg.append("g")
       .attr("class", "y axis")
       .call(yAxis);
 }
 
-function render_legends (svg, names, color, width) {
+function render_legends (svg, names, color, width, callback) {
   var legend = svg.selectAll(".legend")
       .data(names).enter()
     .append("g")
@@ -27,23 +30,44 @@ function render_legends (svg, names, color, width) {
 
   legend.append("rect")
     .attr("x", width - 65)
-    .attr("y", function(name) { return 25 * names.indexOf(name); })
+    .attr("y", function(name) { return 15 * names.indexOf(name) - 10; })
     .attr("width", 10)
     .attr("height", 10)
-    .style("fill", function(name) { return color(name) });
+    .style("fill", function(name) { return color(name) })
+    .on("click", function(name) {
+      if (this.style.opacity == 0.1) {
+        // enable it
+        this.style.opacity = 1;
+        svg.enabledNames.push(name);
+        svg.enabledNames.sort();
+        if (callback) {
+          callback(svg);
+        }
+      } else {
+        // disable it
+        this.style.opacity = 0.1;
+        var index = svg.enabledNames.indexOf(name);
+        if (index > -1) {
+          svg.enabledNames.splice(index, 1);
+        };
+        if (callback) {
+          callback(svg);
+        };
+      };
+    });
 
   legend.append("text")
-    .attr("x", width - 65)
-    .attr("y", function(name) { return 25 * names.indexOf(name); })
+    .attr("x", width - 45)
+    .attr("y", function(name) { return 15 * names.indexOf(name); })
     .text(function(name) { return name; });
 }
 
-function render_area_chart (margin, width, height, x, y, data, names, color) {
-  var svg = d3.select("body").append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+function render_area_chart (svg, margin, width, height, x, y, data, color) {
+  svg.selectAll(".protocol").remove();
+
+  if (svg.enabledNames.length === 0) {
+    return;
+  };
 
   var area = d3.svg.area()
       .x(function(d) { return x(d.x); })
@@ -53,7 +77,7 @@ function render_area_chart (margin, width, height, x, y, data, names, color) {
   var stack = d3.layout.stack()
       .values(function(d) { return d.values; });
 
-  var protocols = stack(names.map(function(name) {
+  var protocols = stack(svg.enabledNames.map(function(name) {
     return {
       name: name,
       values: data.map(function(d) {
@@ -61,6 +85,15 @@ function render_area_chart (margin, width, height, x, y, data, names, color) {
       })
     };
   }));
+
+  var y_values = [];
+  protocols.forEach(function(protocol) {
+    protocol.values.forEach(function(value) {
+      y_values.push(value.y0);
+      y_values.push((value.y0 + value.y) * 1.1);
+    });
+  });
+  y.domain(d3.extent(y_values));
 
   svg.selectAll(".protocol")
       .data(protocols).enter()
@@ -71,7 +104,51 @@ function render_area_chart (margin, width, height, x, y, data, names, color) {
       .attr("d", function(d) { return area(d.values); })
       .style("fill", function(d) { return color(d.name); });
 
-  render_legends(svg, names, color, width);
+  render_axises(svg, x, y, height);
+}
+
+function render_100_area_chart (svg, margin, width, height, x, y, data, color) {
+  svg.selectAll(".protocol").remove();
+  if (svg.enabledNames.length === 0) {
+    return;
+  };
+
+  var y_sum = {};
+  data.forEach(function(d) {
+    y_sum[d.TIME_SPAN] = d3.sum(svg.enabledNames.map(function(name) { return d[name]; }));
+    if (y_sum[d.TIME_SPAN] == 0) {
+      y_sum[d.TIME_SPAN] = Infinity;
+    };
+  });
+
+  var area = d3.svg.area()
+      .x(function(d) { return x(d.x); })
+      .y0(function(d) { return y(d.y0 / y_sum[d.x]); })
+      .y1(function(d) { return y((d.y0 + d.y) / y_sum[d.x]); });
+
+  var stack = d3.layout.stack()
+      .values(function(d) { return d.values; });
+
+  var protocols = stack(svg.enabledNames.map(function(name) {
+    return {
+      name: name,
+      values: data.map(function(d) {
+        return {x: d.TIME_SPAN, y: d[name]};
+      })
+    };
+  }));
+
+  y.domain([0, 1]);
+
+  svg.selectAll(".protocol")
+      .data(protocols).enter()
+    .append("g")
+      .attr("class", "protocol")
+    .append("path")
+      .attr("class", "area")
+      .attr("d", function(d) { return area(d.values); })
+      .style("fill", function(d) { return color(d.name); });
+
   render_axises(svg, x, y, height);
 }
 
@@ -100,21 +177,34 @@ $(function() {
       return v;
     });
 
+    // setup
     var protocol_names = d3.keys(data[0]).filter(function(key) { return key !== "TIME_SPAN"; });
-
-    // setup domains
     color.domain(protocol_names);
-    x.domain(d3.extent(data, function(d) { return d.TIME_SPAN; }));
-    y.domain(d3.extent(data, function(d) {
-      return d3.sum(protocol_names.map(function(name) { return d[name]; })) * 1.1;
-    }));
+    x.domain(d3.extent(data, function(d) { return d.TIME_SPAN * 1.1; }));
 
     // Stack protocols
-    render_area_chart(margin, width, height, x, y, data, protocol_names, color);
+    var svg = d3.select("body").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    svg.enabledNames = protocol_names.slice(0).sort();
+    render_legends(svg, protocol_names, color, width, function(svg) {
+      render_area_chart(svg, margin, width, height, x, y, data, color);
+    });
+    render_area_chart(svg, margin, width, height, x, y, data, color);
 
-    // Single protocol
-    render_area_chart(margin, width, height, x, y, data, ["TCP"], color)
-    render_area_chart(margin, width, height, x, y, data, ["TCP", "HTTP"], color)
+    // 100% stacked area plot
+    var svg2 = d3.select("body").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    svg2.enabledNames = protocol_names.slice(0).sort();
+    render_legends(svg2, protocol_names, color, width, function(svg) {
+      render_100_area_chart(svg2, margin, width, height, x, y, data, color);
+    });
+    render_100_area_chart(svg2, margin, width, height, x, y, data, color);
   });
 
 });
