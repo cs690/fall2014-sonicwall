@@ -10,7 +10,7 @@ duration = 750
 
 # the domain of our scales will be set
 # once we have loaded the data
-x = d3.scale.linear()
+x = d3.time.scale()
   .range([0, width])
 
 y = d3.scale.linear()
@@ -44,11 +44,8 @@ stack = d3.layout.stack()
 # the day lines
 xAxis = d3.svg.axis()
   .scale(x)
-  .orient("bottom")
-
-yAxis = d3.svg.axis()
-  .scale(y)
-  .orient("left")
+  .tickSize(-height)
+  .tickFormat(d3.time.format('%a %d'))
 
 # we will populate this variable with our
 # data array, once its been loaded
@@ -81,11 +78,8 @@ transitionTo = (name) ->
 start = () ->
   # first, lets setup our x scale domain
   # this assumes that the time_spans in our data are in order
-  #mintime_span = d3.min(data, (d) -> d.values[0].time_span)
-  mintime_span = 0
-  maxtime_span = 85
-  console.log(mintime_span)
-  #maxtime_span = d3.max(data, (d) -> d.values[d.values.length - 1].time_span)
+  mintime_span = d3.min(data, (d) -> d.values[0].time_span)
+  maxtime_span = d3.max(data, (d) -> d.values[d.values.length - 1].time_span)
   x.domain([mintime_span, maxtime_span])
 
   # D3's axis functionality usually works great
@@ -94,12 +88,13 @@ start = () ->
   # here I extract out every other day - and 
   # manually specify these values as the tick 
   # values
-  #time_spans = data[0].values.map((v) -> v.time_span)
-  #index = 0
-  #time_spans = time_spans.filter (d) ->
-   # index += 1
-    #(index % 2) == 0
+  time_spans = data[0].values.map((v) -> v.time_span)
+  index = 0
+  time_spans = time_spans.filter (d) ->
+    index += 1
+    (index % 2) == 0
 
+  xAxis.tickValues(time_spans)
 
   # the axis lines will go behind
   # the rest of the display, so create
@@ -108,11 +103,6 @@ start = () ->
     .attr("class", "x axis")
     .attr("transform", "translate(0," + height + ")")
     .call(xAxis)
-
-  svg.append("g")
-	.attr("class", "y axis")
-	.attr("transform", "translate(0," + height + ")")
- 	.call(yAxis)
 
   # I want the streamgraph to emanate from the
   # middle of the chart. 
@@ -365,15 +355,17 @@ createLegend = () ->
 display = (error, rawData) ->
   # a quick way to manually select which calls to display. 
   # feel free to pick other keys and explore the less frequent call types.
-  filterer = {"DNS": 1, "HTTP": 1, "TCP": 1}
+  filterer = {"DNS": 1, "HTTP tree": 1, "TCP": 1}
   data = rawData.filter((d) -> filterer[d.key] == 1)
 
+  # a parser to convert our date string into a JS time object.
+  parseTime = d3.time.format.utc("%x").parse
 
   # go through each data entry and set its
   # time_span and length property
   data.forEach (s) ->
     s.values.forEach (d) ->
-      d.time_span = +d.time_span
+      d.time_span = parseTime(d.time_span)
       d.length = parseFloat(d.length)
 
     # precompute the largest length value for each request type
