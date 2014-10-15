@@ -1,0 +1,41 @@
+.quote {
+    width: 80%;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    padding: 1em;
+    margin: 0 auto;
+    font-size: 20px;
+}
+
+.quote-mark {
+    font-size: 70px;
+    position: relative;
+    top: 35px;
+    line-height: 20px;
+}
+
+footer.well {
+    font-size: 12px;
+    color: #888;
+    margin: 100px 0;
+}
+
+.half {
+    width: 50%;
+    margin: auto;
+    margin-bottom: 40px;
+}
+
+/* Data*/
+.panel ul.data {
+    margin: 0 9em;
+}
+
+/* Team */
+.panel img {
+    height: 100px;
+}
+
+.panel span.desc {
+    margin: 0 2em;
+}

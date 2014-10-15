@@ -27,9 +27,9 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
-          <li class="active"><a href="/">Home</a></li>
+          <li><a href="/">Home</a></li>
           <li><a href="/visual.html">Visualizations</a></li>
-          <li><a href="/data.html">Data</a></li>
+          <li class="active"><a href="/data.html">Data</a></li>
           <li><a href="/tools.html">Tools</a></li>
           <li><a href="/team.html">Team</a></li>
         </ul>
@@ -39,31 +39,38 @@
     </div><!-- /.container-fluid -->
   </nav>
 
-  <div class="container">
-    <div class="jumbotron">
-      <h1>Visualization Matters.</h1>
-      <p>Here, we are visualized.</p>
-      <p>
-        In this project, students will use D3 to build stand-alone prototype visualizations of Dell SonicWALL firewall data that could be integrated into their Dell SonicWALL Analyzer product.
-      </p>
-      <p>
-        <a class="btn btn-primary btn-lg" role="button" href="https://github.com/sjengle/cs690-sonicwall">
-          Github Repository
-        </a>
-      </p>
+  <div class="container half">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+        <a href="http://www.netresec.com/?page=PcapFiles">Wireshark Data</a>
+      </div>
+      <div class="panel-body">
+        <p>
+          <img src="http://wiresharkbook.com/images/101bookcoverthumbnail.png" align="left" hspace="10" vspace="6">
+          Netresec listed a lot of <a href="http://www.netresec.com/?page=PcapFiles">Packet Capture (PCAP) Files</a>. We picked <a href="http://wiresharkbook.com/101_supplements/wireshark101files.zip">a 330MB zip file</a> from <a href="http://wiresharkbook.com/wireshark101.html">Wireshark 101 Essential Skills for Network Analysis</a>.
+        </p>
+
+        <ul class="data list-group">
+          <li><a href="public/sfgate.csv">Original Dataset</a></li>
+          <li><a href="public/geoip.csv">IP Dataset</a></li>
+          <li><a href="public/geoipprocessor.py">IP processor script</a></li>
+          <li><a href="public/ipinfocombiner.py">Data combination script</a></li>
+          <li><a href="public/sfgate_with_geoip.csv">Transformations Dataset</a></li>
+        </ul>
+      </div>
     </div>
   </div>
 
   <div class="container">
     <div class="quote">
       <span class="quote-mark">“</span>
-      These pages are amazing. --- Ranmocy
+      These data are amazing. --- Ranmocy
       <span class="quote-mark">”</span>
     </div>
   </div>
 
   <footer class="well">
-    Copyleft 2014, created by Ranmocy.
+    Created by Ranmocy.
   </footer>
 </body>
 </html>
