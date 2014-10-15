@@ -47,7 +47,7 @@ function render_legends(svg, protocol_names, color, width)  {
 
 /*Stacked Area Chart.*/
 $(function() {
-  var margin = {top: 20, right: 20, bottom: 30, left: 50},
+  var margin = {top: 20, right: 20, bottom: 30, left: 60},
       width = 960 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
   var x = d3.scale.linear()
@@ -77,17 +77,27 @@ $(function() {
 	});  
 	var protocol_names = d3.keys(data[0]).filter(function(key) {return key != "TIME_SPAN"; });
 	color.domain(protocol_names);
-
+	
 	 
 	var protocols = stack(color.domain().map(function(name) {
 		  return {
 			  name : name,
 		      values : data.map(function(d) {
-				  return {TIME_SPAN: d.TIME_SPAN, y:d[name]/2900000};
+				  return {TIME_SPAN: d.TIME_SPAN, y:d[name]/1.0 };
 			  })
 		  };
 	  }));
     x.domain(d3.extent(data, function(d) { return d.TIME_SPAN; }));
+	
+/*Refernce: https://github.com/sjengle/cs690-sonicwall/blob/gh-pages/wsheng/wireshark/default.js
+	 */ 
+	var y_values = [];
+  	protocols.forEach(function(protocol) {
+    protocol.values.forEach(function(value) {
+      y_values.push((value.y0 + value.y) * 1.1);
+    	});
+  	});
+  	y.domain(d3.extent(y_values));
 	
 	var browsers = svg.selectAll(".browser")
 			.data(protocols)
@@ -139,9 +149,7 @@ $(function() {
     	x.domain(d3.extent(data, function(d) { return d.TIME_SPAN; }));
     	y.domain([0, d3.max(data.map(function(d) { return d.DNS; })) * 1.1]);
 		color.domain(protocol_names);
-    x.domain(d3.extent(data, function(d) { return d.TIME_SPAN; }));
-    y.domain([0, d3.max(data.map(function(d) { return d.DNS; })) * 1.1]);
-
+    
     svg.append("path")
         .datum(data)
         .attr("class", "area")
