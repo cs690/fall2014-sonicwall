@@ -27,7 +27,7 @@ footer.well {
 }
 
 /* Data*/
-.panel ul {
+.panel ul.data {
     margin: 0 9em;
 }
 
