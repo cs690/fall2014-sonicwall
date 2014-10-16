@@ -9,19 +9,16 @@ body {
 .axis path,
 .axis line {
   fill: none;
-  stroke: #A9A9A9;
-  stroke-width: 2px;
+  stroke: #000;
   shape-rendering: crispEdges;
 }
 
 .dot {
-  stroke:#000;
-  stroke-width: 1px;
+  stroke: #000;
 }
 
 </style>
 <body>
-<h1> Scatterplot </h1>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
 
@@ -35,23 +32,20 @@ var x = d3.scale.linear()
 var y = d3.scale.linear()
     .range([height, 0]);
 
-/*Ordinal color scale*/
-var color = d3.scale.category10();  
-//var color = d3.scale.quantize().range(colorbrewer.Greens[7]);
+var color = d3.scale.category10();
 
 var xAxis = d3.svg.axis()
-	.scale(x)
-    .orient("bottom")//the label will appear below the axis line
-	.ticks(24);
+    .scale(x)
+    .orient("bottom");
+
 var yAxis = d3.svg.axis()
     .scale(y)
-	.orient("left")
-	.ticks(10);
+    .orient("left");
 
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
-  .append("g")  //appended a new g group element to contain all of about-to-be-generated axis ele
+  .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 d3.tsv("data.tsv", function(error, data) {
@@ -64,23 +58,22 @@ d3.tsv("data.tsv", function(error, data) {
   y.domain(d3.extent(data, function(d) { return d.sepalLength; })).nice();
 
   svg.append("g")
-  	  .attr("class", "x axis")
+      .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
-      .call(xAxis) //xAxis is generated within the new "g"
-	.append("text")
+      .call(xAxis)
+    .append("text")
       .attr("class", "label")
-	  .text("Loading ...")  //load the data asynchronously and tell using "loading"
-      .attr("x", width/2)
-      .attr("y",+30)
+      .attr("x", width)
+      .attr("y", -6)
       .style("text-anchor", "end")
       .text("Sepal Width (cm)");
 
   svg.append("g")
       .attr("class", "y axis")
       .call(yAxis)
-      .append("text")
-	  .attr("class", "label")
-	  .attr("transform", "rotate(-90)")
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
@@ -93,31 +86,26 @@ d3.tsv("data.tsv", function(error, data) {
       .attr("r", 3.5)
       .attr("cx", function(d) { return x(d.sepalWidth); })
       .attr("cy", function(d) { return y(d.sepalLength); })
-	  .style("fill", function(d) { return color(d.species); })
-	  .on("mouseover", function(){d3.select(this).style("fill", "yellow")})
-	  .on("mouseout", function(){d3.select(this).style("fill",function(d) {return color(d.species);})})
+      .style("fill", function(d) { return color(d.species); });
 
   var legend = svg.selectAll(".legend")
       .data(color.domain())
     .enter().append("g")
       .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(0," + i * 40 + ")"; });
+      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
   legend.append("rect")
-      .attr("x", width-68)
-	  .attr("width", 18)
+      .attr("x", width - 18)
+      .attr("width", 18)
       .attr("height", 18)
       .style("fill", color);
 
   legend.append("text")
-      .attr("x", width -30)
-	  .attr("y", 9)
+      .attr("x", width - 24)
+      .attr("y", 9)
       .attr("dy", ".35em")
-      .style("text-anchor", "start")
+      .style("text-anchor", "end")
       .text(function(d) { return d; });
 
-});
-
-</script>
-<!-- #TODO Add reference to README http://jsfiddle.net/eamonnmag/Q567s/
-http://bl.ocks.org/mbostock/3887118#data.tsv -- >
+  });
+  </script>
