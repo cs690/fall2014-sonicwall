@@ -1,8 +1,7 @@
-<<<<<<< HEAD
 Visualizing SonicWall Firewall Data
 ===================================
 
-In this project, students will use D3 to build stand-alone prototype visualizations of Dell SonicWALL firewall data that could be integrated into their Dell SonicWALL Analyzer product. 
+In this project, students will use D3 to build stand-alone prototype visualizations of Dell SonicWALL firewall data that could be integrated into their Dell SonicWALL Analyzer product.
 
 ## Project Team ##
 
@@ -51,7 +50,7 @@ I especially encourage you to read the following articles by the creator of D3, 
 
 ## SonicWall Resources ##
 
-Here are some of the SonicWALL products we will get to work with: 
+Here are some of the SonicWALL products we will get to work with:
 
 - [Dell SonicWALL TZ Series (Small Business)](http://www.sonicwall.com/us/en/products/TZ-Series.html)
 - [Dell SonicWALL Supermassive Series (Enterprise)](http://www.sonicwall.com/us/en/products/network-security.html)
