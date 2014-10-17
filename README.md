@@ -71,4 +71,3 @@ Examples:
 * http://sjengle.cs.usfca.edu/cs690-sonicwall/kyang/
 * http://sjengle.cs.usfca.edu/cs690-sonicwall/Michelle/
 * http://sjengle.cs.usfca.edu/cs690-sonicwall/xihan/
->>>>>>> 64893d740c8c452484f55224405ca93377741cdd
