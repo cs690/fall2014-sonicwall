@@ -37,8 +37,8 @@ footer.well {
 }
 .panel .list-group-item-heading {
     border-bottom: 1px solid #eee;
-    padding-bottom: 5px;
+    padding-bottom: 10px;
 }
 .panel .list-group-item-text {
-    margin: 10px 0;
+    margin: 15px 0;
 }
