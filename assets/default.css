@@ -26,6 +26,16 @@ footer.well {
     margin-bottom: 40px;
 }
 
+.big-title {
+    color: #333;
+    font-size: 70px;
+}
+
+.details {
+    color: #666;
+    font-size: 16px;
+}
+
 /* Data*/
 .panel ul.data {
     margin: 0 9em;
