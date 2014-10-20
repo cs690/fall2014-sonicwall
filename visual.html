@@ -7,6 +7,10 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="assets/default.css">
 
+<style>
+#largeImage {position: absolute;padding: .5em;background: #e3e3e3;border: 1px solid #BFBFBF;}
+</style>
+
   <script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </head>
@@ -39,14 +43,16 @@
     </div><!-- /.container-fluid -->
   </nav>
 
+
   <div class="container half">
     <div class="panel panel-primary">
       <div class="panel-heading">Wireshark Area Chart</div>
       <div class="panel-body">
         <div class="list-group">
-          <a href="wsheng/wireshark/" class="list-group-item">Wanzhang Sheng</a>
-          <a href="kyang/week7_sfgate_again/" class="list-group-item">Kaiming Yang</a>
-          <a href="Michelle/WireSharkDataVisualization/" class="list-group-item">Michelle Gao</a>
+          <a href="wsheng/wireshark/" data="assets/VisualizationWebpage/AreaChart/swz.png" class="list-group-item">Wanzhang Sheng</a>
+          <a href="kyang/week7_sfgate_again/" data="assets/VisualizationWebpage/AreaChart/ykm.png"class="list-group-item">Kaiming Yang</a>
+          <a href="Michelle/WireSharkDataVisualization/"
+			  data="assets/VisualizationWebpage/AreaChart/gj.png" class="list-group-item">Michelle Gao</a>
           <a href="xihan/week7/" class="list-group-item">Xi Han</a>
         </div>
       </div>
@@ -98,5 +104,26 @@
     of
     <a href="http://www.usfca.edu/">University of San Francisco</a>.
   </footer>
+
+ <script>
+	 var offsetX = 20;
+	 var offsetY = 10;
+
+	 $('.list-group a').hover(function(e) {
+     var href = $(this).attr('data');
+     $('<img id="largeImage" src="' + href + '" alt="big image" />')
+     .css('top', e.pageY + offsetY)
+	 .css('left', e.pageX + offsetX)
+	 .css('width', 400)
+	 .css('height',300)
+     .appendTo('body');
+	}, function() {
+     $('#largeImage').remove();
+	});
+
+	$('a').mousemove(function(e) {
+   	  $("#largeImage").css('top', e.pageY + offsetY).css('left', e.pageX + offsetX);
+	});
+</script>
 </body>
 </html>
