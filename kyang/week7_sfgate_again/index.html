@@ -104,8 +104,6 @@ function update_count_domain(){
 	  .call(yAxis)
 	svg.select(".detailaxis").transition()
 	  .call(detailAxis)
-	svg.select(".detailaxis").selectAll("text")
-	  .style("text-anchor","start")
 }
 
 var drag_src;
@@ -158,6 +156,7 @@ function update_detail(t){
 					.attr("transform","translate("+x(t) + "," + (height - protocol.length * 20-3)+")" + (t > slice/2?" scale(-1,1)":""))
 				axis.selectAll("text")
 					.attr("transform", t > slice/2?"scale(-1,1)":null)
+					.style("text-anchor",t > slice/2?"start":"end")
 				axis.select(".baseline")
 					.attr("y1","-1000")
 					.attr("y2","1000")
@@ -219,9 +218,21 @@ d3.csv("../../public/sfgate.csv", function(err,data){
 	
 	svg.append("g")
 	  .attr("class", "yaxis")
+	.append("text")
+	  .attr("class","label")
+	  .attr("transform","rotate(-90)")
+	  .attr("y", 20)
+	  .style("text-anchor", "end")
+      .text("Package per Second")
 	svg.append("g")
 	  .attr("class", "xaxis")
 	  .attr("transform", "translate(0,"+height+")")
+	.append("text")
+	  .attr("class","label")
+	  .attr("x", width)
+	  .attr("y", 20)
+	  .style("text-anchor","end")
+	  .text("Time/s")
 	for (var idx = 0; idx < protocol.length; idx++){
 		svg.append("path")
 			.attr("class","p"+idx)
@@ -298,7 +309,7 @@ d3.csv("../../public/sfgate.csv", function(err,data){
 		.attr("width",width)
 		.attr("height",height)
 		.style("fill","#ffffff")
-		.style("opacity","0.7")
+		.style("opacity","0.5")
 		
 	svg.selectAll(".detailrect")
 		.data(protocol).enter()
@@ -310,12 +321,17 @@ d3.csv("../../public/sfgate.csv", function(err,data){
 		.append("text")
 		.attr("class","detailtext")
 		.style("fill",function(d,i){return color(i)})
-	svg.append("g")
+	var detailaxis = svg.append("g")
 		.attr("class","detailaxis")
-		.append("line")
-			.attr("class","baseline")
-			.attr("x1","0")
-			.attr("x2","0");
+	detailaxis.append("line")
+		.attr("class","baseline")
+		.attr("x1","0")
+		.attr("x2","0");
+	detailaxis.append("g")
+		.attr("transform", "translate("+(width/2)+",-25)")
+	.append("text")
+		.attr("class", "label")
+		.text("Package per Second")
 		
 	svg.append("rect")
 		.attr("class","fade")
