@@ -1,3 +1,5 @@
+ClientArea = [800, 600];
+
 function print(info)
 {
 	console.log(info);
@@ -9,6 +11,15 @@ function local2GlobalPoint(globalStartPoint, rotation, localPoint)
 	result = [];
 	result[0] = globalStartPoint[0] + localPoint[0] * Math.cos(rotation) - localPoint[1] * Math.sin(rotation);
     result[1] = globalStartPoint[1] + localPoint[0] * Math.sin(rotation) + localPoint[1] * Math.cos(rotation);
+	return result;
+}
+
+//Local coordinate always starts from [0, 0]
+function global2LocalPoint(localStartPoint, rotation, globalPoint)
+{
+	result = [];
+	result[0] = (globalPoint[0] - localStartPoint[0]) * Math.cos(rotation) - (globalPoint[1] - localStartPoint[1]) * Math.sin(rotation);
+	result[1] = (globalPoint[0] - localStartPoint[0]) * Math.sin(rotation) + (globalPoint[1] - localStartPoint[1]) * Math.cos(rotation);
 	return result;
 }
 
@@ -34,6 +45,9 @@ function Axis(startPoint, length)
 	this._valueStart = 0;
 	this._valueStop = 0;
 	this.scaleFactor = 1;
+	
+	this.valueType = 'continuous';//'discrete'
+	this.currentValue = 0;
 	
 	this._markStep = 0;
 	this.markWidth = 5;
@@ -139,6 +153,7 @@ function Axis(startPoint, length)
 			this._drawAxis();
 			this._drawMark();
 			this._drawMarkLabel();
+			this._drawCurrentValue(mouseX, mouseY);
 			pop();
 		}
 		
@@ -192,6 +207,30 @@ function Axis(startPoint, length)
 			}			
 		}
 		
+		Axis.prototype._drawCurrentValue = function(currentX, currentY)
+		{
+		console.log(currentX + ',' + currentY);
+			if(this.valueType == "continuous")
+			{
+				//this.currentValue = global2LocalPoint(this.startPoint, this.rotation, [currentX, currentY])[0];
+				this.currentValue = (currentX - this.startPoint[0]) * Math.cos(this.rotation) - (Math.abs(currentY - this.startPoint[1])) * Math.sin(this.rotation);
+			}
+			else if(this.valueType == "discrete")
+			{
+				//this.currentValue = 
+			}
+			
+			if(this.currentValue >= 0 && this.currentValue <= this.length)
+			{
+				//console.log(currentValue);
+				push();
+				noStroke();
+				fill(0);
+				ellipse(this.currentValue, 0, 15, 15);
+				pop();
+			}
+		}
+		
 		Axis.prototype.setValueRange = function (valueStart, valueStop)
 		{
 			this._valueStart = valueStart;
@@ -202,6 +241,8 @@ function Axis(startPoint, length)
 		{
 			return this.length * (this.scaleFactor * value - this._valueStart) / (this._valueStop - this._valueStart);
 		}
+		
+		
 		
 		this._initialized = true;
 	}
