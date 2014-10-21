@@ -4,13 +4,14 @@ var time = 0;
 
 var a = new Axis(origin1, 500);
 
-var b = new Axis(origin1, 500)
+var b = new Axis(origin1, 500);
 
 function preload()
 {
-	createCanvas(ClientArea[0], ClientArea[1]);
+	createCanvas(800, 600);
 	angleMode(RADIANS);
 	background(250);
+	
 	
 	a.setMarkSlotsCount(50);
 	a.markWidth = 5;
@@ -20,13 +21,14 @@ function preload()
 	a.showAxis = true;
 	a.showFirstLabel = false;
 	
-	b.rotation = -Math.PI / 4;
+	b.rotation = -Math.PI / 2;
 	b.setMarkSlotsCount(12);
 	b.markWidth = -5;
 	b.setLabel(valueInterpolate(0, 240, b.getMarkSlotsCount()), 1);
 	b.setValueRange(0, 240);
 	b.setLabelStyle([-6, b.markWidth * 2], Math.PI / 2, constants.RIGHT);
 	b.showAxis = true;
+	
 }
 
 function setup()
@@ -40,6 +42,8 @@ function draw()
 	if (mouseIsPressed)
 	{
 		//fill(0);
+		
+		//console.log(cx + " , " + cy);
 	}
 	else
 	{

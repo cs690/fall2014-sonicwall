@@ -1,5 +1,3 @@
-ClientArea = [800, 600];
-
 function print(info)
 {
 	console.log(info);
@@ -46,9 +44,6 @@ function Axis(startPoint, length)
 	this._valueStop = 0;
 	this.scaleFactor = 1;
 	
-	this.valueType = 'continuous';//'discrete'
-	this.currentValue = 0;
-	
 	this._markStep = 0;
 	this.markWidth = 5;
 	
@@ -68,6 +63,13 @@ function Axis(startPoint, length)
 	this.showLastMark = true;
 	this.showFirstLabel = true;
 	this.showLastLabel = true;
+	
+	this.axisType = 'continuous';//'discrete'
+	this._localX_ = 0;
+	this._localY_ = 0;
+	this._h_ = 0;
+	this._theta_ = 0;
+	this._projectLength = 0;
 	
 	//Construction
 	this.construct = function (startPoint, length)
@@ -152,8 +154,8 @@ function Axis(startPoint, length)
 			rotate(this.rotation);
 			this._drawAxis();
 			this._drawMark();
-			this._drawMarkLabel();
-			this._drawCurrentValue(mouseX, mouseY);
+			this._drawLabel();
+			this._drawProjectValue();
 			pop();
 		}
 		
@@ -189,7 +191,7 @@ function Axis(startPoint, length)
 			}
 		};
 		
-		Axis.prototype._drawMarkLabel = function ()
+		Axis.prototype._drawLabel = function ()
 		{
 			if(this.showLabel)
 			{
@@ -207,27 +209,42 @@ function Axis(startPoint, length)
 			}			
 		}
 		
-		Axis.prototype._drawCurrentValue = function(currentX, currentY)
+		Axis.prototype._drawProjectValue = function()
 		{
-		console.log(currentX + ',' + currentY);
-			if(this.valueType == "continuous")
+			this._localX_ = mouseX - this.startPoint[0];
+			this._localY_ = mouseY - this.startPoint[1];
+			this._h_ = Math.sqrt(this._localX_*this._localX_ + this._localY_*this._localY_);
+			this._theta_ = Math.acos(this._localX_ / this._h_);
+			if(this._localY_ < 0)
 			{
-				//this.currentValue = global2LocalPoint(this.startPoint, this.rotation, [currentX, currentY])[0];
-				this.currentValue = (currentX - this.startPoint[0]) * Math.cos(this.rotation) - (Math.abs(currentY - this.startPoint[1])) * Math.sin(this.rotation);
+				this._projectLength = Math.cos(this._theta_ + this.rotation) * this._h_;
 			}
-			else if(this.valueType == "discrete")
+			else if(this._localY_ > 0)
 			{
-				//this.currentValue = 
+				this._projectLength = Math.cos(this._theta_ - this.rotation) * this._h_;
+			}
+			else
+			{
+				this._projectLength = Math.cos(this.rotation) * this._h_;
+			}		
+		
+			if(this.axisType == "continuous")
+			{
+
+				
+				//console.log(this._localX_ + " " + this._localY_);
+				//console.log(this._projectLength);
+			}
+			else if(this.axisType == "discrete")
+			{
+				//this._projectLength = 
 			}
 			
-			if(this.currentValue >= 0 && this.currentValue <= this.length)
+			if(this._projectLength >= 0 && this._projectLength <= this.length)
 			{
-				//console.log(currentValue);
-				push();
 				noStroke();
-				fill(0);
-				ellipse(this.currentValue, 0, 15, 15);
-				pop();
+				fill([227, 119, 194, 255]);//
+				ellipse(this._projectLength, 0, 10, 10);
 			}
 		}
 		
