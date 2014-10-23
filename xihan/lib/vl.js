@@ -129,16 +129,16 @@ function Axis(startPoint, length)
 		{
 			this._axisType = "continuous";
 			this._setValueRange(valueStart, valueStop);
-			this._setLabel(valueInterpolate(valueStart, valueStop, this._markCount / labelStep) ,labelStep);
+			this._createLabel(valueInterpolate(valueStart, valueStop, this._markCount / labelStep) ,labelStep);
 		}
 		
 		Axis.prototype.setDiscreteLabels = function (labelStep, values)
 		{
 			this._axisType = "discrete";
-			this._setLabel(values ,labelStep);
+			this._createLabel(values ,labelStep);
 		}
 		
-		Axis.prototype._setLabel = function (values, step)
+		Axis.prototype._createLabel = function (values, step)
 		{
 			this._labelStep = step;
 			this.labels = [];
@@ -275,7 +275,7 @@ function Axis(startPoint, length)
 					else this._mouseValue = "";
 				}
 				noStroke();
-				fill([227, 119, 194, 255]);
+				fill([227, 119, 194, 100]);
 				ellipse(this._currentLength_, 0, 10, 10);
 			}
 		}
@@ -681,4 +681,55 @@ function Scatter_Graph(startPoint, width, height)
 	}
 	
 	this.construct(startPoint, width, height);
+}
+
+function Single_Line(startPoint)
+{
+	//Attributes
+	this.startPoint = [0, 0];
+	this.color = [127, 127, 127, 100];
+	this._values = [];
+	this.show = true;
+	
+	//Constructor
+	this.construct = function (startPoint)
+	{
+		this.startPoint = startPoint;
+	};
+	
+	//Methods
+	if (typeof this._initialized == "undefined")
+	{
+	
+		Single_Line.prototype.load = function (labelAxis, valueAxis, values)
+		{
+			this._values = [];
+			for(var i = 0; i < values.length; i++)
+			{
+				this._values[this._values.length] = [labelAxis.scale(values[i][0]), valueAxis.scale(values[i][1])];
+			}
+			
+			console.log(this._values);
+		}
+	
+		Single_Line.prototype.draw = function ()
+		{
+			if(this.show)
+			{
+				push();
+				translate(this.startPoint[0], this.startPoint[1]);
+				stroke();
+				for(var i = 0; i < this._values.length - 1; i++)
+				{
+					line(this._values[i][0], this._values[i][1], this._values[i+1][0], this._values[i+1][1]);
+				}
+				pop();
+			}
+		};
+		
+		this._initialized = true;
+	}
+	
+	//Call construct
+	this.construct(startPoint);	
 }
