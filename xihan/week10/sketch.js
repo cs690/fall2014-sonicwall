@@ -1,9 +1,6 @@
 var origin = [100, 550];
 
-var a = new Axis(origin, 400);
-var b = new Axis(origin, 400);
-
-var l = new Single_Line(origin);
+var lg = new Line_Graph(origin, 400, 400);
 
 function preload()
 {
@@ -13,27 +10,27 @@ function preload()
 
 	////////////////////////////////////////
 	
-	a.markWidth = 5;//30,5,0,1500
-	a.setMarkCount(20);
-	a.setContinuousLabels(5, 0, 100);
-	a.setLabelStyle([0, a.markWidth * 4], 0, constants.CENTER);
-	a.showAxis = true;
-	a.showFirstMark = false;
-	a.showFirstLabel = false;
+	lg._axises[0].markWidth = 5;//30,5,0,1500
+	lg._axises[0].setMarkCount(20);
+	lg._axises[0].setContinuousLabels(5, 0, 100);
+	lg._axises[0].setLabelStyle([0, lg._axises[0].markWidth * 4], 0, constants.CENTER);
+	lg._axises[0].showAxis = true;
+	lg._axises[0].showFirstMark = false;
+	lg._axises[0].showFirstLabel = false;
 	
-	b.rotation = -Math.PI / 2;
-	b.scaleFactor = -1;
-	b.markWidth = -5;
-	b.setMarkCount(20);
-	b.setContinuousLabels(5, 0, 80);
-	b.setLabelStyle([-6, b.markWidth * 2], Math.PI / 2, constants.RIGHT);
-	b.showAxis = true;
-	b.showFirstMark = false;
-	b.showFirstLabel = false;	
+	lg._axises[1].rotation = -Math.PI / 2;
+	lg._axises[1].scaleFactor = -1;
+	lg._axises[1].markWidth = -5;
+	lg._axises[1].setMarkCount(20);
+	lg._axises[1].setContinuousLabels(5, 0, 100);
+	lg._axises[1].setLabelStyle([-6, lg._axises[1].markWidth * 2], Math.PI / 2, constants.RIGHT);
+	lg._axises[1].showAxis = true;
+	lg._axises[1].showFirstMark = false;
+	lg._axises[1].showFirstLabel = false;	
 	
 	///////////////////////////////////////////
 	
-	l.load(a, b, [[10,10], [20, 30], [25, 15], [35, 45], [50, 50], [65, 40], [80, 75], [95, 5]]);
+	lg.addLine([[10,10], [20, 30], [25, 15], [35, 45], [50, 50], [65, 40], [80, 75], [95, 5]]);
 }
 
 function setup()
@@ -44,13 +41,11 @@ function setup()
 function draw()
 {
 	background(250);
-	a.draw();
-	b.draw();
-	l.draw();
+	lg.draw();
 }
 
 function mouseClicked()
 {
-	console.log(a._mouseValue);
-	console.log(b._mouseValue);	
+	console.log(lg._axises[0]._mouseValue);
+	console.log(lg._axises[1]._mouseValue);	
 }

@@ -719,11 +719,31 @@ function Single_Line(startPoint)
 				push();
 				translate(this.startPoint[0], this.startPoint[1]);
 				stroke();
-				for(var i = 0; i < this._values.length - 1; i++)
+				
+				//Line
+				beginShape(constants.LINES)
+				for(var i = 0; i < this._values.length; i++)
 				{
-					line(this._values[i][0], this._values[i][1], this._values[i+1][0], this._values[i+1][1]);
+					vertex(this._values[i][0], this._values[i][1]);
 				}
+				endShape();
+				
+				//Area
+				noStroke();
+				beginShape();
+				fill([0, 0, 0, 30]);
+				vertex(this._values[0][0], 0);
+				for(var i = 0; i < this._values.length; i++)
+				{
+					vertex(this._values[i][0], this._values[i][1]);
+				}
+				vertex(this._values[this._values.length-1][0], 0);
+				endShape(constants.CLOSE);
+
 				pop();
+				
+				
+				
 			}
 		};
 		
@@ -732,4 +752,52 @@ function Single_Line(startPoint)
 	
 	//Call construct
 	this.construct(startPoint);	
+}
+
+function Line_Graph(startPoint, width, height)
+{
+	//Attributes
+	this._startPoint = [0,0];
+	this._width = 0;
+	this._height = 0;
+	this._axises = [];
+	this._lines = [];
+	
+    //Constructor
+    this.construct = function (startPoint, width, height)
+    {
+		this._startPoint = startPoint;
+		this._width = width;
+		this._height = height;
+		this._axises = [new Axis(startPoint, this._width), new Axis(startPoint, this._height)];
+	}
+
+    //Methods
+    if (typeof this._initialized == "undefined")
+	{
+	
+		Line_Graph.prototype.addLine = function (values)
+		{
+			var l = new Single_Line(this._startPoint);
+			l.load(this._axises[0], this._axises[1], values);
+			this._lines[this._lines.length] = l;
+		}
+	
+        Line_Graph.prototype.draw = function ()
+        {
+			for(var i = 0; i < this._axises.length; i++)
+			{
+				this._axises[i].draw();
+			}
+
+			for(var i = 0; i < this._lines.length; i++)
+			{
+				this._lines[i].draw();
+			}
+        }
+
+        this._initialized = true;		
+	}
+	
+	this.construct(startPoint, width, height);
 }
