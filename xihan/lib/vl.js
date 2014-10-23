@@ -37,7 +37,7 @@ function Axis(startPoint, length)
 {
 	//Attributes
 	this.startPoint = [0, 0];
-	this.length = 0;
+	this._length = 0;
 	this.rotation = 0;
 	
 	this._valueStart = 0;
@@ -70,14 +70,14 @@ function Axis(startPoint, length)
 	this._theta_ = 0;
 	this._currentLength_ = 0;
 	this._projectLength = 0;
-	this._projectValue = "";
-	this._projectIndex = 0;
+	this._mouseValue = "";
+	this._mouseValueIndex = 0;
 	
 	//Construction
 	this.construct = function (startPoint, length)
 	{
 		this.startPoint = startPoint;
-		this.length = length;
+		this._length = length;
 	};
 	
 	//Methods
@@ -86,11 +86,16 @@ function Axis(startPoint, length)
 	
 		Axis.prototype.setLength = function (length)
 		{
-			this.length = length;
+			this._length = length;
 			this._updateMark();
 		}
-	
-		Axis.prototype._setMarkCount = function (count)
+		
+		Axis.prototype.getLength = function ()
+		{
+			return this._length;
+		}
+		
+		Axis.prototype.setMarkCount = function (count)
 		{
 			this._markCount = count;
 			this._updateMark();
@@ -104,7 +109,7 @@ function Axis(startPoint, length)
 		
 		Axis.prototype._updateMark = function ()
 		{
-			this._markStep = Math.round(this.length / this._markCount);
+			this._markStep = Math.round(this._length / this._markCount);
 			this.marks = [];
 			for(var i = 0; i < this._markCount; i++)
 			{
@@ -120,18 +125,16 @@ function Axis(startPoint, length)
 		}
 		
 		//Continuous values
-		Axis.prototype.markContinuousValues = function (markCount, labelStep, valueStart, valueStop)
+		Axis.prototype.setContinuousLabels = function (labelStep, valueStart, valueStop)
 		{
 			this._axisType = "continuous";
-			this._setMarkCount(markCount);
 			this._setValueRange(valueStart, valueStop);
-			this._setLabel(valueInterpolate(valueStart, valueStop, markCount / labelStep) ,labelStep);
+			this._setLabel(valueInterpolate(valueStart, valueStop, this._markCount / labelStep) ,labelStep);
 		}
 		
-		Axis.prototype.markDiscreteValues = function (markCount, labelStep, values)
+		Axis.prototype.setDiscreteLabels = function (labelStep, values)
 		{
 			this._axisType = "discrete";
-			this._setMarkCount(markCount);
 			this._setLabel(values ,labelStep);
 		}
 		
@@ -191,7 +194,7 @@ function Axis(startPoint, length)
 			if(this.showAxis)
 			{
 				stroke();
-				line(0, 0, this.length, 0);
+				line(0, 0, this._length, 0);
 			}
 		}
 		
@@ -254,22 +257,22 @@ function Axis(startPoint, length)
 				this._projectLength = Math.cos(this.rotation) * this._h_;
 			}
 		
-			if(this._projectLength >= 0 && this._projectLength <= this.length)
+			if(this._projectLength >= 0 && this._projectLength <= this._length)
 			{		
 				if(this._axisType == "continuous")
 				{
-					this._projectValue = this._valueStart + (this._valueStop - this._valueStart) * this._projectLength / this.length;
+					this._mouseValue = this._valueStart + (this._valueStop - this._valueStart) * this._projectLength / this._length;
 					this._currentLength_ = this._projectLength;
 				}
 				else if(this._axisType == "discrete")
 				{
-					this._projectIndex = Math.round(this._projectLength / (this._markStep * this._labelStep));
-					if(this._projectIndex >= 0 && this._projectIndex < this.labels.length)
+					this._mouseValueIndex = Math.round(this._projectLength / (this._markStep * this._labelStep));
+					if(this._mouseValueIndex >= 0 && this._mouseValueIndex < this.labels.length)
 					{
-						this._projectValue = this.labels[this._projectIndex].info;
-						this._currentLength_ = this._projectIndex * this._markStep * this._labelStep;
+						this._mouseValue = this.labels[this._mouseValueIndex].info;
+						this._currentLength_ = this._mouseValueIndex * this._markStep * this._labelStep;
 					}
-					else this._projectValue = "";
+					else this._mouseValue = "";
 				}
 				noStroke();
 				fill([227, 119, 194, 255]);
@@ -279,7 +282,7 @@ function Axis(startPoint, length)
 		
 		Axis.prototype.scale = function (value)
 		{
-			return this.length * (this.scaleFactor * value - this._valueStart) / (this._valueStop - this._valueStart);
+			return this._length * (this.scaleFactor * value - this._valueStart) / (this._valueStop - this._valueStart);
 		}
 		
 		this._initialized = true;
@@ -525,9 +528,9 @@ function Bar_Graph(startPoint, width, height)
 				
 				for(var i = 0; i < values.length; i++)
 				{
-					if(i < labelAxis.markSlots.length - 1)
+					if(i < labelAxis.marks.length - 1)
 					{
-						var bar = new Bar(local2GlobalPoint(labelAxis.startPoint, labelAxis.rotation, labelAxis.markSlots[i+1]), this.barWidth, valueAxis.scale(values[i]));
+						var bar = new Bar(local2GlobalPoint(labelAxis.startPoint, labelAxis.rotation, labelAxis.marks[i+1]), this.barWidth, valueAxis.scale(values[i]));
 						bar.rotation = valueAxis.rotation;
 						bar.color = color;
 						this._bars[0][this._bars[0].length] = bar;
@@ -538,7 +541,7 @@ function Bar_Graph(startPoint, width, height)
 			{
 				for(var i = 0; i < values.length; i++)
 				{
-					if(i < labelAxis.markSlots.length - 1)
+					if(i < labelAxis.marks.length - 1)
 					{
 						var bar = new Bar(local2GlobalPoint(this._bars[this._bars.length - 2][i].startPoint, this._bars[this._bars.length - 2][i].rotation, this._bars[this._bars.length - 2][i].topPoint), this.barWidth, valueAxis.scale(values[i]));
 						bar.rotation = valueAxis.rotation;

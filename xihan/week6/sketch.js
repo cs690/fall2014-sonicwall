@@ -11,18 +11,17 @@ function preload()
 	//tableData = loadTable('OlympicAthletes_0.csv', 'header', 'csv');
 	//bargraph.load(tableData);
 	
-	bargraph._axises[0].setMarkSlotsCount(10);
-	bargraph._axises[0].showMark = false;
-	bargraph._axises[0].setLabel(["", "USA", "Russia", "Germany", "Thai", "Greece"], 1);
+	bargraph._axises[0].setMarkCount(10);
+	bargraph._axises[0].setDiscreteLabels(1, ["", "USA", "Russia", "Germany", "Thai", "Greece"]);
 	bargraph._axises[0].setLabelStyle([0, bargraph._axises[0].markWidth * 4], 0, constants.CENTER);
+	bargraph._axises[0].showMark = false;
 	bargraph._axises[0].showFirstMark = false;
 	bargraph._axises[0].showLastMark = false;
 	
 	bargraph._axises[1].rotation = -Math.PI / 2;
-	bargraph._axises[1].setMarkSlotsCount(10);
 	bargraph._axises[1].markWidth = -5;
-	bargraph._axises[1].setLabel(valueInterpolate(0, 1500, bargraph._axises[1].getMarkSlotsCount()), 1);
-	bargraph._axises[1].setValueRange(0, 1500);
+	bargraph._axises[1].setMarkCount(10);
+	bargraph._axises[1].setContinuousLabels(1, 0, 1500);
 	bargraph._axises[1].setLabelStyle([-6, bargraph._axises[1].markWidth * 2], Math.PI / 2, constants.RIGHT);
 	bargraph._axises[1].showAxis = false;
 
