@@ -36,7 +36,7 @@ function valueInterpolate(valueStart, valueStop, count)
 function Axis(startPoint, length)
 {
 	//Attributes
-	this.startPoint = [0, 0];
+	this._startPoint = [0, 0];
 	this._length = 0;
 	this.rotation = 0;
 	
@@ -76,13 +76,18 @@ function Axis(startPoint, length)
 	//Construction
 	this.construct = function (startPoint, length)
 	{
-		this.startPoint = startPoint;
+		this._startPoint = startPoint;
 		this._length = length;
 	};
 	
 	//Methods
 	if (typeof this._initialized == "undefined")
 	{
+	
+		Axis.prototype.getStartPoint = function ()
+		{
+			return this._startPoint;
+		}
 	
 		Axis.prototype.setLength = function (length)
 		{
@@ -171,7 +176,7 @@ function Axis(startPoint, length)
 			{
 				this.labels[i].rotation = this.labelRotation;
 				this.labels[i].align = this.labelAlign;
-				this.labels[i].startPoint = [this.marks[i * this._labelStep][0] + this.labelOffset[0], this.marks[i * this._labelStep][1] + this.labelOffset[1]];
+				this.labels[i].setStartPoint([this.marks[i * this._labelStep][0] + this.labelOffset[0], this.marks[i * this._labelStep][1] + this.labelOffset[1]]);
 			}
 		}
 		
@@ -179,7 +184,7 @@ function Axis(startPoint, length)
 		{
 			strokeWeight(1);
 			push();
-			translate(this.startPoint[0], this.startPoint[1]);
+			translate(this._startPoint[0], this._startPoint[1]);
 			rotate(this.rotation);
 			this._drawAxis();
 			this._drawMark();
@@ -240,8 +245,8 @@ function Axis(startPoint, length)
 		
 		Axis.prototype._drawMouseValue = function()
 		{
-			this._localX_ = mouseX - this.startPoint[0];
-			this._localY_ = mouseY - this.startPoint[1];
+			this._localX_ = mouseX - this._startPoint[0];
+			this._localY_ = mouseY - this._startPoint[1];
 			this._h_ = Math.sqrt(this._localX_*this._localX_ + this._localY_*this._localY_);
 			this._theta_ = Math.acos(this._localX_ / this._h_);
 			if(this._localY_ < 0)
@@ -298,7 +303,7 @@ function Axis(startPoint, length)
 function Bar(startPoint, width, height)
 {
 	//Attributes
-	this.startPoint = [0, 0];
+	this._startPoint = [0, 0];
 	this.topPoint = [0, 0];
 	this.leftPoint = [0, 0];
 	this.rightPoint = [0, 0];
@@ -311,7 +316,7 @@ function Bar(startPoint, width, height)
 	//Constructor
 	this.construct = function (startPoint, width, height)
 	{
-		this.startPoint = startPoint;
+		this._startPoint = startPoint;
 		this.width = width;
 		this.height = height;
 		this._updatePoints();
@@ -320,6 +325,11 @@ function Bar(startPoint, width, height)
 	//Methods
 	if (typeof this._initialized == "undefined")
 	{
+		Bar.prototype.getStartPoint = function ()
+		{
+			return this._startPoint;
+		}
+	
 		Bar.prototype.setWidth = function (width)
 		{
 			this.width = width;
@@ -355,7 +365,7 @@ function Bar(startPoint, width, height)
 			rect(this.startX, this.startY, this._width, this._height);
 			*/
 			push();
-			translate(this.startPoint[0], this.startPoint[1]);
+			translate(this._startPoint[0], this._startPoint[1]);
 			rotate(this.rotation);
 			noStroke();
 			fill(color(this.color));
@@ -373,7 +383,7 @@ function Bar(startPoint, width, height)
 function Tag(startPoint, width, height, info)
 {
 	//Attributes
-	this.startPoint = [0, 0];
+	this._startPoint = [0, 0];
 	this.width = 0;
 	this.height = 0;
 	this.rotation = 0;
@@ -386,7 +396,7 @@ function Tag(startPoint, width, height, info)
 	//Constructor
 	this.construct = function (startPoint, width, height, info)
 	{
-		this.startPoint = startPoint;
+		this._startPoint = startPoint;
 		this.width = width;
 		this.height = height;
 		this._label.info = info;
@@ -400,9 +410,14 @@ function Tag(startPoint, width, height, info)
 		
 		Tag.prototype.setStartPoint = function (startPoint)
 		{
-			this.startPoint = startPoint;
+			this._startPoint = startPoint;
 			this._updateLabel();
 		}
+	
+		Tag.prototype.getStartPoint = function ()
+		{
+			return this._startPoint;
+		}	
 	
 		Tag.prototype.setRotation = function (rotation)
 		{
@@ -417,7 +432,7 @@ function Tag(startPoint, width, height, info)
 		
 		Tag.prototype._updateLabel = function ()
 		{
-			this._label.startPoint = local2GlobalPoint(this.startPoint, this.rotation, [12 + this.height/2, 0]);
+			this._label.getStartPoint() = local2GlobalPoint(this._startPoint, this.rotation, [12 + this.height/2, 0]);
 		}
 
 		Tag.prototype.draw = function ()
@@ -425,7 +440,7 @@ function Tag(startPoint, width, height, info)
 			if(this.show)
 			{
 				push();
-				translate(this.startPoint[0], this.startPoint[1]);
+				translate(this._startPoint[0], this._startPoint[1]);
 				rotate(this.rotation);
 				noStroke();
 				fill(color(this.color));
@@ -449,7 +464,7 @@ function Tag(startPoint, width, height, info)
 function Label(startPoint, info)
 {
 	//Attributes
-	this.startPoint = [0, 0];
+	this._startPoint = [0, 0];
 	this.rotation = 0;
 	this.info = "";
 	this.size = 15;
@@ -460,7 +475,7 @@ function Label(startPoint, info)
 	//Constructor
 	this.construct = function (startPoint, info)
 	{
-		this.startPoint = startPoint;
+		this._startPoint = startPoint;
 		this.info = info;
 	};
 	
@@ -468,12 +483,22 @@ function Label(startPoint, info)
 	if (typeof this._initialized == "undefined")
 	{
 	
+		Label.prototype.setStartPoint = function (startPoint)
+		{
+			this._startPoint = startPoint;
+		}		
+	
+		Label.prototype.getStartPoint = function ()
+		{
+			return this._startPoint;
+		}		
+	
 		Label.prototype.draw = function ()
 		{
 			if(this.show)
 			{
 				push();
-				translate(this.startPoint[0], this.startPoint[1]);
+				translate(this._startPoint[0], this._startPoint[1]);
 				rotate(this.rotation);
 				noStroke();
 				textSize(this.size);
@@ -520,6 +545,11 @@ function Bar_Graph(startPoint, width, height)
     if (typeof this._initialized == "undefined")
 	{
 	
+		Bar_Graph.prototype.getStartPoint = function ()
+		{
+			return this._startPoint;
+		}		
+	
 		Bar_Graph.prototype.addBars = function (labelAxis, valueAxis, values, color)
 		{
 			this._bars[this._bars.length] = [];
@@ -530,7 +560,7 @@ function Bar_Graph(startPoint, width, height)
 				{
 					if(i < labelAxis.marks.length - 1)
 					{
-						var bar = new Bar(local2GlobalPoint(labelAxis.startPoint, labelAxis.rotation, labelAxis.marks[i+1]), this.barWidth, valueAxis.scale(values[i]));
+						var bar = new Bar(local2GlobalPoint(labelAxis.getStartPoint(), labelAxis.rotation, labelAxis.marks[i+1]), this.barWidth, valueAxis.scale(values[i]));
 						bar.rotation = valueAxis.rotation;
 						bar.color = color;
 						this._bars[0][this._bars[0].length] = bar;
@@ -543,7 +573,7 @@ function Bar_Graph(startPoint, width, height)
 				{
 					if(i < labelAxis.marks.length - 1)
 					{
-						var bar = new Bar(local2GlobalPoint(this._bars[this._bars.length - 2][i].startPoint, this._bars[this._bars.length - 2][i].rotation, this._bars[this._bars.length - 2][i].topPoint), this.barWidth, valueAxis.scale(values[i]));
+						var bar = new Bar(local2GlobalPoint(this._bars[this._bars.length - 2][i].getStartPoint(), this._bars[this._bars.length - 2][i].rotation, this._bars[this._bars.length - 2][i].topPoint), this.barWidth, valueAxis.scale(values[i]));
 						bar.rotation = valueAxis.rotation;
 						bar.color = color;
 						this._bars[this._bars.length - 1][this._bars[this._bars.length - 1].length] = bar;
@@ -596,7 +626,7 @@ function Bar_Graph(startPoint, width, height)
 function Scatter(startPoint)
 {
 	//Attributes
-	this.startPoint = [0, 0];
+	this._startPoint = [0, 0];
 	this.size = 10;
 	this.color = [127, 127, 127, 100];
 	this.show = true;
@@ -604,19 +634,24 @@ function Scatter(startPoint)
 	//Constructor
 	this.construct = function (startPoint)
 	{
-		this.startPoint = startPoint;
+		this._startPoint = startPoint;
 	};
 	
 	//Methods
 	if (typeof this._initialized == "undefined")
 	{
+
+		Scatter.prototype.getStartPoint = function ()
+		{
+			return this._startPoint;
+		}	
 	
 		Scatter.prototype.draw = function ()
 		{
 			if(this.show)
 			{
 				push();
-				translate(this.startPoint[0], this.startPoint[1]);
+				translate(this._startPoint[0], this._startPoint[1]);
 				noStroke();
 				fill(color(this.color));
 				ellipse(0, 0, this.size, this.size);
@@ -654,6 +689,11 @@ function Scatter_Graph(startPoint, width, height)
     if (typeof this._initialized == "undefined")
 	{
 	
+		Scatter_Graph.prototype.getStartPoint = function ()
+		{
+			return this._startPoint;
+		}		
+	
 		Scatter_Graph.prototype.AddScatter = function (values)
 		{
 			var _startPoint_ = [];
@@ -686,20 +726,25 @@ function Scatter_Graph(startPoint, width, height)
 function Single_Line(startPoint)
 {
 	//Attributes
-	this.startPoint = [0, 0];
+	this._startPoint = [0, 0];
 	this.color = [127, 127, 127, 100];
 	this._values = [];
-	this.show = true;
+	this.visable = true;
 	
 	//Constructor
 	this.construct = function (startPoint)
 	{
-		this.startPoint = startPoint;
+		this._startPoint = startPoint;
 	};
 	
 	//Methods
 	if (typeof this._initialized == "undefined")
 	{
+	
+		Single_Line.prototype.getStartPoint = function ()
+		{
+			return this._startPoint;
+		}	
 	
 		Single_Line.prototype.load = function (labelAxis, valueAxis, values)
 		{
@@ -714,13 +759,12 @@ function Single_Line(startPoint)
 	
 		Single_Line.prototype.draw = function ()
 		{
-			if(this.show)
+			if(this.visable)
 			{
 				push();
-				translate(this.startPoint[0], this.startPoint[1]);
-				stroke();
-				
+				translate(this._startPoint[0], this._startPoint[1]);				
 				//Line
+				stroke(this.color);
 				beginShape(constants.LINES)
 				for(var i = 0; i < this._values.length; i++)
 				{
@@ -731,7 +775,7 @@ function Single_Line(startPoint)
 				//Area
 				noStroke();
 				beginShape();
-				fill([0, 0, 0, 30]);
+				fill([this.color[0], this.color[1], this.color[2], 20]);
 				vertex(this._values[0][0], 0);
 				for(var i = 0; i < this._values.length; i++)
 				{
@@ -776,13 +820,19 @@ function Line_Graph(startPoint, width, height)
     if (typeof this._initialized == "undefined")
 	{
 	
-		Line_Graph.prototype.addLine = function (values)
+		Line_Graph.prototype.getStartPoint = function ()
+		{
+			return this._startPoint;
+		}
+	
+		Line_Graph.prototype.addLine = function (values, color)
 		{
 			var l = new Single_Line(this._startPoint);
 			l.load(this._axises[0], this._axises[1], values);
+			l.color = color;
 			this._lines[this._lines.length] = l;
 		}
-	
+		
         Line_Graph.prototype.draw = function ()
         {
 			for(var i = 0; i < this._axises.length; i++)
@@ -801,3 +851,4 @@ function Line_Graph(startPoint, width, height)
 	
 	this.construct(startPoint, width, height);
 }
+

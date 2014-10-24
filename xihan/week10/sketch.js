@@ -26,11 +26,13 @@ function preload()
 	lg._axises[1].setLabelStyle([-6, lg._axises[1].markWidth * 2], Math.PI / 2, constants.RIGHT);
 	lg._axises[1].showAxis = true;
 	lg._axises[1].showFirstMark = false;
-	lg._axises[1].showFirstLabel = false;	
+	lg._axises[1].showFirstLabel = false;
 	
 	///////////////////////////////////////////
 	
-	lg.addLine([[10,10], [20, 30], [25, 15], [35, 45], [50, 50], [65, 40], [80, 75], [95, 5]]);
+	lg.addLine([[10,10], [20, 30], [25, 15], [35, 45], [50, 50], [65, 40], [80, 75], [95, 5]], [239, 138, 98]);
+	
+	lg.addLine([[10,15], [17, 24], [30, 66], [45, 78], [49, 45], [60, 40], [75, 75], [80, 5]], [103, 169, 207]);
 }
 
 function setup()
