@@ -92,6 +92,54 @@ function sparkline(){
 	return sparkchart(ret).x(xfunc).y(yfunc);
 }
 
+function sparkarea(){
+	var xfunc = function(d,i){return i;}, 
+		yfunc = function(d){return d;}, 
+		datafunc = function(d){return d;};
+	var area = d3.svg.area();
+	var ret = function(selection){
+		area.y0(ret.scale.y()(0));
+		selection.select(".sparkarea").remove();
+		selection
+			.append("svg")
+				.attr("class","sparkarea")
+				.attr("width", ret.width())
+				.attr("height", ret.height())
+			.append("path")
+				.datum(datafunc)
+				.attr("d", area);
+
+	}
+	
+	ret.x = function(fx){
+		if (arguments.length==0) return xfunc;
+		xfunc = fx;
+		if (typeof(xfunc)=="function")
+			area.x(function(d,i){return ret.scale.x()(xfunc(d,i));})
+		else
+			area.x(ret.scale.x()(xfunc))
+		return ret;
+	}
+	
+	ret.y = function(fy){
+		if (arguments.length==0) return yfunc;
+		yfunc = fy;
+		if (typeof(yfunc)=="function")
+			area.y1(function(d,i){return ret.scale.y()(yfunc(d,i));})
+		else
+			area.y1(ret.scale.y()(yfunc))
+		return ret;
+	}
+	
+	ret.data = function(d){
+		if (arguments.length==0) return datafunc;
+		datafunc = d;
+		return ret;
+	}
+	
+	return sparkchart(ret).x(xfunc).y(yfunc);
+}
+
 function sparkbar(){
 	var barfunc = function(d){return d;}
 	var ret = function(selection){

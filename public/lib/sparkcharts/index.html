@@ -13,8 +13,13 @@ var d = [{l:[1,4,5], b:4},
 var table = d3.select("body").append("table");
 
 var sline = sparkline()
-	.domain(3,5)
+	.domain(2,5)
 	.size(100, 20)
+	.data(function(d){return d.l;});
+	
+var sarea =sparkarea()
+	.domain(2,5)
+	.size(100,20)
 	.data(function(d){return d.l;});
 
 var sbar = sparkbar()
@@ -27,6 +32,12 @@ rows.append("td")
 	.call(sline)
 	.select("path")
 	.style("stroke","#0000ff");
+	
+rows.append("td")
+	.call(sarea)
+	.select("path")
+	.style("fill","#ff0000")
+	
 rows.append("td")
 	.call(sbar)
 	.select("rect")
