@@ -21,7 +21,7 @@ function preload()
 	a.showFirstMark = false;
 	a.showFirstLabel = false;
 	
-	b.rotation = -Math.PI / 3;
+	b.setRotation(-Math.PI / 3);
 	b.markWidth = -5;
 	b.setMarkCount(20);
 	b.setDiscreteLabels(2, ["","a","b","c","d","e","f","g","h","i"]);

@@ -38,7 +38,7 @@ function Axis(startPoint, length)
 	//Attributes
 	this._startPoint = [0, 0];
 	this._length = 0;
-	this.rotation = 0;
+	this._rotation = 0;
 	
 	this._valueStart = 0;
 	this._valueStop = 0;
@@ -67,9 +67,11 @@ function Axis(startPoint, length)
 	this._localX_ = 0;
 	this._localY_ = 0;
 	this._h_ = 0;
-	this._theta_ = 0;
+	this._alpha_ = 0;
+	this._beta_ = 0;
 	this._currentLength_ = 0;
-	this._projectLength = 0;
+	this._projectionLength = 0;
+	this._projectionHeight = 0;
 	this._mouseValue = "";
 	this._mouseValueIndex = 0;
 	
@@ -98,6 +100,16 @@ function Axis(startPoint, length)
 		Axis.prototype.getLength = function ()
 		{
 			return this._length;
+		}
+		
+		Axis.prototype.setRotation = function (rotation)
+		{
+			this._rotation = rotation;
+		}
+		
+		Axis.prototype.getRotation = function ()
+		{
+			return this._rotation;
 		}
 		
 		Axis.prototype.setMarkCount = function (count)
@@ -174,18 +186,38 @@ function Axis(startPoint, length)
 		{
 			for(var i = 0; i < this.labels.length; i++)
 			{
-				this.labels[i].rotation = this.labelRotation;
+				this.labels[i].setRotation(this.labelRotation);
 				this.labels[i].align = this.labelAlign;
 				this.labels[i].setStartPoint([this.marks[i * this._labelStep][0] + this.labelOffset[0], this.marks[i * this._labelStep][1] + this.labelOffset[1]]);
 			}
 		}
+		
+		Axis.prototype.getProjectionLength = function (globalX, globalY)
+		{
+			var localX = globalX - this._startPoint[0];
+			var localY = globalY - this._startPoint[1];
+			var h = Math.sqrt(localX*localX + localY*localY);
+			var alpha = Math.acos(localX / h);
+			if(localY < 0)
+			{
+				return Math.cos(alpha + this._rotation) * h;
+			}
+			else if(localY > 0)
+			{
+				return Math.cos(alpha - this._rotation) * h;
+			}
+			else
+			{
+				return Math.cos(this._rotation) * h;
+			}
+		}		
 		
 		Axis.prototype.draw = function ()
 		{
 			strokeWeight(1);
 			push();
 			translate(this._startPoint[0], this._startPoint[1]);
-			rotate(this.rotation);
+			rotate(this._rotation);
 			this._drawAxis();
 			this._drawMark();
 			this._drawLabel();
@@ -245,33 +277,39 @@ function Axis(startPoint, length)
 		
 		Axis.prototype._drawMouseValue = function()
 		{
+
 			this._localX_ = mouseX - this._startPoint[0];
 			this._localY_ = mouseY - this._startPoint[1];
 			this._h_ = Math.sqrt(this._localX_*this._localX_ + this._localY_*this._localY_);
-			this._theta_ = Math.acos(this._localX_ / this._h_);
+			this._alpha_ = Math.acos(this._localX_ / this._h_);
 			if(this._localY_ < 0)
 			{
-				this._projectLength = Math.cos(this._theta_ + this.rotation) * this._h_;
+				this._beta_ = this._alpha_ + this._rotation;
 			}
 			else if(this._localY_ > 0)
 			{
-				this._projectLength = Math.cos(this._theta_ - this.rotation) * this._h_;
+				this._beta_ = this._alpha_ - this._rotation;
 			}
 			else
 			{
-				this._projectLength = Math.cos(this.rotation) * this._h_;
+				this._beta_ = this._rotation;
 			}
-		
-			if(this._projectLength >= 0 && this._projectLength <= this._length)
+			
+			this._projectionLength = Math.cos(this._beta_) * this._h_;
+			this._projectionHeight = Math.sin(this._beta_) * this._h_;			
+			
+			//this._projectionLength = this.getProjectionLength(mouseX, mouseY);
+			
+			if(this._projectionLength >= 0 && this._projectionLength <= this._length)
 			{		
 				if(this._axisType == "continuous")
 				{
-					this._mouseValue = this._valueStart + (this._valueStop - this._valueStart) * this._projectLength / this._length;
-					this._currentLength_ = this._projectLength;
+					this._mouseValue = this._valueStart + (this._valueStop - this._valueStart) * this._projectionLength / this._length;
+					this._currentLength_ = this._projectionLength;
 				}
 				else if(this._axisType == "discrete")
 				{
-					this._mouseValueIndex = Math.round(this._projectLength / (this._markStep * this._labelStep));
+					this._mouseValueIndex = Math.round(this._projectionLength / (this._markStep * this._labelStep));
 					if(this._mouseValueIndex >= 0 && this._mouseValueIndex < this.labels.length)
 					{
 						this._mouseValue = this.labels[this._mouseValueIndex].info;
@@ -309,7 +347,7 @@ function Bar(startPoint, width, height)
 	this.rightPoint = [0, 0];
 	this.width = 0;
 	this.height = 0;
-	this.rotation = 0;
+	this._rotation = 0;
 	this.color = [255, 255, 255];
 	this.selected = true;
 	
@@ -342,6 +380,16 @@ function Bar(startPoint, width, height)
 			this._updatePoints();
 		}
 		
+		Bar.prototype.setRotation = function (rotation)
+		{
+			this._rotation = rotation;
+		}
+		
+		Bar.prototype.getRotation = function ()
+		{
+			return this._rotation;
+		}
+		
 		Bar.prototype._updatePoints = function ()
 		{
 			this.topPoint = [this.height, 0];
@@ -366,7 +414,7 @@ function Bar(startPoint, width, height)
 			*/
 			push();
 			translate(this._startPoint[0], this._startPoint[1]);
-			rotate(this.rotation);
+			rotate(this._rotation);
 			noStroke();
 			fill(color(this.color));
 			rect(0, -this.width/2, this.height, this.width);
@@ -386,7 +434,7 @@ function Tag(startPoint, width, height, info)
 	this._startPoint = [0, 0];
 	this.width = 0;
 	this.height = 0;
-	this.rotation = 0;
+	this._rotation = 0;
 	this.color = [210, 210, 210];
 	this.centerPoint = [0, 0];
 	this.show = true;
@@ -421,9 +469,14 @@ function Tag(startPoint, width, height, info)
 	
 		Tag.prototype.setRotation = function (rotation)
 		{
-			this.rotation = rotation;
+			this._rotation = rotation;
 			this._updateLabel();
 		}
+		
+		Tag.prototype.getRotation = function ()
+		{
+			return this._rotation;
+		}		
 		
 		Tag.prototype.setInfo = function (info)
 		{
@@ -432,7 +485,7 @@ function Tag(startPoint, width, height, info)
 		
 		Tag.prototype._updateLabel = function ()
 		{
-			this._label.getStartPoint() = local2GlobalPoint(this._startPoint, this.rotation, [12 + this.height/2, 0]);
+			this._label.getStartPoint() = local2GlobalPoint(this._startPoint, this._rotation, [12 + this.height/2, 0]);
 		}
 
 		Tag.prototype.draw = function ()
@@ -441,7 +494,7 @@ function Tag(startPoint, width, height, info)
 			{
 				push();
 				translate(this._startPoint[0], this._startPoint[1]);
-				rotate(this.rotation);
+				rotate(this._rotation);
 				noStroke();
 				fill(color(this.color));
 				triangle(6, 0, 12, 5, 12, -5);
@@ -465,7 +518,7 @@ function Label(startPoint, info)
 {
 	//Attributes
 	this._startPoint = [0, 0];
-	this.rotation = 0;
+	this._rotation = 0;
 	this.info = "";
 	this.size = 15;
 	this.align = constants.LEFT;
@@ -493,13 +546,23 @@ function Label(startPoint, info)
 			return this._startPoint;
 		}		
 	
+		Label.prototype.setRotation = function (rotation)
+		{
+			this._rotation = rotation;
+		}
+		
+		Label.prototype.getRotation = function ()
+		{
+			return this._rotation;
+		}		
+	
 		Label.prototype.draw = function ()
 		{
 			if(this.show)
 			{
 				push();
 				translate(this._startPoint[0], this._startPoint[1]);
-				rotate(this.rotation);
+				rotate(this._rotation);
 				noStroke();
 				textSize(this.size);
 				fill(color(this.color));
@@ -560,8 +623,8 @@ function Bar_Graph(startPoint, width, height)
 				{
 					if(i < labelAxis.marks.length - 1)
 					{
-						var bar = new Bar(local2GlobalPoint(labelAxis.getStartPoint(), labelAxis.rotation, labelAxis.marks[i+1]), this.barWidth, valueAxis.scale(values[i]));
-						bar.rotation = valueAxis.rotation;
+						var bar = new Bar(local2GlobalPoint(labelAxis.getStartPoint(), labelAxis.getRotation(), labelAxis.marks[i+1]), this.barWidth, valueAxis.scale(values[i]));
+						bar.setRotation(valueAxis.getRotation());
 						bar.color = color;
 						this._bars[0][this._bars[0].length] = bar;
 					}
@@ -573,8 +636,8 @@ function Bar_Graph(startPoint, width, height)
 				{
 					if(i < labelAxis.marks.length - 1)
 					{
-						var bar = new Bar(local2GlobalPoint(this._bars[this._bars.length - 2][i].getStartPoint(), this._bars[this._bars.length - 2][i].rotation, this._bars[this._bars.length - 2][i].topPoint), this.barWidth, valueAxis.scale(values[i]));
-						bar.rotation = valueAxis.rotation;
+						var bar = new Bar(local2GlobalPoint(this._bars[this._bars.length - 2][i].getStartPoint(), this._bars[this._bars.length - 2][i].getRotation(), this._bars[this._bars.length - 2][i].topPoint), this.barWidth, valueAxis.scale(values[i]));
+						bar.setRotation(valueAxis.getRotation());
 						bar.color = color;
 						this._bars[this._bars.length - 1][this._bars[this._bars.length - 1].length] = bar;
 					}

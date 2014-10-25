@@ -18,7 +18,7 @@ function preload()
 	bargraph._axises[0].showFirstMark = false;
 	bargraph._axises[0].showLastMark = false;
 	
-	bargraph._axises[1].rotation = -Math.PI / 2;
+	bargraph._axises[1].setRotation(-Math.PI / 2);
 	bargraph._axises[1].markWidth = -5;
 	bargraph._axises[1].setMarkCount(10);
 	bargraph._axises[1].setContinuousLabels(1, 0, 1500);

@@ -18,7 +18,7 @@ function preload()
 	lg._axises[0].showFirstMark = false;
 	lg._axises[0].showFirstLabel = false;
 	
-	lg._axises[1].rotation = -Math.PI / 2;
+	lg._axises[1].setRotation(-Math.PI / 2);
 	lg._axises[1].scaleFactor = -1;
 	lg._axises[1].markWidth = -5;
 	lg._axises[1].setMarkCount(20);

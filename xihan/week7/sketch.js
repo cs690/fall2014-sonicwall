@@ -13,7 +13,7 @@ function preload()
 	scattergraph._axises[0].showAxis = true;
 	scattergraph._axises[0].showFirstLabel = false;
 	
-	scattergraph._axises[1].rotation = -Math.PI / 2;
+	scattergraph._axises[1].setRotation(-Math.PI / 2);
 	scattergraph._axises[1].setMarkCount(50);
 	scattergraph._axises[1].markWidth = -5;
 	scattergraph._axises[1].scaleFactor = -1;
