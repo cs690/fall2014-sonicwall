@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Responsible Table</title>
+    <style type="text/css">
+        path{
+            fill:none;
+            stroke:#000;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        thead {
+            background-color: #eee;
+        }
+        th {
+            border: #888 solid 1px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="lib/sparkcharts/sparkcharts.js"></script>
+</head>
+<body>
+    <table>
+        <thead>
+            <th>Source</th>
+            <th>SourceCountry</th>
+            <th>Destination</th>
+            <th>DestinationCountry</th>
+            <th>Protocol</th>
+            <th>Bytes over Time</th>
+            <th>Total bytes</th>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script type="text/javascript">
+        $(function() {
+            $.getJSON("sfgate_summary.json", function(data) {
+                console.debug(data);
+
+                var lengthOverTimeX = d3.max(data.map(function(d) {
+                    return d.LengthOverTime.length;
+                }));
+                var lengthOverTimeY = d3.max(data.map(function(d) {
+                    return d3.max(d.LengthOverTime);
+                }));
+                var TotalLengthX = d3.max(data.map(function(d) {
+                    return d.TotalLength;
+                }));
+
+                var sline = sparkline()
+                    .domain(lengthOverTimeX, lengthOverTimeY)
+                    .size(100, 20)
+                    .data(function(d){ return d.LengthOverTime; });
+
+                var sarea =sparkarea()
+                    .domain(lengthOverTimeX, lengthOverTimeY)
+                    .size(100,20)
+                    .data(function(d){ return d.LengthOverTime; });
+
+                var sbar = sparkbar()
+                    .domain(TotalLengthX)
+                    .size(100, 20)
+                    .data(function(d){ return d.TotalLength; });
+
+                var table = d3.select("tbody");
+                var rows = table.selectAll("tr")
+                        .data(data).enter()
+                    .append("tr");
+
+                rows.append("td").text(function(d) { return d.Source; });
+                rows.append("td").text(function(d) { return d.SourceCountry + ', ' + d.SourceCity; });
+                rows.append("td").text(function(d) { return d.Destination; });
+                rows.append("td").text(function(d) { return d.DestinationCountry + ', ' + d.DestinationCity; });
+                rows.append("td").text(function(d) { return d.Protocol; });
+
+                rows.append("td")
+                    .call(sarea)
+                    .select("path")
+                    .style("stroke","#0000ff");
+
+                rows.append("td")
+                    .call(sbar)
+                    .select("rect")
+                    .style("fill","#888");
+            });
+        });
+    </script>
+</body>
+</html>
