@@ -1,7 +1,26 @@
+var SESSION = 0;
+
 function print(info)
 {
 	console.log(info);
 }
+
+function idGenerator()
+{
+	return hash(((new Date()).getMilliseconds()*(++SESSION)).toString())
+}
+
+//Generate hash from string
+function hash(str) {
+  var hash = 0, i, chr, len;
+  if (str.length == 0) return hash;
+  for (i = 0, len = str.length; i < len; i++) {
+    chr   = str.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
 
 //Local coordinate always starts from [0, 0]
 function local2GlobalPoint(globalStartPoint, rotation, localPoint)
@@ -641,7 +660,7 @@ function Bar_Graph(startPoint, width, height)
 						bar.color = color;
 						this._bars[this._bars.length - 1][this._bars[this._bars.length - 1].length] = bar;
 					}
-				}				
+				}
 			}
 		}
 		
@@ -780,7 +799,7 @@ function Scatter_Graph(startPoint, width, height)
 			}
         }
 
-        this._initialized = true;		
+        this._initialized = true;
 	}
 	
 	this.construct(startPoint, width, height);
@@ -887,7 +906,7 @@ function Line_Graph(startPoint, width, height)
 		{
 			return this._startPoint;
 		}
-	
+		
 		Line_Graph.prototype.addLine = function (values, color)
 		{
 			var l = new Single_Line(this._startPoint);
@@ -913,5 +932,204 @@ function Line_Graph(startPoint, width, height)
 	}
 	
 	this.construct(startPoint, width, height);
+}
+
+function Data_Drawer(value)
+{
+	//Attributes
+	this._value = 0;
+	this._id = "";
+	this._organizer = {};
+	
+	this._globalPoint = [0,0];
+	this._representation = {};
+	this.selected = false;
+	
+	//Constructor
+	this.construct = function (value)
+	{
+		this._id = idGenerator();
+		this._value = value;
+	};
+	
+	//Methods
+	if (typeof this._initialized == "undefined")
+	{
+		Data_Drawer.prototype.getID = function ()
+		{
+			return this._id;
+		}
+		
+		Data_Drawer.prototype.getValue = function ()
+		{
+			return this._value;
+		}
+
+		Data_Drawer.prototype.setValue = function (value)
+		{
+			this._value = value;
+			this.onValueChange(this._id);
+		}
+		
+		Data_Drawer.prototype.onValueChange = function (id)
+		{
+			this._organizer.updateDrawer(id);
+			this.setGlobalPoint();
+		}
+		
+		Data_Drawer.prototype.setGlobalPoint = function()
+		{
+			this._globalPoint = this._organizer.project(this._value);
+		}
+		
+		Data_Drawer.prototype.bindOrganizer = function (organizer)
+		{
+			this._organizer = organizer;
+		}
+		
+		Data_Drawer.prototype.getGlobalX = function ()
+		{
+			return this._globalPoint[0];
+		}
+		
+		Data_Drawer.prototype.getGlobalY = function ()
+		{
+			return this._globalPoint[1];
+		}
+		
+		this._initialized = true;
+	}
+	
+	//Call construct
+	this.construct(value);
+}
+
+function Data_Organizer()
+{
+	//Attributes
+	this._values = [];
+	this._value_drawers = [];
+	this._value_drawers_hashtable = {};
+	this._type = "static";//"dynamic"
+	
+	this._currentDrawerID = -1;
+	
+	//Constructor
+	this.construct = function ()
+	{
+	};
+	
+	//Methods
+	if (typeof this._initialized == "undefined")
+	{
+
+		Data_Organizer.prototype.setData = function (values)
+		{
+			this._values = values;
+			this._value_drawers = [];
+			this._value_drawers_hashtable = {};
+			for(var i = 0; i < values.length; i++)
+			{
+				var drawer = new Data_Drawer(values[i]);
+				drawer.bindOrganizer(this);
+				drawer.setGlobalPoint();
+				this._value_drawers_hashtable[drawer.getID()] = drawer;
+				this._value_drawers[this._value_drawers.length] = drawer;
+			}
+		}
+		
+		Data_Organizer.prototype.getData = function ()
+		{
+			if(this._type == "static")
+			{
+				return this._values;
+			}
+			else if(this._type == "dynamic")
+			{
+				this._values = [];
+				for(var i = 0; i < this._value_drawers.length; i++)
+				{
+					this._values[this._values.length] = this._value_drawers[i];
+				}
+				return this._values;
+			}
+		}
+		
+		Data_Organizer.prototype.updateDrawer = function (id)
+		{
+			console.log(id);
+			console.log(this);
+			console.log(this._value_drawers_hashtable)
+			console.log(this._value_drawers_hashtable[id]);
+		}
+		
+		Data_Organizer.prototype.selectData = function (globalX, globalY)
+		{
+			//console.log(this._value_drawers_hashtable);
+		
+			var minDist = Number.MAX_VALUE;
+			for(var id in this._value_drawers_hashtable)
+			{
+				//console.log(id);
+				
+				var xDiff = globalX - this._value_drawers_hashtable[id].getGlobalX();
+				var yDiff = globalY - this._value_drawers_hashtable[id].getGlobalY();
+				var currentDist = (xDiff * xDiff) + (yDiff * yDiff);
+				
+				/*
+				console.log(globalX);
+				console.log(globalY);
+				console.log(this._value_drawers_hashtable[id].getGlobalX());
+				console.log(this._value_drawers_hashtable[id].getGlobalY());
+				console.log("-------");
+				*/
+				
+				if(currentDist < minDist)
+				{
+					minDist = currentDist;
+					this._currentDrawerID = id;
+				}
+			}
+			if(this._currentDrawerID in this._value_drawers_hashtable)
+			{
+				this._value_drawers_hashtable[this._currentDrawerID].selected = !this._value_drawers_hashtable[this._currentDrawerID].selected;
+				//console.log("Done!");
+			}
+			//console.log(this._currentDrawerID);
+		}
+		
+		Data_Organizer.prototype.project = function (value)
+		{
+			return value;
+		}
+
+		Data_Organizer.prototype.draw = function ()
+		{
+			for(var id in this._value_drawers_hashtable)
+			{
+				var v = this._value_drawers_hashtable[id];
+				var tx = v.getGlobalX();
+				var ty = v.getGlobalY();
+				push();
+				translate(100, 550);
+				noStroke();
+				if(v.selected)
+				{
+					fill([255,0,0,100]);
+				}
+				else
+				{
+					fill([0,0,0,100]);
+				}
+				ellipse(tx, ty, 8, 8);
+				pop();
+			}
+		}
+		
+		this._initialized = true;
+	}
+	
+	//Call construct
+	this.construct();	
 }
 
