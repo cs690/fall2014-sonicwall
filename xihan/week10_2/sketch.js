@@ -37,6 +37,8 @@ function preload()
 	///////////////////////////////////////////
 	
 	vdo_1.project = function (value) { return [lg._axises[0].scale(value[0]), lg._axises[1].scale(value[1])]; };
+
+	vdo_2.project = function (value) { return [lg._axises[0].scale(value[0]), lg._axises[1].scale(value[1])]; };
 	
 	vdo_1.setData(Data_1);
 	vdo_2.setData(Data_2);
@@ -58,6 +60,7 @@ function draw()
 	lg.draw();
 	
 	vdo_1.draw();
+	//vdo_2.draw();
 }
 
 function mouseClicked()
@@ -68,4 +71,5 @@ function mouseClicked()
 	//vdo._value_drawers[0].setValue(5);
 	
 	vdo_1.selectData(mouseX - 100, mouseY - 550);
+	//vdo_2.selectData(mouseX - 100, mouseY - 550);
 }

@@ -447,6 +447,7 @@ function Bar(startPoint, width, height)
 	this.construct(startPoint, width, height);
 }
 
+//class Tag
 function Tag(startPoint, width, height, info)
 {
 	//Attributes
@@ -504,7 +505,8 @@ function Tag(startPoint, width, height, info)
 		
 		Tag.prototype._updateLabel = function ()
 		{
-			this._label.getStartPoint() = local2GlobalPoint(this._startPoint, this._rotation, [12 + this.height/2, 0]);
+			this._label.setStartPoint(local2GlobalPoint(this._startPoint, this._rotation, [12 + this.height/2 - 7, 0]));
+			//7 = CharHeight(this._label.info)//Not yet implemented by P5 dev
 		}
 
 		Tag.prototype.draw = function ()
@@ -945,6 +947,9 @@ function Data_Drawer(value)
 	this._representation = {};
 	this.selected = false;
 	
+	//TBA
+	this._tag = {};
+	
 	//Constructor
 	this.construct = function (value)
 	{
@@ -981,6 +986,17 @@ function Data_Drawer(value)
 		{
 			this._globalPoint = this._organizer.project(this._value);
 		}
+
+		Data_Drawer.prototype.setTag = function()
+		{
+			this._tag = new Tag(this._globalPoint, 50, 40, this._value.toString());
+			this._tag.setRotation(-Math.PI / 2);
+		}		
+		
+		Data_Drawer.prototype.getTag = function()
+		{
+			return this._tag;
+		}		
 		
 		Data_Drawer.prototype.bindOrganizer = function (organizer)
 		{
@@ -1013,6 +1029,7 @@ function Data_Organizer()
 	this._type = "static";//"dynamic"
 	
 	this._currentDrawerID = -1;
+
 	
 	//Constructor
 	this.construct = function ()
@@ -1033,6 +1050,7 @@ function Data_Organizer()
 				var drawer = new Data_Drawer(values[i]);
 				drawer.bindOrganizer(this);
 				drawer.setGlobalPoint();
+				drawer.setTag();
 				this._value_drawers_hashtable[drawer.getID()] = drawer;
 				this._value_drawers[this._value_drawers.length] = drawer;
 			}
@@ -1116,6 +1134,7 @@ function Data_Organizer()
 				if(v.selected)
 				{
 					fill([255,0,0,100]);
+					v.getTag().draw();
 				}
 				else
 				{
