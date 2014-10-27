@@ -13,24 +13,39 @@
         thead {
             background-color: #eee;
         }
-        th {
-            border: #888 solid 1px;
+        th.header {
+            cursor: pointer;
+            font-weight: bold;
+            background-repeat: no-repeat;
+            background-position: center left;
+            border-right: 1px solid #dad9c7;
+            margin-left: -1px;
+            padding: 0 20px;
+        }
+        th.headerSortUp {
+            background-color: #f93;
+        }
+        th.headerSortDown {
+            background-color: #9f3;
         }
     </style>
     <script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
+    <script src="jquery.tablesorter.min.js"></script>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="lib/sparkcharts/sparkcharts.js"></script>
 </head>
 <body>
-    <table>
+    <table id="target">
         <thead>
-            <th>Source</th>
-            <th>SourceCountry</th>
-            <th>Destination</th>
-            <th>DestinationCountry</th>
-            <th>Protocol</th>
-            <th>Bytes over Time</th>
-            <th>Total bytes</th>
+            <tr>
+                <th>Source</th>
+                <th>SourceCountry</th>
+                <th>Destination</th>
+                <th>DestinationCountry</th>
+                <th>Protocol</th>
+                <th>Bytes over Time</th>
+                <th>Total bytes</th>
+            </tr>
         </thead>
         <tbody>
         </tbody>
@@ -86,6 +101,17 @@
                     .call(sbar)
                     .select("rect")
                     .style("fill","#888");
+
+                // sortable table
+                $("#target").tablesorter({
+                    headers: {
+                        5: { sorter: false },
+                        6: { sorter: false }
+                    },
+                    textExtraction: function(node) {
+                        return node.textContent;
+                    }
+                });
             });
         });
     </script>
