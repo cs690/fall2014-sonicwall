@@ -105,11 +105,13 @@
                 // sortable table
                 $("#target").tablesorter({
                     headers: {
+                        0: { sorter: "text" },
+                        1: { sorter: "text" },
+                        2: { sorter: "text" },
+                        3: { sorter: "text" },
+                        4: { sorter: "text" },
                         5: { sorter: false },
                         6: { sorter: false }
-                    },
-                    textExtraction: function(node) {
-                        return node.textContent;
                     }
                 });
             });
