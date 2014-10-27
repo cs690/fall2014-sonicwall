@@ -45,7 +45,7 @@ end
 # IP,Country Code,Country,Region Code,Region,City,Zip code,Latitude,Longitude,Area Code,Metro Code
 geoip = CSV.read('geoip.csv')
 # hash table from ip to [Latitude, Longitude]
-ip_to_geo = geoip.inject({}) { |h, item| h[item[0]] = [item[7], item[8]]; h }
+ip_to_geo = geoip.inject({}) { |h, item| h[item[0]] = [item[7], item[8], item[5]]; h }
 
 # "No.","Time","Source","Destination","Protocol","Length","Info"
 data = CSV.read("#{filename}.csv")
@@ -59,7 +59,9 @@ sizes = grouped_data.map{|group|
 }.to_a
 # find the top records
 top_records = sizes.sort_by {|item| -item.last}.take(num_of_records) # top 10
-
+# find the time range
+times = data.map { |e| e[1].to_f }
+time_range = ((times.min.to_i)..(times.max.to_i)).to_a
 
 #
 #
@@ -76,12 +78,22 @@ summary_data = top_records.map { |(group_name, total_length)|
   d = group_name.split(' - ')
   source_geo = ip_to_geo[d[0]]
   dest_geo = ip_to_geo[d[1]]
+  length_over_time_hash = grouped_data[group_name].group_by { |entry|
+    entry[1].to_i # rounded time
+  }.map { |group|
+    group.map { |entry| entry[5].to_i }.reduce(&:+)
+  }
+  length_over_time = time_range.map { |i| length_over_time_hash[i] || 0 }
   [nslookup(d[0]), nslookup(d[1]), d[2], total_length,
-  source_geo[0], source_geo[1], dest_geo[0], dest_geo[1]]
+  source_geo[2], dest_geo[2],
+  source_geo[0], source_geo[1], dest_geo[0], dest_geo[1],
+  length_over_time]
 }
 # add new header
 summary_header = ["Source", "Destination", "Protocol", "TotalLength",
-  "SourceLatitude", "SourceLongitude", "DestinationLatitude", "DestinationLongitude"]
+  "SourceCity", "DestinationCity",
+  "SourceLatitude", "SourceLongitude", "DestinationLatitude", "DestinationLongitude",
+  "LengthOverTime"]
 
 # JSON
 summary_json = summary_data.map { |e|
@@ -94,9 +106,8 @@ File.open("#{filename}_summary.json", 'wb').write(summary_json)
 summary_data.unshift(summary_header)
 # write to file
 CSV.open("#{filename}_summary.csv", "wb") do |f|
-  summary_data.each { |line| f << line }
+  summary_data.each { |line| f << line[0..-2] }
 end
-
 
 
 #
