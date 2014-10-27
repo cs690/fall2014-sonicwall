@@ -1,11 +1,11 @@
-Source,Destination,Protocol,TotalLength,SourceCity,DestinationCity,SourceLatitude,SourceLongitude,DestinationLatitude,DestinationLongitude
-a184-84-222-144.deploy.static.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,4769916,Redwood City,Milpitas,37.4852,-122.2364,37.4404,-121.8705
-a96-17-110-102.deploy.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,1019110,Cambridge,Milpitas,42.3626,-71.0843,37.4404,-121.8705
-a96-17-110-102.deploy.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,RTMP,375049,Cambridge,Milpitas,42.3626,-71.0843,37.4404,-121.8705
-208.93.137.180,c-24-6-173-220.hsd1.ca.comcast.net,TCP,359298,San Jose,Milpitas,37.3394,-121.8950,37.4404,-121.8705
-a23-62-228-27.deploy.static.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,253619,Cambridge,Milpitas,42.3626,-71.0843,37.4404,-121.8705
-a184-84-222-89.deploy.static.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,174866,Redwood City,Milpitas,37.4852,-122.2364,37.4404,-121.8705
-93.184.216.169,c-24-6-173-220.hsd1.ca.comcast.net,TCP,145962,"",Milpitas,38.0000,-97.0000,37.4404,-121.8705
-a184-84-222-129.deploy.static.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,141844,Redwood City,Milpitas,37.4852,-122.2364,37.4404,-121.8705
-67.192.92.227,c-24-6-173-220.hsd1.ca.comcast.net,TCP,120612,San Antonio,Milpitas,29.4889,-98.3987,37.4404,-121.8705
-s3-1.amazonaws.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,111746,Seattle,Milpitas,47.6103,-122.3341,37.4404,-121.8705
+Source,Destination,Protocol,TotalLength,SourceCity,DestinationCity,SourceCountry,DestinationCountry,SourceLatitude,SourceLongitude,DestinationLatitude,DestinationLongitude
+a184-84-222-144.deploy.static.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,4769916,Redwood City,Milpitas,United States,United States,37.4852,-122.2364,37.4404,-121.8705
+a96-17-110-102.deploy.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,1019110,Cambridge,Milpitas,United States,United States,42.3626,-71.0843,37.4404,-121.8705
+a96-17-110-102.deploy.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,RTMP,375049,Cambridge,Milpitas,United States,United States,42.3626,-71.0843,37.4404,-121.8705
+208.93.137.180,c-24-6-173-220.hsd1.ca.comcast.net,TCP,359298,San Jose,Milpitas,United States,United States,37.3394,-121.8950,37.4404,-121.8705
+a23-62-228-27.deploy.static.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,253619,Cambridge,Milpitas,United States,United States,42.3626,-71.0843,37.4404,-121.8705
+a184-84-222-89.deploy.static.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,174866,Redwood City,Milpitas,United States,United States,37.4852,-122.2364,37.4404,-121.8705
+93.184.216.169,c-24-6-173-220.hsd1.ca.comcast.net,TCP,145962,"",Milpitas,United States,United States,38.0000,-97.0000,37.4404,-121.8705
+a184-84-222-129.deploy.static.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,141844,Redwood City,Milpitas,United States,United States,37.4852,-122.2364,37.4404,-121.8705
+67.192.92.227,c-24-6-173-220.hsd1.ca.comcast.net,TCP,120612,San Antonio,Milpitas,United States,United States,29.4889,-98.3987,37.4404,-121.8705
+s3-1.amazonaws.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,111746,Seattle,Milpitas,United States,United States,47.6103,-122.3341,37.4404,-121.8705

@@ -44,8 +44,8 @@ end
 #                              .JMML.
 # IP,Country Code,Country,Region Code,Region,City,Zip code,Latitude,Longitude,Area Code,Metro Code
 geoip = CSV.read('geoip.csv')
-# hash table from ip to [Latitude, Longitude]
-ip_to_geo = geoip.inject({}) { |h, item| h[item[0]] = [item[7], item[8], item[5]]; h }
+# hash table from ip to [Latitude, Longitude, City, Country]
+ip_to_geo = geoip.inject({}) { |h, e| h[e[0]] = [e[7], e[8], e[5], e[2]]; h }
 
 # "No.","Time","Source","Destination","Protocol","Length","Info"
 data = CSV.read("#{filename}.csv")
@@ -76,7 +76,7 @@ time_range = ((times.min.to_i)..(times.max.to_i)).to_a
 #                                                                             OOb"
 summary_data = top_records.map { |(group_name, total_length)|
   d = group_name.split(' - ')
-  source_geo = ip_to_geo[d[0]]
+  src_geo = ip_to_geo[d[0]]
   dest_geo = ip_to_geo[d[1]]
   length_over_time_hash = grouped_data[group_name].group_by { |entry|
     entry[1].to_i # rounded time
@@ -85,13 +85,13 @@ summary_data = top_records.map { |(group_name, total_length)|
   }
   length_over_time = time_range.map { |i| length_over_time_hash[i] || 0 }
   [nslookup(d[0]), nslookup(d[1]), d[2], total_length,
-  source_geo[2], dest_geo[2],
-  source_geo[0], source_geo[1], dest_geo[0], dest_geo[1],
+  src_geo[2], dest_geo[2], src_geo[3], dest_geo[3],
+  src_geo[0], src_geo[1], dest_geo[0], dest_geo[1],
   length_over_time]
 }
 # add new header
 summary_header = ["Source", "Destination", "Protocol", "TotalLength",
-  "SourceCity", "DestinationCity",
+  "SourceCity", "DestinationCity", "SourceCountry", "DestinationCountry",
   "SourceLatitude", "SourceLongitude", "DestinationLatitude", "DestinationLongitude",
   "LengthOverTime"]
 
