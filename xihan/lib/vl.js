@@ -58,6 +58,8 @@ function Axis(startPoint, length)
 	this._startPoint = [0, 0];
 	this._length = 0;
 	this._rotation = 0;
+
+	this._type = 'continuous';//'discrete'
 	
 	this._valueStart = 0;
 	this._valueStop = 0;
@@ -82,7 +84,6 @@ function Axis(startPoint, length)
 	this.showFirstLabel = true;
 	this.showLastLabel = true;
 	
-	this._axisType = 'continuous';//'discrete'
 	this._localX_ = 0;
 	this._localY_ = 0;
 	this._h_ = 0;
@@ -163,14 +164,14 @@ function Axis(startPoint, length)
 		//Continuous values
 		Axis.prototype.setContinuousLabels = function (labelStep, valueStart, valueStop)
 		{
-			this._axisType = "continuous";
+			this._type = "continuous";
 			this._setValueRange(valueStart, valueStop);
 			this._createLabel(valueInterpolate(valueStart, valueStop, this._markCount / labelStep) ,labelStep);
 		}
 		
 		Axis.prototype.setDiscreteLabels = function (labelStep, values)
 		{
-			this._axisType = "discrete";
+			this._type = "discrete";
 			this._createLabel(values ,labelStep);
 		}
 		
@@ -321,12 +322,12 @@ function Axis(startPoint, length)
 			
 			if(this._projectionLength >= 0 && this._projectionLength <= this._length)
 			{		
-				if(this._axisType == "continuous")
+				if(this._type == "continuous")
 				{
 					this._mouseValue = this._valueStart + (this._valueStop - this._valueStart) * this._projectionLength / this._length;
 					this._currentLength_ = this._projectionLength;
 				}
-				else if(this._axisType == "discrete")
+				else if(this._type == "discrete")
 				{
 					this._mouseValueIndex = Math.round(this._projectionLength / (this._markStep * this._labelStep));
 					if(this._mouseValueIndex >= 0 && this._mouseValueIndex < this.labels.length)
@@ -344,7 +345,15 @@ function Axis(startPoint, length)
 		
 		Axis.prototype.scale = function (value)
 		{
-			return this._length * (this.scaleFactor * value - this._valueStart) / (this._valueStop - this._valueStart);
+			if(this._type == "continuous")
+			{
+				return this._length * (this.scaleFactor * value - this._valueStart) / (this._valueStop - this._valueStart);
+				//console.log("continuous");
+			}
+			else if(this._type == "discrete")
+			{
+				//TBI
+			}
 		}
 		
 		this._initialized = true;
@@ -828,7 +837,7 @@ function Single_Line(startPoint)
 		Single_Line.prototype.getStartPoint = function ()
 		{
 			return this._startPoint;
-		}	
+		}
 	
 		Single_Line.prototype.load = function (labelAxis, valueAxis, values)
 		{
@@ -917,6 +926,11 @@ function Line_Graph(startPoint, width, height)
 			this._lines[this._lines.length] = l;
 		}
 		
+		Line_Graph.prototype.getAxises = function ()
+		{
+			return this._axises;
+		}		
+		
         Line_Graph.prototype.draw = function ()
         {
 			for(var i = 0; i < this._axises.length; i++)
@@ -940,14 +954,14 @@ function Data_Drawer(value)
 {
 	//Attributes
 	this._value = 0;
+	this._index = -1;
 	this._id = "";
 	this._organizer = {};
 	
-	this._globalPoint = [0,0];
+	this._screenProjection = [0,0];
 	this._representation = {};
 	this.selected = false;
 	
-	//TBA
 	this._tag = {};
 	
 	//Constructor
@@ -955,11 +969,22 @@ function Data_Drawer(value)
 	{
 		this._id = idGenerator();
 		this._value = value;
+		this._tag = new Tag(this._screenProjection, 50, 40, this._value.toString());
 	};
 	
 	//Methods
 	if (typeof this._initialized == "undefined")
 	{
+		Data_Drawer.prototype.setIndex = function (index)
+		{
+			this._index = index;
+		}
+		
+		Data_Drawer.prototype.getIndex = function ()
+		{
+			return this._index;
+		}		
+		
 		Data_Drawer.prototype.getID = function ()
 		{
 			return this._id;
@@ -979,19 +1004,21 @@ function Data_Drawer(value)
 		Data_Drawer.prototype.onValueChange = function (id)
 		{
 			this._organizer.updateDrawer(id);
-			this.setGlobalPoint();
+			this.calcScreenProjection();
+			this.updateTag();
 		}
 		
-		Data_Drawer.prototype.setGlobalPoint = function()
+		Data_Drawer.prototype.calcScreenProjection = function()
 		{
-			this._globalPoint = this._organizer.project(this._value);
+			this._screenProjection = this._organizer.projectFunction(this._value);
 		}
 
-		Data_Drawer.prototype.setTag = function()
+		Data_Drawer.prototype.updateTag = function()
 		{
-			this._tag = new Tag(this._globalPoint, 50, 40, this._value.toString());
+			this._tag.setInfo(this._value.toString());
+			this._tag.setStartPoint(this._screenProjection);
 			this._tag.setRotation(-Math.PI / 2);
-		}		
+		}
 		
 		Data_Drawer.prototype.getTag = function()
 		{
@@ -1005,12 +1032,12 @@ function Data_Drawer(value)
 		
 		Data_Drawer.prototype.getGlobalX = function ()
 		{
-			return this._globalPoint[0];
+			return this._screenProjection[0];
 		}
 		
 		Data_Drawer.prototype.getGlobalY = function ()
 		{
-			return this._globalPoint[1];
+			return this._screenProjection[1];
 		}
 		
 		this._initialized = true;
@@ -1023,13 +1050,14 @@ function Data_Drawer(value)
 function Data_Organizer()
 {
 	//Attributes
-	this._values = [];
-	this._value_drawers = [];
-	this._value_drawers_hashtable = {};
+	this._data = [];
+	this._data_drawers = [];
+	this._data_drawers_hashtable = {};
 	this._type = "static";//"dynamic"
 	
 	this._currentDrawerID = -1;
-
+	
+	this._graph = {};
 	
 	//Constructor
 	this.construct = function ()
@@ -1039,66 +1067,64 @@ function Data_Organizer()
 	//Methods
 	if (typeof this._initialized == "undefined")
 	{
-
+		
 		Data_Organizer.prototype.setData = function (values)
 		{
-			this._values = values;
-			this._value_drawers = [];
-			this._value_drawers_hashtable = {};
+			this._data = values;
+			this._data_drawers = [];
+			this._data_drawers_hashtable = {};
 			for(var i = 0; i < values.length; i++)
 			{
 				var drawer = new Data_Drawer(values[i]);
+				drawer.setIndex(i);
 				drawer.bindOrganizer(this);
-				drawer.setGlobalPoint();
-				drawer.setTag();
-				this._value_drawers_hashtable[drawer.getID()] = drawer;
-				this._value_drawers[this._value_drawers.length] = drawer;
+				drawer.calcScreenProjection();
+				drawer.updateTag();
+				this._data_drawers_hashtable[drawer.getID()] = drawer;
+				this._data_drawers[this._data_drawers.length] = drawer;
 			}
 		}
 		
 		Data_Organizer.prototype.getData = function ()
 		{
-			if(this._type == "static")
-			{
-				return this._values;
-			}
-			else if(this._type == "dynamic")
-			{
-				this._values = [];
-				for(var i = 0; i < this._value_drawers.length; i++)
-				{
-					this._values[this._values.length] = this._value_drawers[i];
-				}
-				return this._values;
-			}
+			return this._data;
 		}
 		
 		Data_Organizer.prototype.updateDrawer = function (id)
 		{
-			console.log(id);
-			console.log(this);
-			console.log(this._value_drawers_hashtable)
-			console.log(this._value_drawers_hashtable[id]);
+			this._data[this._data_drawers_hashtable[id].getIndex()] = this._data_drawers_hashtable[id].getValue();
+			
+			console.log("OK!");
+		}
+		
+		Data_Organizer.prototype._reloadData = function ()
+		{
+			this._data = [];
+			for(var i = 0; i < this._data_drawers.length; i++)
+			{
+				this._data[this._data.length] = this._data_drawers[i];
+			}
+			return this._data;			
 		}
 		
 		Data_Organizer.prototype.selectData = function (globalX, globalY)
 		{
-			//console.log(this._value_drawers_hashtable);
+			//console.log(this._data_drawers_hashtable);
 		
 			var minDist = Number.MAX_VALUE;
-			for(var id in this._value_drawers_hashtable)
+			for(var id in this._data_drawers_hashtable)
 			{
 				//console.log(id);
 				
-				var xDiff = globalX - this._value_drawers_hashtable[id].getGlobalX();
-				var yDiff = globalY - this._value_drawers_hashtable[id].getGlobalY();
+				var xDiff = globalX - this._data_drawers_hashtable[id].getGlobalX();
+				var yDiff = globalY - this._data_drawers_hashtable[id].getGlobalY();
 				var currentDist = (xDiff * xDiff) + (yDiff * yDiff);
 				
 				/*
 				console.log(globalX);
 				console.log(globalY);
-				console.log(this._value_drawers_hashtable[id].getGlobalX());
-				console.log(this._value_drawers_hashtable[id].getGlobalY());
+				console.log(this._data_drawers_hashtable[id].getGlobalX());
+				console.log(this._data_drawers_hashtable[id].getGlobalY());
 				console.log("-------");
 				*/
 				
@@ -1108,24 +1134,41 @@ function Data_Organizer()
 					this._currentDrawerID = id;
 				}
 			}
-			if(this._currentDrawerID in this._value_drawers_hashtable)
+			if(this._currentDrawerID in this._data_drawers_hashtable)
 			{
-				this._value_drawers_hashtable[this._currentDrawerID].selected = !this._value_drawers_hashtable[this._currentDrawerID].selected;
+				this._data_drawers_hashtable[this._currentDrawerID].selected = !this._data_drawers_hashtable[this._currentDrawerID].selected;
 				//console.log("Done!");
 			}
 			//console.log(this._currentDrawerID);
 		}
 		
-		Data_Organizer.prototype.project = function (value)
+		Data_Organizer.prototype.projectFunction = function (value)
 		{
-			return value;
+			if(value instanceof Array)
+			{
+				var result = [];
+				for(var i = 0; i < value.length; i++)
+				{
+					result[result.length] = this._graph.getAxises()[i].scale(value[i]);
+				}
+				return result;
+			}
+			else
+			{
+				return this._graph.getAxises()[0].scale(value);
+			}
 		}
-
+		
+		Data_Organizer.prototype.bindGraph = function (graph)
+		{
+			this._graph = graph;
+		}
+		
 		Data_Organizer.prototype.draw = function ()
 		{
-			for(var id in this._value_drawers_hashtable)
+			for(var id in this._data_drawers_hashtable)
 			{
-				var v = this._value_drawers_hashtable[id];
+				var v = this._data_drawers_hashtable[id];
 				var tx = v.getGlobalX();
 				var ty = v.getGlobalY();
 				push();

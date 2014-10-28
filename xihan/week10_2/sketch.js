@@ -10,7 +10,8 @@ var vdo_2 = new Data_Organizer();
 
 function preload()
 {
-	createCanvas(800, 600);
+	var cnv = createCanvas(800, 600);
+	cnv.parent("myContainer");
 	angleMode(RADIANS);
 	background(250);
 
@@ -36,16 +37,15 @@ function preload()
 	
 	///////////////////////////////////////////
 	
-	vdo_1.project = function (value) { return [lg._axises[0].scale(value[0]), lg._axises[1].scale(value[1])]; };
-
-	vdo_2.project = function (value) { return [lg._axises[0].scale(value[0]), lg._axises[1].scale(value[1])]; };
+	vdo_1.bindGraph(lg);
+	vdo_2.bindGraph(lg);
 	
 	vdo_1.setData(Data_1);
 	vdo_2.setData(Data_2);
 	
-	lg.addLine(vdo_1.getData(), [239, 138, 98]);
+	lg.addLine(vdo_1.getData(), [239, 138, 98]);/**/
 	
-	lg.addLine(vdo_2.getData(), [103, 169, 207]);
+	lg.addLine(vdo_2.getData(), [103, 169, 207]);/**/
 }
 
 function setup()
