@@ -59,14 +59,11 @@ function sparkline(){
 				.attr("width", ret.width())
 				.attr("height", ret.height())
 			.append("path")
-				.datum(datafunc);
-				.attr("d", line)
+				.datum(datafunc)
+				.attr("d", line);
 
 	}
 	
-	function updateLine(){
-		if (typeof(line) =="function")
-	}
 	ret.x = function(fx){
 		if (arguments.length==0) return xfunc;
 		xfunc = typeof(fx) == "function"?fx:function(){return fx;};
