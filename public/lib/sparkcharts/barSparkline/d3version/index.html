@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<script src="http://d3js.org/d3.v3.min.js"></script>
+		<script src="sparkchart.js"></script>
+	</head>
+	<body>
+		<script>
+			var d=[4,-3,2];
+			var table=d3.select("body").append("table");
+			
+			var sbar = sparkbar()
+						.domain(4)    // domain(d3.max(data)
+						.size(100,20)
+						.data(function(d) {return d;});
+			//Each row represents an element of data.
+			var rows = table.selectAll("tr").data(d).enter().append("tr");
+			//Draws a bar in each column
+			rows.append("td")
+				.call(sbar)
+				.select("rect")
+				//.style("fill","#00ff00");
+		</script>
+	 </body>
+</html>
