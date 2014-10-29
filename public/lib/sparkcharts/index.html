@@ -7,7 +7,7 @@
 <body>
 <script>
 var d = [{l:[1,4,5], b:4},
-       {l:[2,1,1], b:3}, 
+       {l:[2,1,1], b:-3}, 
        {l:[3,2,5], b:1}];
 
 var table = d3.select("body").append("table");
@@ -23,7 +23,7 @@ var sarea =sparkarea()
 	.data(function(d){return d.l;});
 
 var sbar = sparkbar()
-	.domain(4)
+	.domain([-3,4])
 	.size(100, 20)
 	.data(function(d){return d.b;});
 	
