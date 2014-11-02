@@ -13,12 +13,12 @@ var d = [{l:[1,4,5], b:4},
 var table = d3.select("body").append("table");
 
 var sline = sparkline()
-	.domain(2,5)
+	//.domain(2,0)
 	.size(100, 20)
 	.data(function(d){return d.l;});
 	
 var sarea =sparkarea()
-	.domain(2,5)
+	//.domain(2,5)
 	.size(100,20)
 	.data(function(d){return d.l;});
 

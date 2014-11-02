@@ -26,7 +26,6 @@ function sparkchart(sparkchart){
 		if (arguments.length==0) return [scale.x.domain(), scale.y.domain()];
 		scale.x.domain(dx instanceof Array?dx:[0,dx]);
 		scale.y.domain(dy instanceof Array?dy:[0,dy]);
-		sparkchart.autosize(dx == 0, dy == 0);
 		return sparkchart;
 	}
 	sparkchart.scale = {
@@ -50,8 +49,18 @@ function sparkline(){
 	var xfunc = function(d,i){return i;}, 
 		yfunc = function(d){return d;}, 
 		datafunc = function(d){return d;};
-	var line = d3.svg.line();
 	var ret = function(selection){
+		var domain = ret.domain();
+		var ax = domain[0][0] == 0 && domain[0][1] == 0
+		var ay = domain[1][0] == 0 && domain[1][1] == 0
+		console.log([ax,ay])
+		var line = (ax || ay)?
+			function(d){
+				var scalex = ax?ret.scale.x().copy().domain([Math.min.apply(null,d.map(xfunc)), Math.max.apply(null,d.map(xfunc))]):ret.scale.x()
+				var scaley = ay?ret.scale.y().copy().domain([Math.min.apply(null,d.map(yfunc).concat([0])), Math.max.apply(null,d.map(yfunc).concat([0]))]):ret.scale.y()
+				return d3.svg.line().x(function(d,i){return scalex(xfunc(d,i))}).y(function(d,i){return scaley(yfunc(d,i))})(d)
+			}:
+			d3.svg.line().x(function(d,i){return ret.scale.x()(xfunc(d,i))}).y(function(d,i){return ret.scale.y()(yfunc(d,i))})
 		selection.select(".sparkline").remove();
 		selection
 			.append("svg")
@@ -67,16 +76,12 @@ function sparkline(){
 	ret.x = function(fx){
 		if (arguments.length==0) return xfunc;
 		xfunc = typeof(fx) == "function"?fx:function(){return fx;};
-		if (typeof(line) != "function")
-			line.x(function(d,i){return ret.scale.x()(xfunc(d,i));})
 		return ret;
 	}
 	
 	ret.y = function(fy){
 		if (arguments.length==0) return yfunc;
 		yfunc = typeof(fy) == "function"?fy:function(){return fy;};
-		if (typeof(line) != "function")
-			line.y(function(d,i){return ret.scale.y()(yfunc(d,i));})
 		return ret;
 	}
 	
@@ -86,42 +91,24 @@ function sparkline(){
 		return ret;
 	}
 	
-	ret.autosize = function(ax, ay){
-		if (ax || ay)
-			line = function(d){
-				var xscale, yscale;
-				if (ax){
-					var xval = d.map(xfunc)
-					xscale = ret.scale.x().copy().domain([Math.min.apply(null,xval),Math.max.apply(null,xval)])
-				}else
-					xscale = ret.scale.x()
-				if (ay){
-					var yval = d.map(yfunc)
-					yscale = ret.scale.y().copy().domain([Math.min.apply(null,yval),Math.max.apply(null,yval)])
-				}else
-					yscale = ret.scale.y()
-				return d3.svg.line()
-					.x(function(d,i){
-						return xscale(xfunc(d,i));
-					}).y(function(d,i){
-						return yscale(yfunc(d,i));
-					})
-			}
-		else{
-			line = d3.svg.line()
-			ret.x(xfunc).y(yfunc)
-		}
-	}
-	
-	return sparkchart(ret).x(xfunc).y(yfunc);
+	return sparkchart(ret);
 }
 
 function sparkarea(){
 	var xfunc = function(d,i){return i;}, 
 		yfunc = function(d){return d;}, 
 		datafunc = function(d){return d;};
-	var area = d3.svg.area();
 	var ret = function(selection){
+		var domain = ret.domain();
+		var ax = domain[0][0] == 0 && domain[0][1] == 0
+		var ay = domain[1][0] == 0 && domain[1][1] == 0
+		var area = (ax || ay)?
+			function(d){
+				var scalex = ax?ret.scale.x().copy().domain([Math.min.apply(null,d.map(xfunc)), Math.max.apply(null,d.map(xfunc))]):ret.scale.x()
+				var scaley = ay?ret.scale.y().copy().domain([Math.min.apply(null,d.map(yfunc).concat([0])), Math.max.apply(null,d.map(yfunc).concat([0]))]):ret.scale.y()
+				return d3.svg.area().x(function(d,i){return scalex(xfunc(d,i))}).y1(function(d,i){return scaley(yfunc(d,i))}).y0(scaley(0))(d)
+			}:
+			d3.svg.area().x(function(d,i){return ret.scale.x()(xfunc(d,i))}).y1(function(d,i){return ret.scale.y()(yfunc(d,i))}).y0(ret.scale.y()(0))
 		selection.select(".sparkarea").remove();
 		selection
 			.append("svg")
@@ -137,16 +124,12 @@ function sparkarea(){
 	ret.x = function(fx){
 		if (arguments.length==0) return xfunc;
 		xfunc = typeof(fx) == "function"?fx:function(){return fx};
-		if (typeof(area)!="function"")
-			area.x(function(d,i){return ret.scale.x()(xfunc(d,i));})
 		return ret;
 	}
 	
 	ret.y = function(fy){
 		if (arguments.length==0) return yfunc;
-		yfunc = typeof(fy) == "function":fy:function(){return fy};
-		if (typeof(area)!="function")
-			area.y1(function(d,i){return ret.scale.y()(yfunc(d,i));})
+		yfunc = typeof(fy) == "function"?fy:function(){return fy};
 		return ret;
 	}
 	
@@ -156,32 +139,7 @@ function sparkarea(){
 		return ret;
 	}
 	
-	ret.autosize = function(ax, ay){
-		if (ax || ay)
-			area = function(d){
-				var xscale, yscale;
-				if (ax){
-					var xval = d.map(xfunc)
-					xscale = ret.scale.x().copy().domain([Math.min.apply(null,xval),Math.max.apply(null,xval)])
-				}else
-					xscale = ret.scale.x()
-				if (ay){
-					var yval = d.map(yfunc)
-					yscale = ret.scale.y().copy().domain([Math.min.apply(null,yval),Math.max.apply(null,yval)])
-				}else
-					yscale = ret.scale.y()
-				return d3.svg.area()
-					.x(function(d,i){return xscale(xfunc(d,i));})
-					.y1(function(d,i){return yscale(yfunc(d,i));})
-					.y0(yscale(0))
-			}
-		else{
-			area = d3.svg.area().y0(yscale(0))
-			ret.x(xfunc).y(yfunc)
-		}
-	}
-	
-	return sparkchart(ret).x(xfunc).y(yfunc);
+	return sparkchart(ret);
 }
 
 function sparkbar(){
@@ -208,6 +166,5 @@ function sparkbar(){
 			barfunc = function(){return d;}
 		return ret;
 	}
-	ret.autosize = function(){}
 	return sparkchart(ret)
 }
