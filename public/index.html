@@ -9,6 +9,7 @@
             fill:none;
             stroke:#000;
         }
+
         table {
             border-collapse: collapse;
         }
@@ -22,13 +23,28 @@
             background-position: center left;
             border-right: 1px solid #dad9c7;
             margin-left: -1px;
-            padding: 0 20px;
+            padding: 10px 0;
+            width: 150px;
+            text-align: center;
         }
         th.headerSortUp {
             background-color: #f93;
         }
         th.headerSortDown {
             background-color: #9f3;
+        }
+
+        th .caret {
+            border-top: none;
+        }
+        th.headerSortUp .caret {
+            display: inline-block;
+            border-top: 4px solid;
+        }
+        th.headerSortDown .caret {
+            display: inline-block;
+            border-top: none;
+            border-bottom: 4px solid;
         }
     </style>
 
@@ -72,11 +88,11 @@
         <table id="target">
             <thead>
                 <tr>
-                    <th>Source</th>
-                    <th>SourceCountry</th>
-                    <th>Destination</th>
-                    <th>DestinationCountry</th>
-                    <th>Protocol</th>
+                    <th>Source<span class="caret"></span></th>
+                    <th>SourceCountry<span class="caret"></span></th>
+                    <th>Destination<span class="caret"></span></th>
+                    <th>DestinationCountry<span class="caret"></span></th>
+                    <th>Protocol<span class="caret"></span></th>
                     <th>Bytes over Time</th>
                     <th>Total bytes</th>
                 </tr>
