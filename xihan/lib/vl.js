@@ -58,7 +58,8 @@ function Axis(startPoint, length)
 	this._startPoint = [0, 0];
 	this._length = 0;
 	this._rotation = 0;
-
+	
+	this._id = "";
 	this._type = 'continuous';//'discrete'
 	
 	this._valueStart = 0;
@@ -90,6 +91,7 @@ function Axis(startPoint, length)
 	this._alpha_ = 0;
 	this._beta_ = 0;
 	this._currentLength_ = 0;
+	this._currentHeight_ = 0;
 	this._projectionLength = 0;
 	this._projectionHeight = 0;
 	this._mouseValue = "";
@@ -105,12 +107,22 @@ function Axis(startPoint, length)
 	//Methods
 	if (typeof this._initialized == "undefined")
 	{
-	
+		
+		Axis.prototype.setID = function (id)
+		{
+			this._id = idGenerator();
+		}
+		
+		Axis.prototype.getID = function ()
+		{
+			return this._id;
+		}		
+		
 		Axis.prototype.getStartPoint = function ()
 		{
 			return this._startPoint;
 		}
-	
+		
 		Axis.prototype.setLength = function (length)
 		{
 			this._length = length;
@@ -189,6 +201,10 @@ function Axis(startPoint, length)
 					{
 						this.labels[index] = new Label([0, 0], values[index]);
 					}
+					else
+					{
+						this.labels[index] = new Label([0, 0], "");
+					}
 				}
 			}
 			this._updateLabel();
@@ -212,25 +228,7 @@ function Axis(startPoint, length)
 			}
 		}
 		
-		Axis.prototype.getProjectionLength = function (globalX, globalY)
-		{
-			var localX = globalX - this._startPoint[0];
-			var localY = globalY - this._startPoint[1];
-			var h = Math.sqrt(localX*localX + localY*localY);
-			var alpha = Math.acos(localX / h);
-			if(localY < 0)
-			{
-				return Math.cos(alpha + this._rotation) * h;
-			}
-			else if(localY > 0)
-			{
-				return Math.cos(alpha - this._rotation) * h;
-			}
-			else
-			{
-				return Math.cos(this._rotation) * h;
-			}
-		}		
+	
 		
 		Axis.prototype.draw = function ()
 		{
@@ -295,9 +293,28 @@ function Axis(startPoint, length)
 			}			
 		}
 		
-		Axis.prototype._drawMouseValue = function()
+		Axis.prototype.getProjectionLength = function (globalX, globalY)
 		{
-
+			var localX = globalX - this._startPoint[0];
+			var localY = globalY - this._startPoint[1];
+			var h = Math.sqrt(localX*localX + localY*localY);
+			var alpha = Math.acos(localX / h);
+			if(localY < 0)
+			{
+				return Math.cos(alpha + this._rotation) * h;
+			}
+			else if(localY > 0)
+			{
+				return Math.cos(alpha - this._rotation) * h;
+			}
+			else
+			{
+				return Math.cos(this._rotation) * h;
+			}
+		}
+		
+		Axis.prototype._updateMouseProjection = function()
+		{
 			this._localX_ = mouseX - this._startPoint[0];
 			this._localY_ = mouseY - this._startPoint[1];
 			this._h_ = Math.sqrt(this._localX_*this._localX_ + this._localY_*this._localY_);
@@ -316,31 +333,57 @@ function Axis(startPoint, length)
 			}
 			
 			this._projectionLength = Math.cos(this._beta_) * this._h_;
-			this._projectionHeight = Math.sin(this._beta_) * this._h_;			
-			
-			//this._projectionLength = this.getProjectionLength(mouseX, mouseY);
+			this._projectionHeight = Math.sin(this._beta_) * this._h_;		
+		}
+		
+		Axis.prototype._updateContinuousMouseValue = function()
+		{
+			this._mouseValue = this._valueStart + (this._valueStop - this._valueStart) * this._projectionLength / this._length;
+			this._currentLength_ = this._projectionLength;
+		}
+
+		Axis.prototype._updateDiscreteMouseValue = function()
+		{
+			this._mouseValueIndex = Math.round(this._projectionLength / (this._markStep * this._labelStep));
+			this._mouseValue = this.labels[this._mouseValueIndex].info;
+			this._currentLength_ = this._mouseValueIndex * this._markStep * this._labelStep;
+		}
+		
+		Axis.prototype._drawMouseValue = function()
+		{
+			this._updateMouseProjection();
 			
 			if(this._projectionLength >= 0 && this._projectionLength <= this._length)
 			{		
 				if(this._type == "continuous")
 				{
-					this._mouseValue = this._valueStart + (this._valueStop - this._valueStart) * this._projectionLength / this._length;
-					this._currentLength_ = this._projectionLength;
+					this._updateContinuousMouseValue();
+					/*
+					stroke([0, 0, 0, 50]);
+					line(this._currentLength_, 0, this._currentLength_, this._currentHeight_);
+					*/
+					strokeWeight(1);
+					stroke([255, 0, 0, 200]);
+					line(this._currentLength_, 0, this._currentLength_, -this.markWidth);		
 				}
 				else if(this._type == "discrete")
 				{
-					this._mouseValueIndex = Math.round(this._projectionLength / (this._markStep * this._labelStep));
-					if(this._mouseValueIndex >= 0 && this._mouseValueIndex < this.labels.length)
+					this._updateDiscreteMouseValue();
+					strokeWeight(4);
+					stroke([255, 0, 0, 255]);
+					if(this._mouseValueIndex != 0 && this._mouseValueIndex != this.labels.length - 1)
 					{
-						this._mouseValue = this.labels[this._mouseValueIndex].info;
-						this._currentLength_ = this._mouseValueIndex * this._markStep * this._labelStep;
-					}
-					else this._mouseValue = "";
+						line(this._currentLength_ - this._markStep * this._labelStep / 2, this.markWidth*3/5, this._currentLength_ + this._markStep * this._labelStep / 2, this.markWidth*3/5);
+					}						
 				}
+				/*
 				noStroke();
 				fill([227, 119, 194, 100]);
 				ellipse(this._currentLength_, 0, 10, 10);
+				*/
+		
 			}
+			else this._mouseValue = "";
 		}
 		
 		Axis.prototype.scale = function (value)
@@ -737,7 +780,7 @@ function Scatter(startPoint)
 		Scatter.prototype.getStartPoint = function ()
 		{
 			return this._startPoint;
-		}	
+		}
 	
 		Scatter.prototype.draw = function ()
 		{
@@ -950,15 +993,14 @@ function Line_Graph(startPoint, width, height)
 	this.construct(startPoint, width, height);
 }
 
-function Data_Drawer(value)
+function Data_Entry(value)
 {
 	//Attributes
 	this._value = 0;
-	this._index = -1;
 	this._id = "";
-	this._organizer = {};
+	this._source = {};
 	
-	this._screenProjection = [0,0];
+	this._screenPoint = [0,0];
 	this._representation = {};
 	this.selected = false;
 	
@@ -969,75 +1011,73 @@ function Data_Drawer(value)
 	{
 		this._id = idGenerator();
 		this._value = value;
-		this._tag = new Tag(this._screenProjection, 50, 40, this._value.toString());
+		this._tag = new Tag(this._screenPoint, 50, 40, this._value.toString());
 	};
 	
 	//Methods
 	if (typeof this._initialized == "undefined")
 	{
-		Data_Drawer.prototype.setIndex = function (index)
-		{
-			this._index = index;
-		}
 		
-		Data_Drawer.prototype.getIndex = function ()
+		Data_Entry.prototype.getIndex = function ()
 		{
 			return this._index;
 		}		
 		
-		Data_Drawer.prototype.getID = function ()
+		Data_Entry.prototype.getID = function ()
 		{
 			return this._id;
 		}
 		
-		Data_Drawer.prototype.getValue = function ()
+		Data_Entry.prototype.getValue = function ()
 		{
 			return this._value;
 		}
 
-		Data_Drawer.prototype.setValue = function (value)
+		Data_Entry.prototype.setValue = function (value)
 		{
 			this._value = value;
 			this.onValueChange(this._id);
 		}
 		
-		Data_Drawer.prototype.onValueChange = function (id)
+		Data_Entry.prototype.onValueChange = function (id)
 		{
-			this._organizer.updateDrawer(id);
-			this.calcScreenProjection();
+			/*
+			this._source.updateRawData(id);
+			this.screenMapping();
 			this.updateTag();
+			*/
 		}
 		
-		Data_Drawer.prototype.calcScreenProjection = function()
+		Data_Entry.prototype.screenMapping = function ()
 		{
-			this._screenProjection = this._organizer.projectFunction(this._value);
+			this._screenPoint = this._source.mappingFunction(this._value);
 		}
 
-		Data_Drawer.prototype.updateTag = function()
+		Data_Entry.prototype.updateTag = function ()
 		{
 			this._tag.setInfo(this._value.toString());
-			this._tag.setStartPoint(this._screenProjection);
+			this._tag.setStartPoint(this._screenPoint);
 			this._tag.setRotation(-Math.PI / 2);
 		}
 		
-		Data_Drawer.prototype.getTag = function()
+		Data_Entry.prototype.getTag = function ()
 		{
 			return this._tag;
 		}		
 		
-		Data_Drawer.prototype.bindOrganizer = function (organizer)
+		Data_Entry.prototype.link = function (source)
 		{
-			this._organizer = organizer;
+			this._source = source;
 		}
 		
-		Data_Drawer.prototype.getGlobalX = function ()
+		Data_Entry.prototype.getGlobalX = function ()
 		{
-			return this._screenProjection[0];
+			return this._screenPoint[0];
 		}
 		
-		Data_Drawer.prototype.getGlobalY = function ()
+		Data_Entry.prototype.getGlobalY = function ()
 		{
-			return this._screenProjection[1];
+			return this._screenPoint[1];
 		}
 		
 		this._initialized = true;
@@ -1047,102 +1087,143 @@ function Data_Drawer(value)
 	this.construct(value);
 }
 
-function Data_Organizer()
+function Data_Source(type)
 {
 	//Attributes
-	this._data = [];
-	this._data_drawers = [];
-	this._data_drawers_hashtable = {};
 	this._type = "static";//"dynamic"
-	
-	this._currentDrawerID = -1;
-	
+	this._rawData = [];
+	this._entries = [];
+	this._entries_hashtable = {};
+	this._currentEntryID = -1;
 	this._graph = {};
 	
 	//Constructor
-	this.construct = function ()
+	this.construct = function (type)
 	{
+		this._type = type;
 	};
 	
 	//Methods
 	if (typeof this._initialized == "undefined")
 	{
 		
-		Data_Organizer.prototype.setData = function (values)
+		Data_Source.prototype.setRawData = function (data)
 		{
-			this._data = values;
-			this._data_drawers = [];
-			this._data_drawers_hashtable = {};
-			for(var i = 0; i < values.length; i++)
+			this._rawData = data;
+		}
+		
+		Data_Source.prototype.getRawData = function ()
+		{
+			return this._rawData;
+		}
+		
+		Data_Source.prototype.getEntries = function ()
+		{
+			return this._entries;
+		}
+		
+		Data_Source.prototype.setType = function (type)
+		{
+			if(this._type != type)
 			{
-				var drawer = new Data_Drawer(values[i]);
-				drawer.setIndex(i);
-				drawer.bindOrganizer(this);
-				drawer.calcScreenProjection();
-				drawer.updateTag();
-				this._data_drawers_hashtable[drawer.getID()] = drawer;
-				this._data_drawers[this._data_drawers.length] = drawer;
+				this._type = type;
+				this._updateType();
 			}
 		}
 		
-		Data_Organizer.prototype.getData = function ()
+		Data_Source.prototype.getType = function ()
 		{
-			return this._data;
+			return this._type;
 		}
 		
-		Data_Organizer.prototype.updateDrawer = function (id)
+		Data_Source.prototype._updateType = function ()
 		{
-			this._data[this._data_drawers_hashtable[id].getIndex()] = this._data_drawers_hashtable[id].getValue();
-			
-			console.log("OK!");
-		}
-		
-		Data_Organizer.prototype._reloadData = function ()
-		{
-			this._data = [];
-			for(var i = 0; i < this._data_drawers.length; i++)
+			if(this._type == "static")
 			{
-				this._data[this._data.length] = this._data_drawers[i];
+				this._reloadRawData();
+				this._clearEntries();
 			}
-			return this._data;			
+			else if(this._type = "dynamic")
+			{
+				this._createEntries();
+			}
+			else
+			{
+				console.log("TYPE ERROR!");
+			}
 		}
 		
-		Data_Organizer.prototype.selectData = function (globalX, globalY)
+		Data_Source.prototype._clearEntries = function ()
 		{
-			//console.log(this._data_drawers_hashtable);
+			this._entries = [];
+			this._entries_hashtable = {};
+		}
 		
+		Data_Source.prototype._createEntry = function (value)
+		{
+			var result = new Data_Entry(value);
+			result.link(this);
+			result.screenMapping();
+			result.updateTag();
+			return result;
+		}
+		
+		Data_Source.prototype._createEntries = function ()
+		{
+			this._clearEntries();
+			for(var i = 0; i < this._rawData.length; i++)
+			{
+				var entry = this._createEntry(this._rawData[i]);
+				this._entries_hashtable[entry.getID()] = entry;
+				this._entries[this._entries.length] = entry;
+			}
+		}
+		
+		Data_Source.prototype.updateRawData = function (id)
+		{
+			/*
+			this._rawData[this._entries_hashtable[id].getIndex()] = this._entries_hashtable[id].getValue();
+			*/
+		}
+		
+		Data_Source.prototype._reloadRawData = function ()
+		{
+			this._rawData = [];
+			for(var i = 0; i < this._entries.length; i++)
+			{
+				this._rawData[this._rawData.length] = this._entries[i].getValue();
+			}
+			return this._rawData;
+		}
+		
+		
+		///////////////////
+		Data_Source.prototype._getEntry = function (globalX, globalY)
+		{
 			var minDist = Number.MAX_VALUE;
-			for(var id in this._data_drawers_hashtable)
+			for(var id in this._entries_hashtable)
 			{
-				//console.log(id);
-				
-				var xDiff = globalX - this._data_drawers_hashtable[id].getGlobalX();
-				var yDiff = globalY - this._data_drawers_hashtable[id].getGlobalY();
+				var xDiff = globalX - this._entries_hashtable[id].getGlobalX();
+				var yDiff = globalY - this._entries_hashtable[id].getGlobalY();
 				var currentDist = (xDiff * xDiff) + (yDiff * yDiff);
-				
-				/*
-				console.log(globalX);
-				console.log(globalY);
-				console.log(this._data_drawers_hashtable[id].getGlobalX());
-				console.log(this._data_drawers_hashtable[id].getGlobalY());
-				console.log("-------");
-				*/
-				
 				if(currentDist < minDist)
 				{
 					minDist = currentDist;
-					this._currentDrawerID = id;
+					this._currentEntryID = id;
 				}
 			}
-			if(this._currentDrawerID in this._data_drawers_hashtable)
-			{
-				this._data_drawers_hashtable[this._currentDrawerID].selected = !this._data_drawers_hashtable[this._currentDrawerID].selected;
-				//console.log("Done!");
-			}
-			//console.log(this._currentDrawerID);
 		}
 		
-		Data_Organizer.prototype.projectFunction = function (value)
+		Data_Source.prototype.selectEntry = function (globalX, globalY)
+		{
+			this._getEntry(globalX, globalY);
+			if(this._currentEntryID in this._entries_hashtable)
+			{
+				this._entries_hashtable[this._currentEntryID].selected = !this._entries_hashtable[this._currentEntryID].selected;
+			}
+		}
+		
+		Data_Source.prototype.mappingFunction = function (value)
 		{
 			if(value instanceof Array)
 			{
@@ -1159,20 +1240,21 @@ function Data_Organizer()
 			}
 		}
 		
-		Data_Organizer.prototype.bindGraph = function (graph)
+		Data_Source.prototype.bindGraph = function (graph)
 		{
 			this._graph = graph;
+			this._updateType();
 		}
 		
-		Data_Organizer.prototype.draw = function ()
+		Data_Source.prototype.draw = function ()
 		{
-			for(var id in this._data_drawers_hashtable)
+			for(var id in this._entries_hashtable)
 			{
-				var v = this._data_drawers_hashtable[id];
+				var v = this._entries_hashtable[id];
 				var tx = v.getGlobalX();
 				var ty = v.getGlobalY();
 				push();
-				translate(100, 550);
+				translate(this._graph.getAxises()[0].getStartPoint()[0], this._graph.getAxises()[1].getStartPoint()[1]);
 				noStroke();
 				if(v.selected)
 				{
@@ -1192,6 +1274,219 @@ function Data_Organizer()
 	}
 	
 	//Call construct
-	this.construct();	
+	this.construct(type);	
 }
 
+function Graph_Prototype()
+{
+	//Attributes
+	this._dataSources = [];
+	this._axises = [];
+	this._representations = [];
+	
+    //Constructor
+    this.construct = function ()
+    {
+	}
+
+    //Methods
+    if (typeof this._initialized == "undefined")
+	{
+	
+		Graph_Prototype.prototype.addDataSource = function (data)
+		{
+			data.bindGraph(this);
+			this._dataSources[this._dataSources.length] = data;
+		}
+		
+		Graph_Prototype.prototype.getDataSources = function (data)
+		{
+			return this._dataSources;
+		}		
+
+		Graph_Prototype.prototype.clearDataSources = function (data)
+		{
+			this._dataSources = [];
+		}
+		
+		Graph_Prototype.prototype.addAxis = function (axis)
+		{
+			this._axises[this._axises.length] = axis;
+		}
+		
+		Graph_Prototype.prototype.getAxises = function ()
+		{
+			return this._axises;
+		}
+		
+		Graph_Prototype.prototype._link = function ()
+		{
+			
+		}
+		
+        Graph_Prototype.prototype.draw = function ()
+        {
+			for(var i = 0; i < this._axises.length; i++)
+			{
+				this._axises[i].draw();
+			}
+			
+			for(var i = this._dataSources.length - 1; i >= 0; i--)
+			{
+				this._dataSources[i].draw();
+			}			
+			
+			for(var i = 0; i < this._representations.length; i++)
+			{
+				this._representations[i].draw();
+			}
+        }
+		
+        this._initialized = true;
+	}
+	
+	this.construct();
+}
+
+function Presentation_Value_Prototype()
+{
+	//Attributes
+	this._startPoint = [0, 0];
+	this.color = [127, 127, 127, 100];
+	
+	this.visable = true;
+	this._source = {};
+	
+	//Constructor
+	this.construct = function ()
+	{
+	};
+	
+	//Methods
+	if (typeof this._initialized == "undefined")
+	{
+	
+		Presentation_Value_Prototype.prototype.setStartPoint = function (startPoint)
+		{
+			this._startPoint = startPoint;
+		}
+	
+		Presentation_Value_Prototype.prototype.getStartPoint = function ()
+		{
+			return this._startPoint;
+		}
+	
+		Presentation_Value_Prototype.prototype.link = function (source)
+		{
+			this._source = source;
+		}
+	
+		Presentation_Value_Prototype.prototype.draw = function ()
+		{
+			if(this.visable)
+			{
+				push();
+				translate(this._startPoint[0], this._startPoint[1]);				
+				//Line
+				stroke(this.color);
+				beginShape(constants.LINES)
+				for(var i = 0; i < this._values.length; i++)
+				{
+					vertex(this._values[i][0], this._values[i][1]);
+				}
+				endShape();
+				
+				//Area
+				noStroke();
+				beginShape();
+				fill([this.color[0], this.color[1], this.color[2], 20]);
+				vertex(this._values[0][0], 0);
+				for(var i = 0; i < this._values.length; i++)
+				{
+					vertex(this._values[i][0], this._values[i][1]);
+				}
+				vertex(this._values[this._values.length-1][0], 0);
+				endShape(constants.CLOSE);
+
+				pop();
+			}
+		};
+		
+		this._initialized = true;
+	}
+	
+	//Call construct
+	this.construct(startPoint);	
+}
+
+function Presentation_Relationship_Prototype()
+{
+	//Attributes
+	this._startPoint = [0, 0];
+	this.color = [127, 127, 127, 100];
+	
+	this.visable = true;
+	this._source = {};
+	
+	//Constructor
+	this.construct = function ()
+	{
+	};
+	
+	//Methods
+	if (typeof this._initialized == "undefined")
+	{
+	
+		Presentation_Relationship_Prototype.prototype.setStartPoint = function (startPoint)
+		{
+			this._startPoint = startPoint;
+		}
+	
+		Presentation_Relationship_Prototype.prototype.getStartPoint = function ()
+		{
+			return this._startPoint;
+		}
+	
+		Presentation_Relationship_Prototype.prototype.link = function (source)
+		{
+			this._source = source;
+		}
+	
+		Presentation_Relationship_Prototype.prototype.draw = function ()
+		{
+			if(this.visable)
+			{
+				push();
+				translate(this._startPoint[0], this._startPoint[1]);				
+				//Line
+				stroke(this.color);
+				beginShape(constants.LINES)
+				for(var i = 0; i < this._values.length; i++)
+				{
+					vertex(this._values[i][0], this._values[i][1]);
+				}
+				endShape();
+				
+				//Area
+				noStroke();
+				beginShape();
+				fill([this.color[0], this.color[1], this.color[2], 20]);
+				vertex(this._values[0][0], 0);
+				for(var i = 0; i < this._values.length; i++)
+				{
+					vertex(this._values[i][0], this._values[i][1]);
+				}
+				vertex(this._values[this._values.length-1][0], 0);
+				endShape(constants.CLOSE);
+
+				pop();
+			}
+		};
+		
+		this._initialized = true;
+	}
+	
+	
+	//Call construct
+	this.construct(startPoint);	
+}

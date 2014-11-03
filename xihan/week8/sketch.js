@@ -23,6 +23,8 @@ function preload()
 	bargraph._axises[1].setLabelStyle([-6, bargraph._axises[1].markWidth * 2], Math.PI / 2, constants.RIGHT);
 	bargraph._axises[1].showAxis = false;
 	
+	console.log("in");
+	
 	bargraph.addBars(bargraph._axises[0], bargraph._axises[1], [0,24,0,6,0,0,0,3,12,3,1,0,1,0,0,0,0,0,0,0,2,0,5,0,0,0,0,1], [227, 119, 194]);
 	bargraph.addBars(bargraph._axises[0], bargraph._axises[1], [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,98,169,0,0,2,0,0,0,0,0,0,0], [148, 103, 189]);
 	bargraph.addBars(bargraph._axises[0], bargraph._axises[1], [0,5,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], [214, 39, 40]);
@@ -31,6 +33,8 @@ function preload()
 	bargraph.addBars(bargraph._axises[0], bargraph._axises[1], [43, 115, 47,23,71,74,19,0,18,8,0,0,0,0,0,0,4,0,0,6,8,4,32,44,16,0,0,4], [31, 119, 180]);
 
 	///////////////////////////////////////////////////////
+	
+	console.log("in!!!");
 	
 	bargraph._dataLoadCompleted = true;
 }

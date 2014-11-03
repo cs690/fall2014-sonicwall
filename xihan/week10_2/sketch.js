@@ -5,8 +5,8 @@ var Data_2 = [[10,15], [17, 24], [30, 66], [45, 78], [49, 45], [60, 40], [75, 75
 
 var lg = new Line_Graph(origin, 400, 400);
 
-var vdo_1 = new Data_Organizer();
-var vdo_2 = new Data_Organizer();
+var vdo_1 = new Data_Source("dynamic");
+var vdo_2 = new Data_Source("dynamic");
 
 function preload()
 {
@@ -37,15 +37,13 @@ function preload()
 	
 	///////////////////////////////////////////
 	
+	vdo_1.setRawData(Data_1);
 	vdo_1.bindGraph(lg);
+	vdo_2.setRawData(Data_2);
 	vdo_2.bindGraph(lg);
-	
-	vdo_1.setData(Data_1);
-	vdo_2.setData(Data_2);
-	
-	lg.addLine(vdo_1.getData(), [239, 138, 98]);/**/
-	
-	lg.addLine(vdo_2.getData(), [103, 169, 207]);/**/
+
+	lg.addLine(vdo_1.getRawData(), [239, 138, 98]);/**/
+	lg.addLine(vdo_2.getRawData(), [103, 169, 207]);/**/
 }
 
 function setup()
@@ -70,6 +68,6 @@ function mouseClicked()
 
 	//vdo._value_drawers[0].setValue(5);
 	
-	vdo_1.selectData(mouseX - 100, mouseY - 550);
+	vdo_1.selectEntry(mouseX - 100, mouseY - 550);
 	//vdo_2.selectData(mouseX - 100, mouseY - 550);
 }

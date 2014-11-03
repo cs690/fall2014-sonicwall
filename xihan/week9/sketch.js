@@ -27,6 +27,7 @@ function preload()
 	b.setDiscreteLabels(2, ["","a","b","c","d","e","f","g","h","i"]);
 	b.setLabelStyle([-6, b.markWidth * 2], Math.PI / 2, constants.RIGHT);
 	b.showAxis = true;
+	b.showMark = false;
 	b.showFirstMark = false;
 	b.showFirstLabel = false;
 	
