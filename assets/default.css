@@ -42,8 +42,11 @@ footer.well {
 }
 
 /* Team */
-.panel img {
+.panel img.header {
     height: 100px;
+}
+.panel img.body {
+    width: 100%;
 }
 .panel .list-group-item-heading {
     border-bottom: 1px solid #eee;
