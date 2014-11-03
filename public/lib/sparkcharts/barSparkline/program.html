@@ -1,15 +1,48 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-			<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-			<script src="http://omnipotent.net/jquery.sparkline/2.1.2/jquery.sparkline.js"></script>
-		</meta>
-	</head>
-	<body>
-		<script type="text/javascript"  src="program.js"></script>
-		<p>
-			Sparkline appears here: <span id="sparkline">&nbsp;</span>
-		</p>
-	</body>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="http://omnipotent.net/jquery.sparkline/2.1.2/jquery.sparkline.js"></script>
+</meta>
+</head>
+<body>
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../../../index.html">Dell SonicWall</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li><a href="../../../index.html">Home</a></li>
+            <li class="active"><a href="../../../visual.html">Visualizations</a></li>
+            <li><a href="../../../data.html">Data</a></li>
+            <li><a href="../../../tools.html">Tools</a></li>
+            <li><a href="../../../team.html">Team</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+    <div class="container" style="width:400px">
+        Sparkline appears here: <span id="sparkline">&nbsp;</span>
+    </div>
+
+    <script type="text/javascript"  src="program.js"></script>
+</body>
 </html>
