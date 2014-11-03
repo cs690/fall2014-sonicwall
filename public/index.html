@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>Responsible Table</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <style type="text/css">
         path{
             fill:none;
@@ -29,27 +31,60 @@
             background-color: #9f3;
         }
     </style>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
     <script src="jquery.tablesorter.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="lib/sparkcharts/sparkcharts.js"></script>
 </head>
 <body>
-    <table id="target">
-        <thead>
-            <tr>
-                <th>Source</th>
-                <th>SourceCountry</th>
-                <th>Destination</th>
-                <th>DestinationCountry</th>
-                <th>Protocol</th>
-                <th>Bytes over Time</th>
-                <th>Total bytes</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="../index.html">Dell SonicWall</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li><a href="../index.html">Home</a></li>
+            <li class="active"><a href="../visual.html">Visualizations</a></li>
+            <li><a href="../data.html">Data</a></li>
+            <li><a href="../tools.html">Tools</a></li>
+            <li><a href="../team.html">Team</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+    <div class="container">
+        <table id="target">
+            <thead>
+                <tr>
+                    <th>Source</th>
+                    <th>SourceCountry</th>
+                    <th>Destination</th>
+                    <th>DestinationCountry</th>
+                    <th>Protocol</th>
+                    <th>Bytes over Time</th>
+                    <th>Total bytes</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 
     <script type="text/javascript">
         $(function() {
