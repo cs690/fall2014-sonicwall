@@ -1,0 +1,80 @@
+html, body{
+	height:100%;
+}
+
+div{
+	padding:10px;
+}
+
+#chart{
+	float:top;
+	width: 100%;
+	height:80%;
+}
+
+
+#g1{
+	float:top;
+	width:100%;
+	height:50%;
+}
+
+#table{
+	float:bottom;
+	width: 100%;
+	height: 50%;
+}
+.domain {
+	fill: none;
+	stroke: #000;
+}
+
+line{
+	stroke:#000;
+	stroke-width:"1";
+}
+
+.detailaxis text{
+	text-anchor: start;
+}
+
+path{
+	fill:none;
+}
+
+table {
+	border-collapse: collapse;
+}
+thead {
+	background-color: #eee;
+}
+th.header {
+	cursor: pointer;
+	font-weight: bold;
+	background-repeat: no-repeat;
+	background-position: center left;
+	border-right: 1px solid #dad9c7;
+	margin-left: -1px;
+	padding: 10px 0;
+	width: 150px;
+	text-align: center;
+}
+th.headerSortUp {
+	background-color: #f93;
+}
+th.headerSortDown {
+	background-color: #9f3;
+}
+
+th .caret {
+	border-top: none;
+}
+th.headerSortUp .caret {
+	display: inline-block;
+	border-top: 4px solid;
+}
+th.headerSortDown .caret {
+	display: inline-block;
+	border-top: none;
+	border-bottom: 4px solid;
+}
