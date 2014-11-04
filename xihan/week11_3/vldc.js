@@ -7,7 +7,7 @@ var _websocket_ = {};
 
 function createServer()
 {
-	_websocket_ = new WebSocket('ws://localhost:8080/');//, 'echo-protocol'
+	_websocket_ = new WebSocket('ws://localhost:8080/');//, 'rawdata-input-protocol'
 
 	_websocket_.onopen = function (evt)
 	{
@@ -23,7 +23,7 @@ function createServer()
 	{
 		console.log('Erroroccured:' + evt.data);
 	}
-
+	
 	_websocket_.onmessage = function (evt)
 	{
 		console.log('Retrieveddatafromserver:' + evt.data);
