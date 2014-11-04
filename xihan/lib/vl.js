@@ -1090,6 +1090,7 @@ function Data_Entry(value)
 function Data_Source(type)
 {
 	//Attributes
+	this.self = {};
 	this._type = "static";//"dynamic"
 	this._rawData = [];
 	this._entries = [];
@@ -1100,6 +1101,7 @@ function Data_Source(type)
 	//Constructor
 	this.construct = function (type)
 	{
+		this.self = this;
 		this._type = type;
 	};
 	
