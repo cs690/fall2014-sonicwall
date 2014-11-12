@@ -64,8 +64,9 @@ function Axis(startPoint, length)
 	
 	this._valueStart = 0;
 	this._valueStop = 0;
+	this._discreteValues = [];
 	this.scaleFactor = 1;
-
+	
 	this.marks = [];
 	this._markCount = 0;
 	this._markStep = 0;
@@ -184,6 +185,7 @@ function Axis(startPoint, length)
 		Axis.prototype.setDiscreteLabels = function (labelStep, values)
 		{
 			this._type = "discrete";
+			this._discreteValues = values;
 			this._createLabel(values ,labelStep);
 		}
 		
@@ -395,7 +397,7 @@ function Axis(startPoint, length)
 			}
 			else if(this._type == "discrete")
 			{
-				//TBI
+				return this._discreteValues.indexof(value) * this._markStep * this._labelStep;
 			}
 		}
 		
@@ -1090,7 +1092,6 @@ function Data_Entry(value)
 function Data_Source(type)
 {
 	//Attributes
-	this.self = {};
 	this._type = "static";//"dynamic"
 	this._rawData = [];
 	this._entries = [];
@@ -1098,11 +1099,13 @@ function Data_Source(type)
 	this._currentEntryID = -1;
 	this._graph = {};
 	
+	this.color = [0,0,0, 127];
+	
 	//Constructor
 	this.construct = function (type)
 	{
-		this.self = this;
 		this._type = type;
+		this.color = [random(255), random(255), random(255), 200]
 	};
 	
 	//Methods
@@ -1265,7 +1268,7 @@ function Data_Source(type)
 				}
 				else
 				{
-					fill([0,0,0,100]);
+					fill(this.color);
 				}
 				ellipse(tx, ty, 8, 8);
 				pop();
