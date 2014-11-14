@@ -1,0 +1,12 @@
+<head>
+	<script language="javascript" type="text/javascript" src="../lib/p5.js"></script>
+	<script language="javascript" type="text/javascript" src="../lib/vl.js"></script>
+	<script language="javascript" type="text/javascript" src="vldc.js"></script>
+	<script language="javascript" type="text/javascript" src="sketch.js"></script>
+</head>
+<body>
+	Data: <input type="text" id="dataInput" value="[[8,15], [22, 42], [28, 15], [31, 48], [35, 35], [59, 40], [65, 48]]" />
+	<input type="submit" value="Submit" onclick="sendData(document.getElementById('dataInput').value)"/>
+	<input type="submit" value="Clear" onclick="clearData()"/>
+	<div id="myContainer"></div>
+</body>
