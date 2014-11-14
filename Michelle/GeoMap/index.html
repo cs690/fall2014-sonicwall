@@ -45,7 +45,9 @@
 						.attr('class', 'd3-tip')
 						.offset([-10,0])
 						.html(function(d) {
-							return "IP:"+d.Source;
+								return "Source IP:"+d.Source+
+								"<br>"+
+								"Destination IP:"+d.Destination;
 						})
 			//Create SVG element
 			var svg = d3.select("body")
@@ -127,7 +129,6 @@
 						   .style("fill", "red")
 						   .style("opacity", 0.75)
 						  	.on('mouseover', tip.show)
-								
 						   .on('mouseout', tip.hide)
 						   });
 
