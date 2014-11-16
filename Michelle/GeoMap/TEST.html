@@ -48,16 +48,16 @@
 								return "Source IP:"+d.Source+
 								"<br>"+
 								"Destination IP:"+d.Destination;
-						})
-			//Create SVG element
+								})
+		   			//Create SVG element
 			var svg = d3.select("body")
 						.append("svg")
 						.attr("width", w)
 						.attr("height", h);
 			
 			svg.call(tip);
-
-				d3.json("us-states.json", function(json) {
+			
+			d3.json("us-states.json", function(json) {
 
 					svg.selectAll("path")
 					   .data(json.features)
@@ -67,20 +67,33 @@
 					   .style("fill", "steelblue");
 
 					//Load in cities data
-					d3.csv("testdata.csv", function(data) {
-						svg.selectAll("circle")
+					   d3.csv("testdata.csv", function(data) {
+						   svg.selectAll("circle")
 						   .data(data)
 						   .enter()
 						   .append("circle")
 						   .attr("cx", function(d) {
 							   return projection([d.SourceLongitude,d.SourceLatitude])[0];
-						   })
+							   })
 						   .attr("cy", function(d) {
 								return projection([d.SourceLongitude,d.SourceLatitude])[1];
 								}) 
-						   .attr("r", 1.0)
-						   .style("fill", "red")
-						   .style("opacity", 0.75)
+						   .style("stroke", "white")
+						   .style("stroke-width", "0.5px")
+						   .style("stroke-opacity", 1)
+						   .attr("r", 5)
+						   .style("fill", function(d) {
+								if(d.Protocol == "DNS"){
+									return "red";
+								}else if (d.Protocol == "HTTP") {
+									return "yellow";
+								}else if (d.Protocol == "TCP"){
+									return "green";
+								}else {
+									return "gray";
+								}
+								})
+					   	   .style("opacity", 0.05)
 						   .on('mouseover', tip.show)
 						   .on('mouseout', tip.hide)
 						   });
