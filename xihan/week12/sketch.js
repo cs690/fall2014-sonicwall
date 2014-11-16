@@ -20,7 +20,7 @@ function preload()
 	axisX.setLabelStyle([0, axisX.markWidth * 4], 0, constants.CENTER);
 	axisX.showAxis = true;
 	axisX.showFirstMark = false;
-	//axisX.showFirstLabel = false;	
+	//axisX.showFirstLabel = false;
 
 	var axisY = new Axis(origin, 500);
 	axisY.setRotation(-Math.PI / 2);
