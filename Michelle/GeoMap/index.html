@@ -17,7 +17,13 @@
 				color: orange;
 				-webkit-transform:scale(2, 2);
 			}
-		
+
+			.legend {
+			    font-size: 12px;
+			  }
+		    rect {
+		      stroke-width: 2;
+	    }		  
 		</style>
 	</head>
 	<body>
@@ -56,7 +62,52 @@
 						.attr("height", h);
 			
 			svg.call(tip);
+
+var legend = svg.selectAll('.legend')
+  .data(color.domain())
+  .enter()
+  .append('g')
+  .attr('class', 'legend')
+  .attr('transform', function(d, i) {
+    var height = legendRectSize + legendSpacing;
+    var offset =  height * color.domain().length / 2;
+    var horz = -2 * legendRectSize;
+    var vert = i * height - offset;
+    return 'translate(' + horz + ',' + vert + ')';
+  });	
+
+		//add legend 
+			var legendRectSize = 10;
+			var legendSpacing = 2;	
+			legend.append('rect')
+				.attr('x',legendRectSize)
+				.attr('y', legendRectSize)
+				.attr('width', legendRectSize)
+			  	.attr('height', legendRectSize)
+  				.style('fill', "green")
+  				.style('stroke', "green");	
+			legend.append('text')
+			    .attr('x', legendRectSize*2+legendSpacing)
+			    .attr('y', legendRectSize*2)
+			    .text(function(d) { return "TCP"; });
+
+  			legend.append('rect')
+  				.attr('x', legendRectSize)
+				.attr('y', legendRectSize*2)
+				.attr('width', legendRectSize)
+			  	.attr('height', legendRectSize)
+  				.style('fill', "red")
+  				.style('stroke', "red");	
+
+			legend.append('text')
+			  .attr('x', legendRectSize *2+legendSpacing)
+			  .attr('y', legendRectSize*3)
+			  .text(function(d) { return "DNS"; });
+
+
 			
+					
+
 			d3.json("us-states.json", function(json) {
 
 					svg.selectAll("path")
