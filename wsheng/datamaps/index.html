@@ -90,20 +90,12 @@
                     destinationEnabled = true;
                     break;
                 }
-                case "+source": {
-                    sourceEnabled = true;
+                case "~source": {
+                    sourceEnabled = !sourceEnabled;
                     break;
                 }
-                case "-source": {
-                    sourceEnabled = false;
-                    break;
-                }
-                case "+destination": {
-                    destinationEnabled = true;
-                    break;
-                }
-                case "-destination": {
-                    destinationEnabled = false;
+                case "~destination": {
+                    destinationEnabled = !destinationEnabled;
                     break;
                 }
                 case "none": {
@@ -123,7 +115,6 @@
             if (destinationEnabled) {
                 newData = newData.concat(destinationBubble);
             };
-            console.debug(sourceEnabled, destinationEnabled, newData);
 
             map.bubbles(newData, options);
         };
@@ -171,11 +162,18 @@
 
                 // legends
                 map.legend();
-                // $('.datamaps-legend')
-                //     .find('dt')
-                //     .on('click', function(event) {
-                //         renderBubbles(map, data, bubbleScale, event.target.textContent);
-                //     });
+                var sourceRegexp = /source/i;
+                var destinationRegexp = /destination/i;
+                $('.datamaps-legend')
+                    .find('dt')
+                    .on('click', function(event) {
+                        var text = event.target.textContent;
+                        if (sourceRegexp.test(text)) {
+                            renderBubbles(map, data, bubbleScale, "~source");
+                        } else if (destinationRegexp.test(text)) {
+                            renderBubbles(map, data, bubbleScale, "~destination");
+                        };
+                    });
             });
         });
 
