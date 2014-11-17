@@ -8,7 +8,7 @@
             height: 400px;
         }
         .datamaps-arc {
-            opacity: 0.8;
+            opacity: 0.4;
         }
     </style>
     <script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
@@ -24,7 +24,7 @@
 
     <script type="text/javascript">
         var map = new Datamap({
-          scope: 'usa',
+          scope: 'world',
           element: document.getElementById('map-container'),
           projection: 'mercator',
 
@@ -113,14 +113,14 @@
         };
 
         $(function() {
-            $.getJSON("../../public/sfgate_summary.json", function(data) {
+            $.getJSON("sfgate_summary.json", function(data) {
                 var lengthes = data.map(function(d) {return d.TotalLength; });
                 var protocolColor = d3.scale.category20c();
 
                 // arc
                 var arcScale = d3.scale.linear()
                                 .domain(d3.extent(lengthes))
-                                .range([0.5, 5]);
+                                .range([0.5, 10]);
 
                 map.arc(data.map(function(d) {
                     return {
@@ -148,7 +148,7 @@
                 renderBubbles(map, data, bubbleScale, "all");
 
                 // labels
-                map.labels();
+                // map.labels();
 
                 // legends
                 map.legend();
