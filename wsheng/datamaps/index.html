@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wanzhang's Datamap</title>
+    <style type="text/css">
+        #map-container {
+            width: 800px;
+            height: 400px;
+        }
+        .datamaps-arc {
+            opacity: 0.4;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+    <script type="text/javascript" src="datamaps.all.min.js"></script>
+</head>
+<body>
+    <h1>Worldwide Datamap</h1>
+    <div id="control-panel">
+    </div>
+    <div id="map-container"></div>
+
+    <script type="text/javascript">
+        var map = new Datamap({
+          scope: 'world',
+          element: document.getElementById('map-container'),
+          projection: 'mercator',
+
+          fills: {
+            defaultFill: '#86C166',
+            source: 'rgba(0,244,244,0.9)',
+            destination: 'red'
+          }
+        });
+
+        var sourceEnabled = false;
+        var destinationEnabled = false;
+        var renderBubbles = function(map, data, scale, type) {
+            var sourceBubble = data.map(function(d) {
+                return {
+                    radius: scale(d.TotalLength),
+                    fillKey: 'source',
+                    Protocol: d.Protocol,
+                    TotalLength: d.TotalLength,
+                    latitude: d.SourceLatitude,
+                    longitude: d.SourceLongitude
+                };
+            });
+            var destinationBubble = data.map(function(d) {
+                return {
+                    radius: scale(d.TotalLength),
+                    fillKey: 'destination',
+                    Protocol: d.Protocol,
+                    TotalLength: d.TotalLength,
+                    latitude: d.DestinationLatitude,
+                    longitude: d.DestinationLongitude
+                };
+            });
+            var options = {
+                popupTemplate: function(geo, data) {
+                    return '<div class="hoverinfo">' +
+                    '<strong>Protocol: </strong>' + data.Protocol + '<br/>' +
+                    '<strong>TotalLength: </strong>' + data.TotalLength + '<br/>' +
+                    '</div>';
+                }
+            };
+
+            switch(type) {
+                case "all": {
+                    sourceEnabled = true;
+                    destinationEnabled = true;
+                    break;
+                }
+                case "source": {
+                    sourceEnabled = true;
+                    destinationEnabled = false;
+                    break;
+                }
+                case "destination": {
+                    sourceEnabled = false;
+                    destinationEnabled = true;
+                    break;
+                }
+                case "~source": {
+                    sourceEnabled = !sourceEnabled;
+                    break;
+                }
+                case "~destination": {
+                    destinationEnabled = !destinationEnabled;
+                    break;
+                }
+                case "none": {
+                    sourceEnabled = false;
+                    destinationEnabled = false;
+                    break;
+                }
+                default: {
+                    return;
+                }
+            }
+
+            var newData = [];
+            if (sourceEnabled) {
+                newData = newData.concat(sourceBubble);
+            };
+            if (destinationEnabled) {
+                newData = newData.concat(destinationBubble);
+            };
+
+            map.bubbles(newData, options);
+        };
+
+        $(function() {
+            $.getJSON("sfgate_summary.json", function(data) {
+                var lengthes = data.map(function(d) {return d.TotalLength; });
+                var protocolColor = d3.scale.category20c();
+
+                // arc
+                var arcScale = d3.scale.linear()
+                                .domain(d3.extent(lengthes))
+                                .range([0.5, 10]);
+
+                map.arc(data.map(function(d) {
+                    return {
+                        origin: {
+                            latitude: d.SourceLatitude,
+                            longitude: d.SourceLongitude
+                        },
+                        destination: {
+                            latitude: d.DestinationLatitude,
+                            longitude: d.DestinationLongitude
+                        },
+                        options: {
+                            strokeWidth: arcScale(d.TotalLength),
+                            strokeColor: protocolColor(d.Protocol)
+                        }
+                    };
+                }), {
+                    arcSharpness: 1.4
+                });
+
+                // bubble
+                var bubbleScale = d3.scale.sqrt()
+                                    .domain(d3.extent(lengthes))
+                                    .range([1, 50]);
+                renderBubbles(map, data, bubbleScale, "all");
+
+                // labels
+                // map.labels();
+
+                // legends
+                map.legend();
+                var sourceRegexp = /source/i;
+                var destinationRegexp = /destination/i;
+                $('.datamaps-legend')
+                    .find('dt')
+                    .on('click', function(event) {
+                        var text = event.target.textContent;
+                        if (sourceRegexp.test(text)) {
+                            renderBubbles(map, data, bubbleScale, "~source");
+                        } else if (destinationRegexp.test(text)) {
+                            renderBubbles(map, data, bubbleScale, "~destination");
+                        };
+                    });
+            });
+        });
+
+    </script>
+</body>
+</html>

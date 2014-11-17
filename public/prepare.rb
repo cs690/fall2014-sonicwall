@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 filename = 'sfgate'
-num_of_records = 10
+num_of_records = 20
 
 require "csv"
 require 'json'
@@ -84,16 +84,27 @@ summary_data = top_records.map { |(group_name, total_length)|
     group.map { |entry| entry[5].to_i }.reduce(&:+)
   }
   length_over_time = time_range.map { |i| length_over_time_hash[i] || 0 }
-  [nslookup(d[0]), nslookup(d[1]), d[2], total_length,
-  src_geo[2], dest_geo[2], src_geo[3], dest_geo[3],
-  src_geo[0], src_geo[1], dest_geo[0], dest_geo[1],
-  length_over_time]
+  [
+    # nslookup(d[0]), nslookup(d[1]),
+    d[0], d[1],
+    d[2], total_length,
+    # src_geo[2], dest_geo[2],
+    # src_geo[3], dest_geo[3],
+    src_geo[0], src_geo[1],
+    dest_geo[0], dest_geo[1],
+    # length_over_time
+  ]
 }
 # add new header
-summary_header = ["Source", "Destination", "Protocol", "TotalLength",
-  "SourceCity", "DestinationCity", "SourceCountry", "DestinationCountry",
-  "SourceLatitude", "SourceLongitude", "DestinationLatitude", "DestinationLongitude",
-  "LengthOverTime"]
+summary_header = [
+  "Source", "Destination",
+  "Protocol", "TotalLength",
+  # "SourceCity", "DestinationCity",
+  # "SourceCountry", "DestinationCountry",
+  "SourceLatitude", "SourceLongitude",
+  "DestinationLatitude", "DestinationLongitude",
+  # "LengthOverTime"
+]
 
 # JSON
 summary_json = summary_data.map { |e|
