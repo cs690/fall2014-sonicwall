@@ -1,11 +1,21 @@
-Source,Destination,Protocol,TotalLength,SourceCity,DestinationCity,SourceCountry,DestinationCountry,SourceLatitude,SourceLongitude,DestinationLatitude,DestinationLongitude
-a184-84-222-144.deploy.static.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,4769916,Redwood City,Milpitas,United States,United States,37.4852,-122.2364,37.4404,-121.8705
-a96-17-110-102.deploy.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,1019110,Cambridge,Milpitas,United States,United States,42.3626,-71.0843,37.4404,-121.8705
-a96-17-110-102.deploy.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,RTMP,375049,Cambridge,Milpitas,United States,United States,42.3626,-71.0843,37.4404,-121.8705
-208.93.137.180,c-24-6-173-220.hsd1.ca.comcast.net,TCP,359298,San Jose,Milpitas,United States,United States,37.3394,-121.8950,37.4404,-121.8705
-a23-62-228-27.deploy.static.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,253619,Cambridge,Milpitas,United States,United States,42.3626,-71.0843,37.4404,-121.8705
-a184-84-222-89.deploy.static.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,174866,Redwood City,Milpitas,United States,United States,37.4852,-122.2364,37.4404,-121.8705
-93.184.216.169,c-24-6-173-220.hsd1.ca.comcast.net,TCP,145962,"",Milpitas,United States,United States,38.0000,-97.0000,37.4404,-121.8705
-a184-84-222-129.deploy.static.akamaitechnologies.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,141844,Redwood City,Milpitas,United States,United States,37.4852,-122.2364,37.4404,-121.8705
-67.192.92.227,c-24-6-173-220.hsd1.ca.comcast.net,TCP,120612,San Antonio,Milpitas,United States,United States,29.4889,-98.3987,37.4404,-121.8705
-s3-1.amazonaws.com,c-24-6-173-220.hsd1.ca.comcast.net,TCP,111746,Seattle,Milpitas,United States,United States,47.6103,-122.3341,37.4404,-121.8705
+Source,Destination,Protocol,TotalLength,SourceLatitude,SourceLongitude,DestinationLatitude
+184.84.222.144,24.6.173.220,TCP,4769916,37.4852,-122.2364,37.4404
+96.17.110.102,24.6.173.220,TCP,1019110,42.3626,-71.0843,37.4404
+96.17.110.102,24.6.173.220,RTMP,375049,42.3626,-71.0843,37.4404
+208.93.137.180,24.6.173.220,TCP,359298,37.3394,-121.8950,37.4404
+23.62.228.27,24.6.173.220,TCP,253619,42.3626,-71.0843,37.4404
+184.84.222.89,24.6.173.220,TCP,174866,37.4852,-122.2364,37.4404
+93.184.216.169,24.6.173.220,TCP,145962,38.0000,-97.0000,37.4404
+184.84.222.129,24.6.173.220,TCP,141844,37.4852,-122.2364,37.4404
+67.192.92.227,24.6.173.220,TCP,120612,29.4889,-98.3987,37.4404
+207.171.163.33,24.6.173.220,TCP,111746,47.6103,-122.3341,37.4404
+74.217.78.141,24.6.173.220,TCP,88010,37.5402,-122.3041,37.4404
+208.93.137.180,24.6.173.220,HTTP,76124,37.3394,-121.8950,37.4404
+24.6.173.220,184.84.222.144,TCP,70914,37.4404,-121.8705,37.4852
+93.184.216.229,24.6.173.220,TCP,68622,38.0000,-97.0000,37.4404
+24.6.173.220,208.93.137.180,HTTP,49132,37.4404,-121.8705,37.3394
+75.75.75.75,24.6.173.220,DNS,45248,38.0000,-97.0000,37.4404
+23.23.254.40,24.6.173.220,TCP,42830,39.0437,-77.4875,37.4404
+23.62.228.24,24.6.173.220,TCP,36714,42.3626,-71.0843,37.4404
+207.171.187.118,24.6.173.220,TCP,30532,47.6103,-122.3341,37.4404
+207.171.185.200,24.6.173.220,TCP,30062,47.6103,-122.3341,37.4404
