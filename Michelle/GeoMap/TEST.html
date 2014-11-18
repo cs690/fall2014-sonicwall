@@ -5,10 +5,11 @@
 		<title>D3: Adding data points (circles) to the map</title>
 		<script type="text/javascript" src="../d3/d3.v3.js"></script>
 		<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+
 		<style type="text/css">
 			.d3-tip {
   				line-height: 1.5;
-			 	font-size: 6px;
+			 	font-size: 10px;
  			 	background: rgba(0, 0, 0, 0.8);
   				color: #fff;
   				border-radius: 2px;
@@ -30,13 +31,13 @@
 		<script type="text/javascript">
 
 			//Width and height
-			var w = 500;
-			var h = 300;
+			var w = 900;
+			var h = w/2;
 
 			//Define map projection
 			var projection = d3.geo.albersUsa()
 								   .translate([w/2, h/2])
-								   .scale([500]);
+								   .scale([1000]);
 
 			//Define path generator
 			var path = d3.geo.path()
@@ -63,12 +64,12 @@
 			
 			svg.call(tip);
 
-var legend = svg.selectAll('.legend')
-  .data(color.domain())
-  .enter()
-  .append('g')
-  .attr('class', 'legend')
-  .attr('transform', function(d, i) {
+		var legend = svg.selectAll('.legend')
+		  .data(color.domain())
+		  .enter()
+		  .append('g')
+		  .attr('class', 'legend')
+		  .attr('transform', function(d, i) {
     var height = legendRectSize + legendSpacing;
     var offset =  height * color.domain().length / 2;
     var horz = -2 * legendRectSize;
@@ -104,10 +105,6 @@ var legend = svg.selectAll('.legend')
 			  .attr('y', legendRectSize*3)
 			  .text(function(d) { return "DNS"; });
 
-
-			
-					
-
 			d3.json("us-states.json", function(json) {
 
 					svg.selectAll("path")
@@ -119,7 +116,7 @@ var legend = svg.selectAll('.legend')
 
 					//Load in cities data
 					   d3.csv("testdata.csv", function(data) {
-						   svg.selectAll("circle")
+						   var quakes= svg.selectAll("circle")
 						   .data(data)
 						   .enter()
 						   .append("circle")
@@ -146,9 +143,10 @@ var legend = svg.selectAll('.legend')
 								})
 					   	   .style("opacity", 0.05)
 						   .on('mouseover', tip.show)
-						   .on('mouseout', tip.hide)
-						   });
-				});
+						   .on('mouseout', tip.hide);
+							
+    		});
+	});
 			
 		</script>
 	</body>
