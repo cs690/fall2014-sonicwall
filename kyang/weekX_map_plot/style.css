@@ -1,3 +1,10 @@
-path{
+.land{
     fill:#AAAAAA;
+    stroke:#AAAAAA;
+}
+
+.graticule {
+  fill: none;
+  stroke: #CCCCCC;
+  stroke-width: .5px;
 }
