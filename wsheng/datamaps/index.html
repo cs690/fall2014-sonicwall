@@ -18,7 +18,9 @@
 </head>
 <body>
     <h1>Worldwide Datamap</h1>
+    <p>Tip: Use mouse wheel to zoom and drag to move.</p>
     <div id="control-panel">
+        <p>Switch between scope:</p>
         <button id="usa">USA</button>
         <button id="world">World</button>
     </div>
@@ -177,9 +179,15 @@
 
             // zoom and pan
             map.svg.call(d3.behavior.zoom().on('zoom', function(event) {
-                map.svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-                map.svg.selectAll("g").attr("transform","translate("+ d3.event.translate.join(",")+")scale("+d3.event.scale+")");
-                map.svg.selectAll("g").selectAll("circle").attr("d", map.path.projection(map.projection));
+                map.svg
+                    .attr("transform",
+                          "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+                map.svg.selectAll("g")
+                    .attr("transform",
+                          "translate(" + d3.event.translate.join(",") + ")scale(" + d3.event.scale + ")");
+                map.svg.select('.bubbles').selectAll('circle').attr("r", function(d) {
+                    return d.radius / d3.event.scale;
+                });
             }));
         };
 
