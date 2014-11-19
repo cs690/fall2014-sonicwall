@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1> Map Plot</h1>
+<svg>
+<defs>
+    <filter id="glow" x="-0.25" y="-0.25%" width="1.5" height="1.5">
+      <feGaussianBlur result="blurOut" in="SourceGraphic" stdDeviation="2" />
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+    </filter>
+</defs>
+</svg>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+<script src="http://d3js.org/queue.v1.min.js"></script>
+<script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
+<script src="map.js"></script>
+
+
+<button type="button" onclick="change()">Change</button>
+</body>
+</html>

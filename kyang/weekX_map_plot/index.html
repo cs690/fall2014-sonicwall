@@ -5,21 +5,100 @@
 </head>
 <body>
 <h1> Map Plot</h1>
-<svg>
-<defs>
-    <filter id="glow" x="-0.25" y="-0.25%" width="1.5" height="1.5">
-      <feGaussianBlur result="blurOut" in="SourceGraphic" stdDeviation="2" />
-      <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
-    </filter>
-</defs>
-</svg>
 <script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="http://d3js.org/topojson.v1.min.js"></script>
 <script src="http://d3js.org/queue.v1.min.js"></script>
 <script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
-<script src="map.js"></script>
+<script src="mapactivity.js"></script>
+<p> This is a real-time world map, click <button type="button" onclick="play()">Play</button> to start simulating with sfgate data, 
+or <button type="button" onclick="start()">Start</button> a simple random demo. </p>
+<p> You can also <button type="button" onclick="change()">Change</button> the projection. </p>
+<p> Drag to move and wheel to zoom, move mouse on an edge to see detail.</p>
+<script>
+var events,  map;
+queue()
+    .defer(d3.json, "world-countries.json")
+    .defer(d3.csv, "../../public/sfgate.csv")
+    .defer(d3.csv, "../../public/geoip.csv")
+    .await(function(err, world, eve, loc){
+        eve.forEach(function(e){
+            e.Time = +e.Time;
+            e.Length = +e.Length;
+        })
+        var geoloc = {}
+        loc.forEach(function(l){
+            l.Longitude = +l.Longitude;
+            l.Latitude = +l.Latitude;
+            geoloc[l.IP] = l
+        })
+        events = eve
+        map = map_activity(d3.select('body'), world.features)
+            .width(window.innerWidth /3*2)
+            .accessor.event.src(function(e){return e.Source})
+            .accessor.event.dst(function(e){return e.Destination})
+            .accessor.event.category(function(e){return e.Protocol})
+            .accessor.event.size(function(e){return e.Length})
+            .accessor.ip.geoloc(function(ip){
+                var loc = geoloc[ip]
+                return [loc.Longitude, loc.Latitude];
+            })
+        console.log('complete')
+    })
+var count = 0
+function play(){
+    events.forEach(function(e){
+        setTimeout(function(){
+            map(e)
+            count++
+            if (count%10 == 0)
+                console.log(count)
+        }, e.Time*1000)
+    })
+}
 
+var projections = [
+    [d3.geo.kavrayskiy7(),function(){return map.width()/5.64}],
+    [d3.geo.orthographic(), function(){return map.width() / 4;}]
+]
+var cur = 0;
 
-<button type="button" onclick="change()">Change</button>
+function change(){
+    cur++
+    cur = cur % projections.length
+    map.projection(projections[cur][0], projections[cur][1])
+}
+
+function start(){
+    var ips = ["24.6.173.220",
+"75.75.75.75",
+"208.93.137.180",
+"208.93.137.190",
+"66.109.241.50",
+"107.22.233.219",
+"184.73.197.77",
+"98.137.88.34",
+"205.251.215.121",
+"66.235.138.18",
+"216.155.207.26",
+"207.171.187.118",
+"138.108.6.20"],
+        protocols = ['TCP','HTTP','DNS']
+        console.log(geoloc)
+    for (i = 0; i < 10000; i++){
+        setTimeout(function(){
+            var a = 0,b =0;
+            while (a==b){
+                a=Math.floor(Math.random() * 10)
+                b=Math.floor(Math.random() * 10)
+            }
+            map({
+                Source:ips[a],
+                Destination:ips[b],
+                Protocol: protocols[Math.floor(Math.random() * protocols.length)],
+                Length: Math.floor(Math.random() * 20)
+            })
+        }, Math.random() * 40000);
+    }
+}
+</script>
 </body>
 </html>
