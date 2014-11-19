@@ -5,7 +5,7 @@
 		<title>D3: Adding data points (circles) to the map</title>
 		<script type="text/javascript" src="../d3/d3.v3.js"></script>
 		<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
-
+		<script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
 		<style type="text/css">
 			.d3-tip {
   				line-height: 1.5;
@@ -28,7 +28,25 @@
 		</style>
 	</head>
 	<body>
+		<script src="http://d3js.org/d3.v3.min.js"></script>
+		<script src="http://d3js.org/topojson.v1.min.js"></script>
+		<script src="/datamaps.world.min.js"></script>
+		<div id="container" style="position: relative; width: 500px; height: 300px;"></div>
+		<script>
+			    var map = new Datamap({element: document.getElementById('container')});
+			</script>
+
+			d3.csv("sfgate_summary.json", function(data) {
+				
+			}
+
+		<!--
+		<script src="http://d3js.org/topojson.v1.min.js"></script>
+		<script src="http://datamaps.github.io/scripts/datamaps.world.min.js"></script>
+		<div id="container" style="position: relative; width: 500px; height: 300px;"></div>
+
 		<script type="text/javascript">
+			var map = new Datamap({element: document.getElementById('container')});
 
 			//Width and height
 			var w = 900;
@@ -138,16 +156,16 @@
 								}else if (d.Protocol == "TCP"){
 									return "green";
 								}else {
-									return "gray";
-								}
+									return "gray";}
 								})
 					   	   .style("opacity", 0.05)
 						   .on('mouseover', tip.show)
 						   .on('mouseout', tip.hide);
 							
     		});
-	});
-			
-		</script>
-	</body>
+});
+
+
+		</script>   -->
+	</body>   
 </html>
