@@ -8,3 +8,13 @@
   stroke: #CCCCCC;
   stroke-width: .5px;
 }
+
+.highlight{
+    filter:url('#glow')
+}
+
+.data{
+    fill:none;
+    opacity:0.05;
+    stroke-width:'1px'
+}

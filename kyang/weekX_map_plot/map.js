@@ -64,14 +64,18 @@ queue()
     .defer(d3.csv, "/public/geoip.csv")
     .await(onLoadReady)
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("body").select("svg")
     .attr("width", width)
     .attr("height", height)
     
 var s0, t0, S0, r0;
 
+var locations = {}
+var conversition = {}
+var color = d3.scale.category10()
+var rand_norm = d3.random.normal()
+
 function zoomstart() {
-  //d3.event.preventDefault()
   s0 = zoom.scale()
   t0 = [d3.event.sourceEvent.x, d3.event.sourceEvent.y]
   S0 = scale
@@ -81,10 +85,9 @@ function zoomstart() {
 function zoom() {
   if (s0) {
     rotate = [r0[0] + (d3.event.sourceEvent.x - t0[0])/8, r0[1] - (d3.event.sourceEvent.y - t0[1])/8]
-    console.log(Object.keys(d3.event.sourceEvent))
     scale = S0 * zoom.scale() / s0
     cur_prj[1](2)
-    svg.selectAll('.prjpath').attr('d',path)
+    refresh(svg)
   }
 }
 
@@ -100,7 +103,32 @@ var zoom = d3.behavior.zoom()
     .on("zoom", zoom)
     .on('zoomend', zoomend)
     
+function datapath(d){
+    var src = locations[d.Source],
+        dst = locations[d.Destination],
+        pstart = cur_prj[0]([src.Longitude, src.Latitude]),
+        pend = cur_prj[0]([dst.Longitude, dst.Latitude]),
+        dx = (pend[0] - pstart[0])/3,
+        dy = (pend[1] - pstart[1])/3,
+        len = (dx * dx + dy * dy),
+        prep = [-dy/len, dx/len]
+    return "M" + pstart+'C'
+        + (pstart[0]+dx+prep[0]*d.disp_arg) + ',' + (pstart[1]+dy+prep[1]*d.disp_arg) + ','
+        + (pend[0]-dx+prep[0]*d.disp_arg) + ',' + (pend[1]-dy+prep[1]*d.disp_arg) + ','
+        + pend
+}
+    
 function onLoadReady(err, world, data, ip_loc){
+    ip_loc.forEach(function(l){
+        l.Latitude = +l.Latitude;
+        l.Longitude= +l.Longitude;
+        locations[l.IP] = l
+    })
+    data.forEach(function(d){
+        d.Time = +d.Time
+        d.disp_arg = rand_norm()
+    })
+    console.log(data)
     svg.append("path").datum(graticule)
         .attr("class","prjpath graticule")
         .attr('d',path)
@@ -116,11 +144,21 @@ function onLoadReady(err, world, data, ip_loc){
         .attr('height','1e6')
         .attr('style','opacity:0;')
         .call(zoom)
+    svg.selectAll('.data').data(data).enter()
+        .append('path')
+        .attr('class','data')
+        .attr('stroke',function(d){return color(d.Protocol)})
+        .attr('d', datapath)
 }
 function change(){
     cur_prj_idx ++
     cur_prj_idx = cur_prj_idx % Object.keys(projections).length
     cur_prj = projections[Object.keys(projections)[cur_prj_idx]]
     onWindowResize()
-    svg.selectAll(".prjpath").transition().duration(1000).attr("d",path)
+    refresh(svg.transition().duration(1000))
+}
+
+function refresh(svg){
+    svg.selectAll('.prjpath').attr('d',path)
+    svg.selectAll('.data').attr('d',datapath)
 }
