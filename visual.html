@@ -7,9 +7,9 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="assets/default.css">
 
-<style>
-#largeImage {position: absolute;padding: .5em;background: #e3e3e3;border: 1px solid #BFBFBF;}
-</style>
+  <style>
+    #largeImage {position: absolute;padding: .5em;background: #e3e3e3;border: 1px solid #BFBFBF;}
+  </style>
 
   <script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
@@ -49,13 +49,14 @@
       <div class="panel-heading">Map Visualization</div>
       <div class="panel-body">
         <div class="list-group">
-          <a href="kyang/weekX_map_plot"class="list-group-item">Kaiming Yang</a>
-          <a href="Michelle/GeoMap2"class="list-group-item">Michelle Gao(Choropleth)</a>
-          <a href="Michelle/GeoMap"class="list-group-item">Michelle Gao(DataMaps)</a>
+          <a href="kyang/weekX_map_plot" class="list-group-item">Kaiming Yang</a>
+          <a href="Michelle/GeoMap2" class="list-group-item">Michelle Gao(Choropleth)</a>
+          <a href="Michelle/GeoMap" class="list-group-item">Michelle Gao(DataMaps)</a>
+          <a href="wsheng/datamaps" class="list-group-item">Wanzhang Sheng</a>
         </div>
       </div>
     </div>
-    
+
     <div class="panel panel-primary">
       <div class="panel-heading">Demos</div>
       <div class="panel-body">
@@ -69,10 +70,8 @@
       <div class="panel-body">
         <div class="list-group">
           <a href="public/" data="assets/VisualizationWebpage/SortableTable/SortableChart.png" class="list-group-item">Sortable Table</a>
-          <a href="public/lib/sparkcharts/"
-			  data="assets/VisualizationWebpage/SortableTable/Sparkchart.png" class="list-group-item">Spark Charts</a>
-          <a href="public/lib/sparkcharts/barSparkline/program.html"
-			  data="assets/VisualizationWebpage/SortableTable/BarSparkline.png" class="list-group-item">Bar Sparkline Charts</a>
+          <a href="public/lib/sparkcharts/" data="assets/VisualizationWebpage/SortableTable/Sparkchart.png" class="list-group-item">Spark Charts</a>
+          <a href="public/lib/sparkcharts/barSparkline/program.html" data="assets/VisualizationWebpage/SortableTable/BarSparkline.png" class="list-group-item">Bar Sparkline Charts</a>
         </div>
       </div>
     </div>
@@ -82,8 +81,7 @@
         <div class="list-group">
           <a href="wsheng/wireshark/" data="assets/VisualizationWebpage/AreaChart/swz.png" class="list-group-item">Wanzhang Sheng</a>
           <a href="kyang/week7_sfgate_again/" data="assets/VisualizationWebpage/AreaChart/ykm.png"class="list-group-item">Kaiming Yang</a>
-          <a href="Michelle/WireSharkDataVisualization/"
-			  data="assets/VisualizationWebpage/AreaChart/gj.png" class="list-group-item">Michelle Gao</a>
+          <a href="Michelle/WireSharkDataVisualization/" data="assets/VisualizationWebpage/AreaChart/gj.png" class="list-group-item">Michelle Gao</a>
           <a href="xihan/week7/" data="assets/VisualizationWebpage/AreaChart/hx.png" class="list-group-item">Xi Han</a>
         </div>
       </div>
@@ -92,10 +90,8 @@
       <div class="panel-heading">Wireshark.twb (Tableau)</div>
       <div class="panel-body">
         <div class="list-group">
-          <a href="wsheng/wireshark/Wireshark.twb"
-			  data="assets/VisualizationWebpage/Tableau/swz.png"class="list-group-item">Wanzhang Sheng</a>
-          <a href="kyang/week7_sfgate_tableau/sfgate.twb"
-			  data="assets/VisualizationWebpage/Tableau/ykm.png"class="list-group-item">Kaiming Yang</a>
+          <a href="wsheng/wireshark/Wireshark.twb" data="assets/VisualizationWebpage/Tableau/swz.png"class="list-group-item">Wanzhang Sheng</a>
+          <a href="kyang/week7_sfgate_tableau/sfgate.twb" data="assets/VisualizationWebpage/Tableau/ykm.png"class="list-group-item">Kaiming Yang</a>
           <a href="Michelle/WiresharkTableau/Book2.twb" data="assets/VisualizationWebpage/Tableau/gj.png"class="list-group-item">Michelle Gao</a>
         </div>
       </div>
@@ -138,25 +134,25 @@
     <a href="http://www.usfca.edu/">University of San Francisco</a>.
   </footer>
 
- <script>
-	 var offsetX = 20;
-	 var offsetY = 10;
+  <script>
+    var offsetX = 20;
+    var offsetY = 10;
 
-	 $('.list-group a').hover(function(e) {
+    $('.list-group a').hover(function(e) {
      var href = $(this).attr('data');
      $('<img id="largeImage" src="' + href + '" alt="big image" />')
      .css('top', e.pageY + offsetY)
-	 .css('left', e.pageX + offsetX)
-	 .css('width', 400)
-	 .css('height',300)
+     .css('left', e.pageX + offsetX)
+     .css('width', 400)
+     .css('height',300)
      .appendTo('body');
-	}, function() {
+   }, function() {
      $('#largeImage').remove();
-	});
+   });
 
-	$('a').mousemove(function(e) {
-   	  $("#largeImage").css('top', e.pageY + offsetY).css('left', e.pageX + offsetX);
-	});
-</script>
+    $('a').mousemove(function(e) {
+      $("#largeImage").css('top', e.pageY + offsetY).css('left', e.pageX + offsetX);
+    });
+  </script>
 </body>
 </html>
