@@ -27,7 +27,7 @@ def nslookup(ip)
     $ip_to_name[ip] = name
   rescue StandardError => e
     puts "Missing"
-    ip
+    $ip_to_name[ip] = ip
   end
 end
 
@@ -135,7 +135,13 @@ end
 subset_data = top_records.inject([]) { |a, (group_name, total_length)|
   # old: "No.","Time","Source","Destination","Protocol","Length","Info"
   # new: "Time","Source","Destination","Protocol","Length"
-  data = grouped_data[group_name].map {|d| [d[1].to_i, d[2], d[3], d[4], d[5].to_i] }
+  data = grouped_data[group_name].map {|d|
+    [d[1].to_i,
+    nslookup(d[2]), nslookup(d[3]),
+    # d[2], d[3],
+    d[4],
+    d[5].to_i]
+  }
   values = data.group_by { |d|
     "#{d[0]} - #{d[1]} - #{d[2]} - #{d[3]}"
   }.map { |v|
@@ -145,7 +151,12 @@ subset_data = top_records.inject([]) { |a, (group_name, total_length)|
   a += values
 }.sort
 # new header
-subset_header = ["Time","Source","Destination","Protocol","TotalLength"]
+subset_header = [
+  "Time",
+  "Source", "Destination",
+  "Protocol",
+  "TotalLength"
+]
 
 # JSON
 subset_json = subset_data.map { |e|
