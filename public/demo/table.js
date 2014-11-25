@@ -1,4 +1,9 @@
 $(function() {
+  var subsetData = [];
+  $.getJSON("../sfgate_subset.json", function(data) {
+    subsetData = data;
+  });
+
   $.getJSON("../sfgate_summary.json", function(data) {
     // var lengthOverTimeX = d3.max(data.map(function(d) {
     //     return d.LengthOverTime.length;
@@ -28,11 +33,18 @@ $(function() {
     var table = d3.select("tbody");
     var rows = table.selectAll("tr")
         .data(data).enter()
-      .append("tr");
-
-    table.selectAll("tr").each(function(d, i) {
-        // console.debug(d, i);
-    });
+      .append("tr")
+      .on('mouseover', function(d) {
+        // console.debug("mouseover", d);
+        var subData = subsetData.filter(function(sub) {
+          return sub.Destination === d.Destination &&
+          sub.Source === d.Source &&
+          sub.Protocol === d.Protocol;
+        });
+        // console.debug(subData);
+        var g1 = $('#g1').empty();
+        draw_g1(g1, subData);
+      });
 
     rows.append("td").text(function(d) { return d.Source; });
     rows.append("td").text(function(d) { return d.SourceCountry + ', ' + d.SourceCity; });
@@ -62,5 +74,6 @@ $(function() {
         6: { sorter: false }
       }
     });
+
   });
 });

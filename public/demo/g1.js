@@ -1,4 +1,5 @@
-function draw_g1(g1, data){
+function draw_g1(node, data){
+    var g1 = node[0];
     var framewidth = g1.offsetWidth,
         frameheight = g1.offsetHeight;
     var margin = {top: 20, right: 30, bottom: 35, left: 50},

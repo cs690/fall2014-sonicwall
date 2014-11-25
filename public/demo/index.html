@@ -67,7 +67,7 @@
     <script>
         $(function() {
             d3.csv("../sfgate.csv", function(err, data){
-                draw_g1(document.getElementById("g1"), data);
+                draw_g1($('#g1'), data);
             });
         });
     </script>
