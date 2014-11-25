@@ -30,16 +30,20 @@ $(function() {
         .data(data).enter()
       .append("tr");
 
+    table.selectAll("tr").each(function(d, i) {
+        // console.debug(d, i);
+    });
+
     rows.append("td").text(function(d) { return d.Source; });
     rows.append("td").text(function(d) { return d.SourceCountry + ', ' + d.SourceCity; });
     rows.append("td").text(function(d) { return d.Destination; });
     rows.append("td").text(function(d) { return d.DestinationCountry + ', ' + d.DestinationCity; });
     rows.append("td").text(function(d) { return d.Protocol; });
 
-    // rows.append("td")
-    //   .call(sarea)
-    //   .select("path")
-    //   .style("stroke","#0000ff");
+    rows.append("td")
+      .call(sarea)
+      .select("path")
+      .style("stroke","#0000ff");
 
     rows.append("td")
       .call(sbar)
