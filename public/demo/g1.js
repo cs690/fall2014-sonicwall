@@ -1,3 +1,5 @@
+var color = d3.scale.category10();
+
 function draw_g1(node, data){
     node.empty();
     var g1 = node[0];
@@ -34,7 +36,6 @@ function draw_g1(node, data){
                   .attr('height', frameheight)
                 .append('g')
                   .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
-    var color = d3.scale.category10();
     var protocol = [];
     var protocol_inv = {};
     var slice = 80;
@@ -214,7 +215,7 @@ function draw_g1(node, data){
     for (var idx = 0; idx < protocol.length; idx++){
         svg.append("path")
             .attr("class","p"+idx)
-            .style("fill", color(idx))
+            .style("fill", color(protocol[idx].Name))
             .attr("d", protocol[idx].Area(time_tick));
     }
 
@@ -258,7 +259,7 @@ function draw_g1(node, data){
       .attr("y", 0)
       .attr("width", 15)
       .attr("height", 15)
-      .style("fill", function(d,i){return color(i);})
+      .style("fill", function(d,i){ return color(d.Name); })
       .on("click", function(){
         if (isDragging){
             isDragging = false;
@@ -270,7 +271,7 @@ function draw_g1(node, data){
         if (!p.Visible)
             d3.select(this).transition().style("fill","#888888")
         else
-            d3.select(this).transition().style("fill",color(protocol_inv[p.Name]))
+            d3.select(this).transition().style("fill",color(p.Name))
       })
       .call(drag)
 
@@ -293,12 +294,12 @@ function draw_g1(node, data){
         .data(protocol).enter()
         .append("rect")
         .attr("class","detailrect")
-        .attr("fill",function(d,i){return color(i)})
+        .attr("fill",function(d,i){return color(d.Name)})
     svg.selectAll(".detailtext")
         .data(protocol).enter()
         .append("text")
         .attr("class","detailtext")
-        .style("fill",function(d,i){return color(i)})
+        .style("fill",function(d,i){return color(d.Name)})
     var detailaxis = svg.append("g")
         .attr("class","detailaxis")
     detailaxis.append("line")
