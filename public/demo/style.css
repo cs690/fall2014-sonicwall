@@ -34,13 +34,13 @@ table {
 }
 thead {
     background-color: #eee;
+    border: 1px solid #dad9c7;
 }
 th.header {
     cursor: pointer;
     font-weight: bold;
     background-repeat: no-repeat;
     background-position: center left;
-    border-right: 1px solid #dad9c7;
     margin-left: -1px;
     padding: 10px 0;
     width: 150px;
@@ -68,6 +68,12 @@ th.headerSortDown .caret {
 
 tr {
     cursor: pointer;
+}
+tbody tr {
+    border: white solid 1px;
+}
+tbody tr:hover {
+    border: #888 solid 1px;
 }
 tr.selected {
     background-color: #70E87F;

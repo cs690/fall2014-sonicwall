@@ -1,4 +1,5 @@
 var rows;
+var selectedRows = {}; // if some row is clicked(locked)
 
 $(function() {
   function draw_sub_g1 (data) {
@@ -37,7 +38,6 @@ $(function() {
       .size(100, 20)
       .data(function(d){ return d.TotalLength; });
 
-    var selectedRows = {}; // if some row is clicked(locked)
     function isSelected () {
       return Object.keys(selectedRows).length > 0;
     }
