@@ -1,4 +1,14 @@
 $(function() {
+  function draw_sub_g1 (d) {
+    var subData = subsetData.filter(function(sub) {
+      return sub.Destination === d.Destination &&
+      sub.Source === d.Source &&
+      sub.Protocol === d.Protocol;
+    });
+    draw_g1($('#g1'), subData);
+  }
+
+
   $.getJSON("../sfgate_summary.json", function(data) {
     // var lengthOverTimeX = d3.max(data.map(function(d) {
     //     return d.LengthOverTime.length;
@@ -25,44 +35,45 @@ $(function() {
       .size(100, 20)
       .data(function(d){ return d.TotalLength; });
 
-    var selectedRow = undefined; // if some row is clicked(locked)
+    var selectedRows = {}; // if some row is clicked(locked)
+    function isSelected () {
+      return Object.keys(selectedRows).length > 0;
+    }
 
     var table = d3.select("tbody")
       .on('mouseout', function() {
-        if (selectedRow !== undefined) { return; };
+        if (isSelected()) { return; };
         draw_g1($('#g1'), subsetData);
       });
-
-    function draw_sub_g1 (d) {
-      var subData = subsetData.filter(function(sub) {
-        return sub.Destination === d.Destination &&
-        sub.Source === d.Source &&
-        sub.Protocol === d.Protocol;
-      });
-      draw_g1($('#g1'), subData);
-    }
 
     var rows = table.selectAll("tr")
         .data(data).enter()
       .append("tr")
-      .on('mouseover', function(d) {
-        if (selectedRow !== undefined) { return; };
-        draw_sub_g1 (d);
+      .on('mouseover', function(datum) {
+        if (isSelected()) { return; };
+        draw_sub_g1 (datum);
       })
-      .on('click', function(d) {
-        if (selectedRow !== undefined) {
-          $(selectedRow).removeClass('selected');
-          if (selectedRow === this) {
-            selectedRow = undefined;
-            return;
+      .on('click', function(datum, index) {
+        if (event.metaKey || event.ctrlKey || event.shiftKey) {
+          if (selectedRows[index] !== undefined) {
+            $(this).removeClass('selected');
+            selectedRows[index] = undefined;
+          } else {
+            $(this).addClass('selected');
+            selectedRows[index] = this;
           };
-        };
-        $(this).addClass('selected');
-        selectedRow = this;
-        draw_sub_g1 (d);
-      });
+        } else {
+          Object.keys(selectedRows).forEach(function(i) {
+            $(selectedRows[i]).removeClass('selected');
+            selectedRows[i] = undefined;
+          });
 
-    table;
+          $(this).addClass('selected');
+          selectedRows[index] = this;
+        };
+
+        draw_sub_g1 (datum);
+      });
 
     rows.append("td").text(function(d) { return d.Source; });
     rows.append("td").text(function(d) { return d.SourceCountry + ', ' + d.SourceCity; });

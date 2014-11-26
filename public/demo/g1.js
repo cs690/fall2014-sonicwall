@@ -1,6 +1,7 @@
 function draw_g1(node, data){
     node.empty();
     var g1 = node[0];
+
     var framewidth = g1.offsetWidth,
         frameheight = g1.offsetHeight;
     var margin = {top: 20, right: 30, bottom: 35, left: 50},
@@ -77,13 +78,16 @@ function draw_g1(node, data){
             if (max < sum)
                 max = sum;
         }
-        y.domain([0,round(max)]);
+        // y.domain([0,round(max)]);
+        y.domain([0, max*1.1]);
+
         max = 0;
         protocol.forEach(function(d){
             if (d.Visible && d.Max > max)
                 max = d.Max;
         })
-        detail.domain([0,round(max)])
+        detail.domain([0, max*1.1])
+
         var t = svg.transition().duration(750);
         for (var i = 0; i < protocol.length; i++)
             t.select(".p"+i).attr("d",protocol[i].Area(time_tick))
