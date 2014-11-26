@@ -1,11 +1,17 @@
 $(function() {
+  function draw_sub_g1 (data) {
+    var subData = subsetData.filter(function(sub) {
+      return data.filter(function(d) {
+        return sub.Destination === d.Destination &&
+        sub.Source === d.Source &&
+        sub.Protocol === d.Protocol;
+      }).length > 0;
+    });
+    draw_g1($('#g1'), subData);
+  }
+
+
   $.getJSON("../sfgate_summary.json", function(data) {
-    // var lengthOverTimeX = d3.max(data.map(function(d) {
-    //     return d.LengthOverTime.length;
-    // }));
-    // var lengthOverTimeY = d3.max(data.map(function(d) {
-    //     return d3.max(d.LengthOverTime);
-    // }));
     var TotalLengthX = d3.max(data.map(function(d) {
       return d.TotalLength;
     }));
@@ -16,7 +22,6 @@ $(function() {
     //     .data(function(d){ return d.LengthOverTime; });
 
     var sarea =sparkarea()
-      // .domain(lengthOverTimeX, lengthOverTimeY)
       .size(100,20)
       .data(function(d){ return d.LengthOverTime; });
 
@@ -25,44 +30,63 @@ $(function() {
       .size(100, 20)
       .data(function(d){ return d.TotalLength; });
 
-    var selectedRow = undefined; // if some row is clicked(locked)
+    var selectedRows = {}; // if some row is clicked(locked)
+    function isSelected () {
+      return Object.keys(selectedRows).length > 0;
+    }
 
     var table = d3.select("tbody")
       .on('mouseout', function() {
-        if (selectedRow !== undefined) { return; };
+        if (isSelected()) { return; };
         draw_g1($('#g1'), subsetData);
       });
-
-    function draw_sub_g1 (d) {
-      var subData = subsetData.filter(function(sub) {
-        return sub.Destination === d.Destination &&
-        sub.Source === d.Source &&
-        sub.Protocol === d.Protocol;
-      });
-      draw_g1($('#g1'), subData);
-    }
 
     var rows = table.selectAll("tr")
         .data(data).enter()
       .append("tr")
-      .on('mouseover', function(d) {
-        if (selectedRow !== undefined) { return; };
-        draw_sub_g1 (d);
+      .on('mouseover', function(datum) {
+        if (isSelected()) { return; };
+        draw_sub_g1 ([datum]);
       })
-      .on('click', function(d) {
-        if (selectedRow !== undefined) {
-          $(selectedRow).removeClass('selected');
-          if (selectedRow === this) {
-            selectedRow = undefined;
-            return;
+      .on('click', function(datum, index) {
+        this.data = datum;
+
+        if (event.metaKey || event.ctrlKey || event.shiftKey) {
+          if (selectedRows[index] !== undefined) {
+            $(this).removeClass('selected');
+            selectedRows[index] = undefined;
+          } else {
+            $(this).addClass('selected');
+            selectedRows[index] = this;
+          };
+        } else {
+          var node = selectedRows[index];
+          var count = 0;
+
+          Object.keys(selectedRows).forEach(function(i) {
+            if (selectedRows[i] !== undefined) {
+              count++;
+              $(selectedRows[i]).removeClass('selected');
+              selectedRows[i] = undefined;
+            };
+          });
+
+          if (!(node === this && count === 1)) {
+            $(this).addClass('selected');
+            selectedRows[index] = this;
           };
         };
-        $(this).addClass('selected');
-        selectedRow = this;
-        draw_sub_g1 (d);
-      });
 
-    table;
+        var data = [];
+        Object.keys(selectedRows).forEach(function(i) {
+          var r = selectedRows[i];
+          if (r !== undefined) {
+            data.push(r.data);
+          };
+        });
+
+        draw_sub_g1(data);
+      });
 
     rows.append("td").text(function(d) { return d.Source; });
     rows.append("td").text(function(d) { return d.SourceCountry + ', ' + d.SourceCity; });
