@@ -57,14 +57,24 @@
 								"Destination IP:"+d.Destination;
 								})
 		   			//Create SVG element
-			var svg = d3.select("body")
+			var sourcesvg= d3.select("body")
 						.append("svg")
+						.attr("x", 0)
+						.attr("y",0)
 						.attr("width", w)
 						.attr("height", h);
 			
-			svg.call(tip);
+			sourcesvg.call(tip);
 
-		var legend = svg.selectAll('.legend')
+			var destinationsvg = d3.select("body")
+						.append("svg")
+						.attr("x", 0 )
+						.attr("y", 500)
+						.attr("width", w)
+						.attr("height", h);
+			destinationsvg.call(tip);
+
+		var legend = sourcesvg.selectAll('.legend')
 		  .data(color.domain())
 		  .enter()
 		  .append('g')
@@ -106,17 +116,15 @@
 			  .text(function(d) { return "DNS"; });
 
 			d3.json("us-states.json", function(json) {
-
-					svg.selectAll("path")
+					sourcesvg.selectAll("path")
 					   .data(json.features)
 					   .enter()
 					   .append("path")
 					   .attr("d", path)
 					   .style("fill", "gray");
-
 					//Load in cities data
 					   d3.csv("testdata.csv", function(data) {
-						   var quakes= svg.selectAll("circle")
+						   var quakes= sourcesvg.selectAll("circle")
 						   .data(data)
 						   .enter()
 						   .append("circle")
@@ -144,9 +152,47 @@
 					   	   .style("opacity", 0.05)
 						   .on('mouseover', tip.show)
 						   .on('mouseout', tip.hide);
-							
+					   });
+			});
+
+
+d3.json("us-states.json", function(json) {
+					destinationsvg.selectAll("path")
+					   .data(json.features)
+					   .enter()
+					   .append("path")
+					   .attr("d", path)
+					   .style("fill", "yellow");
+					//Load in cities data
+					   d3.csv("testdata.csv", function(data) {  
+						   var quakes= destinationsvg.selectAll("circle")
+						   .data(data).enter()
+						   .append("circle")
+						   .attr("cx", function(d) {
+							   return projection([d.SourceLongitude,d.SourceLatitude])[0];
+							   })
+						   .attr("cy", function(d) {
+								return projection([d.SourceLongitude,d.SourceLatitude])[1];
+								}) 
+						   .style("stroke", "white")
+						   .style("stroke-width", "0.5px")
+						   .style("stroke-opacity", 1)
+						   .attr("r", 5)
+						   .style("fill", function(d) {
+								if(d.Protocol == "DNS"){
+									return "red";
+								}else if (d.Protocol == "HTTP") {
+									return "yellow";
+								}else if (d.Protocol == "TCP"){
+									return "green";
+								}else {
+									return "gray";}
+								})
+					   	   .style("opacity", 0.05)
+						   .on('mouseover', tip.show)
+						   .on('mouseout', tip.hide);
+					});							
     		});
-	});
 			
 		</script>
 	</body>
