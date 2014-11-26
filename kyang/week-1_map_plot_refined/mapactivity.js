@@ -29,7 +29,8 @@ function map_activity(d3selection, worldmap){
         color = d3.scale.category10(),
          path = d3.geo.path(),
           svg = d3selection.append('svg'),
-        decay = Math.exp(-record.interval),
+     svg_root = svg.append('g'),
+        decay = Math.exp(-record.interval*5),
   scale_decay = Math.sqrt(Math.sqrt(Math.sqrt(decay, -10))),
         timer = null,
         nodes = null,
@@ -39,15 +40,18 @@ function map_activity(d3selection, worldmap){
 detail_domain = 0,
          line = d3.svg.line()
                 .x(function(d,i){return i/record.slots * detail_time})
-                .y(function(d){return detail_scale(d) + detail_off})
+                .y(function(d){return -detail_scale(d) - detail_off}),
+redraw_network= false
+                
+               
     // helper functions
     function refreshDetail(){
         if (detail_on == null){
             detail[0].attr('visibility','hidden')
             detail[1].attr('visibility','hidden')
         }else{
-            var nodeint = Object.keys(detail_on.nodes),
-               nodeinfo = nodeint.map(function(srcint){return detail_on.nodes[srcint]})
+            var nodeint = Object.keys(detail_on[0].nodes),
+               nodeinfo = nodeint.map(function(srcint){return detail_on[0].nodes[srcint]})
             for (i = 0; i < 2; i++){
                 var srcloc = projection(geoloc[nodeint[i]].loc),
                     dstloc = projection(geoloc[nodeint[1-i]].loc)
@@ -60,19 +64,19 @@ detail_domain = 0,
                 detail[i].selectAll('.timeline')
                     .attr('d',function(d){return line(ni[category[d]].data)})
                 detail[i].selectAll('.bar')
+                    .attr('y', function(d){return detail_scale(-ni[category[d]].data[0]) - detail_off})
                     .attr('height', function(d){return detail_scale(ni[category[d]].data[0])})
             }
         }
     }
     
     function refreshEdge(){
-    
         edges.selectAll('.edge')
             .attr('x1', function(d){return projection(geoloc[Object.keys(dashboard[d].nodes)[0]].loc)[0];})
             .attr('y1', function(d){return projection(geoloc[Object.keys(dashboard[d].nodes)[0]].loc)[1];})
             .attr('x2', function(d){return projection(geoloc[Object.keys(dashboard[d].nodes)[1]].loc)[0];})
             .attr('y2', function(d){return projection(geoloc[Object.keys(dashboard[d].nodes)[1]].loc)[1];})
-            .attr('stroke',function(d){return dashboard[d].active?'green':'gray'})
+            .attr('stroke',function(d){return dashboard[d].active>0?'green':'gray'})
         refreshDetail()
     }
     function refreshNetwork(){
@@ -82,11 +86,7 @@ detail_domain = 0,
             .attr('r',node_r)
         refreshEdge()
     }
-    
-    function refreshMap(){
-        svg.selectAll('.prjpath').attr('d',path)
-        refreshNetwork()    
-    }
+   
     
     function prepareProjection(){
         projection
@@ -94,10 +94,11 @@ detail_domain = 0,
             .scale(scale * scale_factor())
             .translate([width/2, height/2])
         path.projection(projection)
-        refreshMap()
+        svg_root.selectAll('.prjpath').attr('d',path)
+        refreshNetwork()    
     }
     function updateSize(){
-        svg .attr('width',width)
+        svg.attr('width',width)
             .attr('height',height)
         prepareProjection()
     }
@@ -109,7 +110,7 @@ detail_domain = 0,
         refreshNetwork()
     }
     function appendConn(conint, int1, int2){
-        dashboard[conint] = {active:false, nodes:{}}
+        dashboard[conint] = {active:0, nodes:{}}
         dashboard[conint].nodes[int1] = {}
         dashboard[conint].nodes[int2] = {}
         var arrlen = record.slots + 5;
@@ -125,8 +126,30 @@ detail_domain = 0,
         })
         edges.selectAll('.edge').data(Object.keys(dashboard)).enter().append('line')
             .attr('class','edge')
-            .on('mouseover',function(){detail_on = dashboard[this.__data__];refreshDetail()})
-            .on('mouseout',function(){detail_on = null;refreshDetail()})
+            .on('mouseover',function(){if (detail_on == null) detail_on = [dashboard[this.__data__], null];refreshDetail()})
+            .on('mouseout',function(){if (detail_on[1]==null) detail_on = null;refreshDetail()})
+            .on('click', function(){
+                var srcloc, dstloc,nodeint = Object.keys(detail_on[0].nodes);
+                switch (detail_on[1]){
+                    case null:
+                        detail_on[1] = 'src';
+                        srcloc = projection(geoloc[nodeint[0]].loc);
+                        dstloc = projection(geoloc[nodeint[1]].loc);
+                        break;
+                    case 'src':
+                        detail_on[1] = 'dst';
+                        srcloc = projection(geoloc[nodeint[1]].loc);
+                        dstloc = projection(geoloc[nodeint[0]].loc);
+                        break;
+                    case 'dst':
+                        detail_on[1] = null;
+                        svg_root.transition().attr('transform','')
+                        return
+                }
+                var dx = dstloc[0] - srcloc[0],
+                    dy = dstloc[1] - srcloc[1]
+                svg_root.transition().attr('transform',"translate(100," + height/2 + ")rotate(" + -(Math.atan(dy/dx)/Math.PI*180+(dx>0?0:180)) + ")translate("+[-srcloc[0],-srcloc[1]]+")")
+            })
         refreshEdge()
     }
     
@@ -159,14 +182,14 @@ detail_domain = 0,
     function makeDetailFeature(s){
         s.append('line')
             .attr('class','detail_axis')
-            .attr('y1', detail_off)
-            .attr('y2', detail_off + detail_height)
+            .attr('y1', -detail_off)
+            .attr('y2', -detail_off - detail_height)
         s.append('line')
             .attr('class','detail_axis')
             .attr('x1', 0)
-            .attr('y1', detail_off)
+            .attr('y1', -detail_off)
             .attr('x2', detail_time)
-            .attr('y2', detail_off)
+            .attr('y2', -detail_off)
     }
     
     // init gesture
@@ -199,18 +222,18 @@ detail_domain = 0,
         
         
     // init SVG
-    svg.append('g')
+    svg_root.append('g')
         .attr('class', 'layer_graticule')
       .append('path').datum(d3.geo.graticule())
         .attr('class', 'prjpath graticule')
         
-    svg.append('g')
+    svg_root.append('g')
         .attr('class', 'layer_land')
         .selectAll('.land').data(worldmap).enter()
       .append('path')
         .attr('class','prjpath land')
         
-    svg.append('rect')
+    svg_root.append('rect')
         .attr('class', 'eventlistener')
         .attr('x','-100')
         .attr('y','-100')
@@ -219,9 +242,9 @@ detail_domain = 0,
         .style('opacity','0')
         .call(zoom)
         
-    edges = svg.append('g')
-    nodes = svg.append('g')
-    detail = [svg.append('g'), svg.append('g')]
+    edges = svg_root.append('g')
+    nodes = svg_root.append('g')
+    detail = [svg_root.append('g'), svg_root.append('g')]
     makeDetailFeature(detail[0])
     makeDetailFeature(detail[1])
         
@@ -230,7 +253,7 @@ detail_domain = 0,
    timer = setInterval(function(){
         Object.keys(dashboard).forEach(function(conint){
             var biboard = dashboard[conint]
-            biboard.active=false;
+            biboard.active--;
             Object.keys(biboard.nodes).forEach(function(srcint){
                 var board = biboard.nodes[srcint];
                 category.forEach(function(cate){
@@ -241,6 +264,10 @@ detail_domain = 0,
                 })
             })
         })
+        if (redraw_network){
+            refreshNetwork()
+            redraw_network = false;
+        }
         refreshEdge()
         var origin_dom = detail_scale.domain()[1],
                   diff = origin_dom - detail_domain;
@@ -268,11 +295,11 @@ detail_domain = 0,
             appendCate(cate);
         if (dashboard[conint] == undefined)
             appendConn(conint,srcint,dstint);
-        dashboard[conint].active=true;
+        dashboard[conint].active=2;
         dashboard[conint].nodes[srcint][cate].nextval += accessor.event.size(event)
         if (dashboard[conint].nodes[srcint][cate].nextval > detail_domain)
             detail_domain = dashboard[conint].nodes[srcint][cate].nextval
-        refreshNetwork()
+        redraw_network = true;
     }
     
     map_activity.width = function(w){
@@ -319,6 +346,11 @@ detail_domain = 0,
                 if(!arguments.length)return accessor.event.size;
                 accessor.event.size = x;
                 return map_activity;
+            },
+            'time':function(x){
+                if(!arguments.length)return accessor.event.time;
+                accessor.event.time = x;
+                return map_activity;
             }
         },
         'ip':{
@@ -335,7 +367,6 @@ detail_domain = 0,
         projection=proj
         scale_factor = s_factor
         prepareProjection()
-        refreshMap()
     }
     
     updateSize()
