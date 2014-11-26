@@ -171,6 +171,8 @@ function draw_g1(node, data){
                 return i;
     }
 
+    if (data.length === 0) { return; };
+
     var time_domain = [+data[0].Time, +data[data.length-1].Time];
     data.forEach(function(d){
         var idx
