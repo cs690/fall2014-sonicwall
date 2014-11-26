@@ -12,12 +12,6 @@ $(function() {
 
 
   $.getJSON("../sfgate_summary.json", function(data) {
-    // var lengthOverTimeX = d3.max(data.map(function(d) {
-    //     return d.LengthOverTime.length;
-    // }));
-    // var lengthOverTimeY = d3.max(data.map(function(d) {
-    //     return d3.max(d.LengthOverTime);
-    // }));
     var TotalLengthX = d3.max(data.map(function(d) {
       return d.TotalLength;
     }));
@@ -28,7 +22,6 @@ $(function() {
     //     .data(function(d){ return d.LengthOverTime; });
 
     var sarea =sparkarea()
-      // .domain(lengthOverTimeX, lengthOverTimeY)
       .size(100,20)
       .data(function(d){ return d.LengthOverTime; });
 
