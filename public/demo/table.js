@@ -1,9 +1,11 @@
 $(function() {
-  function draw_sub_g1 (d) {
+  function draw_sub_g1 (data) {
     var subData = subsetData.filter(function(sub) {
-      return sub.Destination === d.Destination &&
-      sub.Source === d.Source &&
-      sub.Protocol === d.Protocol;
+      return data.filter(function(d) {
+        return sub.Destination === d.Destination &&
+        sub.Source === d.Source &&
+        sub.Protocol === d.Protocol;
+      }).length > 0;
     });
     draw_g1($('#g1'), subData);
   }
@@ -51,9 +53,11 @@ $(function() {
       .append("tr")
       .on('mouseover', function(datum) {
         if (isSelected()) { return; };
-        draw_sub_g1 (datum);
+        draw_sub_g1 ([datum]);
       })
       .on('click', function(datum, index) {
+        this.data = datum;
+
         if (event.metaKey || event.ctrlKey || event.shiftKey) {
           if (selectedRows[index] !== undefined) {
             $(this).removeClass('selected');
@@ -63,16 +67,32 @@ $(function() {
             selectedRows[index] = this;
           };
         } else {
+          var node = selectedRows[index];
+          var count = 0;
+
           Object.keys(selectedRows).forEach(function(i) {
-            $(selectedRows[i]).removeClass('selected');
-            selectedRows[i] = undefined;
+            if (selectedRows[i] !== undefined) {
+              count++;
+              $(selectedRows[i]).removeClass('selected');
+              selectedRows[i] = undefined;
+            };
           });
 
-          $(this).addClass('selected');
-          selectedRows[index] = this;
+          if (!(node === this && count === 1)) {
+            $(this).addClass('selected');
+            selectedRows[index] = this;
+          };
         };
 
-        draw_sub_g1 (datum);
+        var data = [];
+        Object.keys(selectedRows).forEach(function(i) {
+          var r = selectedRows[i];
+          if (r !== undefined) {
+            data.push(r.data);
+          };
+        });
+
+        draw_sub_g1(data);
       });
 
     rows.append("td").text(function(d) { return d.Source; });
