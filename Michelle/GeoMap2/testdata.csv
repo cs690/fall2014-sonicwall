@@ -1,4 +1,4 @@
-No.,Time,Source,Destination,Protocol,Length,Info,SourceLatitude,SourceLongitude,Destination Latitude,Destination Longitude
+No.,Time,Source,Destination,Protocol,Length,Info,SourceLatitude,SourceLongitude,DestinationLatitude,DestinationLongitude
 1,0.0,24.6.173.220,75.75.75.75,DNS,74,Standard query 0x5285  A www.sfgate.com,37.4404,-121.8705,38.0,-97.0
 2,0.012983,75.75.75.75,24.6.173.220,DNS,132,Standard query response 0x5285  CNAME orig-10034.hearst.cotcdn.net A 208.93.137.180,38.0,-97.0,37.4404,-121.8705
 3,0.014193,24.6.173.220,75.75.75.75,DNS,74,Standard query 0x30b7  AAAA www.sfgate.com,37.4404,-121.8705,38.0,-97.0
