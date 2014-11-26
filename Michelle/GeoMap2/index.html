@@ -58,7 +58,8 @@
 								})
 
 //Create SVG element
-			d3.select("body").append("h1").html("Request sent out by sources");
+		d3.select("body").append("h1").html("Request received by destinations");
+
 			var sourcesvg= d3.select("body")
 						.append("svg")
 						.attr("x", 0)
@@ -68,7 +69,7 @@
 			
 			sourcesvg.call(tip);
 
-			d3.select("body").append("h1").html("Request received by destinations");
+			d3.select("body").append("h1").html("Request sent out by sources");
 			var destinationsvg = d3.select("body")
 						.append("svg")
 						.attr("x", 0 )
