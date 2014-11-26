@@ -54,7 +54,7 @@ $(function() {
         if (event.metaKey || event.ctrlKey || event.shiftKey) {
           if (selectedRows[index] !== undefined) {
             $(this).removeClass('selected');
-            selectedRows[index] = undefined;
+            delete selectedRows[index];
           } else {
             $(this).addClass('selected');
             selectedRows[index] = this;
@@ -67,7 +67,7 @@ $(function() {
             if (selectedRows[i] !== undefined) {
               count++;
               $(selectedRows[i]).removeClass('selected');
-              selectedRows[i] = undefined;
+              delete selectedRows[i];
             };
           });
 
@@ -84,6 +84,11 @@ $(function() {
             data.push(r.data);
           };
         });
+
+        // if no selected data, display myself
+        if (data.length === 0) {
+          data = [datum];
+        };
 
         draw_sub_g1(data);
       });
