@@ -268,10 +268,23 @@ function draw_g1(node, data){
         var p = d3.select(this).data()[0];
         p.Visible = !p.Visible;
         update_count_domain();
-        if (!p.Visible)
+        if (!p.Visible) {
             d3.select(this).transition().style("fill","#888888")
-        else
+            // disable the rows in table
+            rows.each(function(datum) {
+                if (datum.Protocol === p.Name) {
+                    $(this).addClass('disabled');
+                };
+            });
+        } else {
             d3.select(this).transition().style("fill",color(p.Name))
+            // enable the rows in table
+            rows.each(function(datum) {
+                if (datum.Protocol === p.Name) {
+                    $(this).removeClass('disabled');
+                };
+            });
+        }
       })
       .call(drag)
 

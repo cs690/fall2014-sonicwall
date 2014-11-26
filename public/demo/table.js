@@ -1,5 +1,12 @@
+var rows;
+
 $(function() {
   function draw_sub_g1 (data) {
+    // enable the rows in table
+    rows.each(function(datum) {
+      $(this).removeClass('disabled');
+    });
+
     var subData = subsetData.filter(function(sub) {
       return data.filter(function(d) {
         return sub.Destination === d.Destination &&
@@ -41,7 +48,7 @@ $(function() {
         draw_g1($('#g1'), subsetData);
       });
 
-    var rows = table.selectAll("tr")
+    rows = table.selectAll("tr")
         .data(data).enter()
       .append("tr")
       .on('mouseover', function(datum) {

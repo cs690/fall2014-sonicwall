@@ -70,8 +70,11 @@ tr {
     cursor: pointer;
 }
 tr.selected {
-    background-color: #444;
-    color: #eee;
+    background-color: #70E87F;
+}
+tr.disabled {
+    color: #aaa !important;
+    background-color: #f8f8f8 !important;
 }
 
 td {
