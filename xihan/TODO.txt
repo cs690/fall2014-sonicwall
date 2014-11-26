@@ -1,2 +1,4 @@
 Zoom the graph
 Lock one value and translate it into the center
+
+star rating graph

@@ -27,6 +27,7 @@ function createServer(map)
 	_websocket_.onmessage = function (evt)
 	{
 		console.log('Retrieveddatafromserver:' + evt.data);
+		var result = 
 		map(evt.data);
 	}	
 }

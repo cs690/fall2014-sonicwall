@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+00<!DOCTYPE html>
 <html>
 <head>
 <link rel="stylesheet" href="style.css">
@@ -29,10 +29,10 @@ queue()
         })
         map = map_activity(d3.select('body'), world.features)
             .width(window.innerWidth /3*2)
-            .accessor.event.src(function(e){return e.Source})
-            .accessor.event.dst(function(e){return e.Destination})
-            .accessor.event.category(function(e){return e.Protocol})
-            .accessor.event.size(function(e){return e.Length})
+            .accessor.event.src(function(e){return e.split(',')[2]})
+            .accessor.event.dst(function(e){return e.split(',')[3]})
+            .accessor.event.category(function(e){return e.split(',')[4]})
+            .accessor.event.size(function(e){return e.split(',')[5]})
             .accessor.ip.geoloc(function(ip){
                 var loc = geoloc[ip]
                 return [loc.Longitude, loc.Latitude];
