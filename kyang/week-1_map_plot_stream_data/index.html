@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1> Map Plot</h1>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/queue.v1.min.js"></script>
+<script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
+<script src="vldc.js"></script>
+<script src="mapactivity.js"></script>
+<p> This is a real-time world map, click <button type="button" onclick="play()">Play</button> to start simulating with sfgate data, 
+or <button type="button" onclick="start()">Start</button> a simple random demo. </p>
+<p> Click on edges to get focus. </p>
+<p> You can also <button type="button" onclick="change()">Change</button> the projection. </p>
+<p> Drag to move and wheel to zoom, move mouse on an edge to see detail.</p>
+<script>
+var events,  map;
+queue()
+    .defer(d3.json, "world-countries.json")
+    .defer(d3.csv, "../../public/geoip.csv")
+    .await(function(err, world, loc){
+        var geoloc = {}
+        loc.forEach(function(l){
+            l.Longitude = +l.Longitude;
+            l.Latitude = +l.Latitude;
+            geoloc[l.IP] = l
+        })
+        map = map_activity(d3.select('body'), world.features)
+            .width(window.innerWidth /3*2)
+            .accessor.event.src(function(e){return e.Source})
+            .accessor.event.dst(function(e){return e.Destination})
+            .accessor.event.category(function(e){return e.Protocol})
+            .accessor.event.size(function(e){return e.Length})
+            .accessor.ip.geoloc(function(ip){
+                var loc = geoloc[ip]
+                return [loc.Longitude, loc.Latitude];
+            })
+        createServer(map);
+    })
+var projections = [
+    [d3.geo.kavrayskiy7(),function(){return map.width()/5.64}],
+    [d3.geo.orthographic(), function(){return map.width() / 4;}]
+]
+var cur = 0;
+
+function change(){
+    cur++
+    cur = cur % projections.length
+    map.projection(projections[cur][0], projections[cur][1])
+}
+
+</script>
+</body>
+</html>

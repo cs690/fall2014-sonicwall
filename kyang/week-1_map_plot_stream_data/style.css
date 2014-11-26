@@ -1,0 +1,28 @@
+.land{
+    fill:#AAAAAA;
+    stroke:#AAAAAA;
+}
+
+.graticule {
+  fill: none;
+  stroke: #CCCCCC;
+  stroke-width: .5px;
+}
+
+.highlight{
+    filter:url('#glow')
+}
+
+.edge{
+    stroke-width:5
+}
+
+
+.detail_axis{
+    stroke-width:2;
+    stroke:blue
+}
+
+.timeline{
+    fill:none
+}
