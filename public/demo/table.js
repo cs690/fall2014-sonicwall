@@ -1,9 +1,4 @@
 $(function() {
-  var subsetData = [];
-  $.getJSON("../sfgate_subset.json", function(data) {
-    subsetData = data;
-  });
-
   $.getJSON("../sfgate_summary.json", function(data) {
     // var lengthOverTimeX = d3.max(data.map(function(d) {
     //     return d.LengthOverTime.length;
@@ -30,21 +25,44 @@ $(function() {
       .size(100, 20)
       .data(function(d){ return d.TotalLength; });
 
-    var table = d3.select("tbody");
+    var selectedRow = undefined; // if some row is clicked(locked)
+
+    var table = d3.select("tbody")
+      .on('mouseout', function() {
+        if (selectedRow !== undefined) { return; };
+        draw_g1($('#g1'), subsetData);
+      });
+
+    function draw_sub_g1 (d) {
+      var subData = subsetData.filter(function(sub) {
+        return sub.Destination === d.Destination &&
+        sub.Source === d.Source &&
+        sub.Protocol === d.Protocol;
+      });
+      draw_g1($('#g1'), subData);
+    }
+
     var rows = table.selectAll("tr")
         .data(data).enter()
       .append("tr")
       .on('mouseover', function(d) {
-        // console.debug("mouseover", d);
-        var subData = subsetData.filter(function(sub) {
-          return sub.Destination === d.Destination &&
-          sub.Source === d.Source &&
-          sub.Protocol === d.Protocol;
-        });
-        // console.debug(subData);
-        var g1 = $('#g1').empty();
-        draw_g1(g1, subData);
+        if (selectedRow !== undefined) { return; };
+        draw_sub_g1 (d);
+      })
+      .on('click', function(d) {
+        if (selectedRow !== undefined) {
+          $(selectedRow).removeClass('selected');
+          if (selectedRow === this) {
+            selectedRow = undefined;
+            return;
+          };
+        };
+        $(this).addClass('selected');
+        selectedRow = this;
+        draw_sub_g1 (d);
       });
+
+    table;
 
     rows.append("td").text(function(d) { return d.Source; });
     rows.append("td").text(function(d) { return d.SourceCountry + ', ' + d.SourceCity; });

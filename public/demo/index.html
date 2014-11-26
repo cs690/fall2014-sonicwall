@@ -65,10 +65,10 @@
     </div>
 
     <script>
-        $(function() {
-            d3.csv("../sfgate.csv", function(err, data){
-                draw_g1($('#g1'), data);
-            });
+        var subsetData = [];
+        $.getJSON("../sfgate_subset.json", function(data) {
+          subsetData = data;
+          draw_g1($('#g1'), subsetData);
         });
     </script>
 </body>

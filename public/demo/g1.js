@@ -1,4 +1,5 @@
 function draw_g1(node, data){
+    node.empty();
     var g1 = node[0];
     var framewidth = g1.offsetWidth,
         frameheight = g1.offsetHeight;

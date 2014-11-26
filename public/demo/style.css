@@ -65,3 +65,7 @@ th.headerSortDown .caret {
     border-top: none;
     border-bottom: 4px solid;
 }
+
+tr.selected {
+    background-color: red;
+}
