@@ -6,90 +6,121 @@ import tornado.websocket
 import tornado.ioloop
 import tornado.web
 
-clients = {}
-services = {}
-connections = {}
-
-available_subprotocols = ['echo-protocol', 'client-protocol', 'service-protocol']
-
-def print_connections():
-    print "Alive clients:"
-    print clients
-    print "Alive services:"
-    print services
-    print "Alive others:"
-    print connections
-
 class WSHandler(tornado.websocket.WebSocketHandler):
 
     def check_origin(self, origin):
-        print "Origin: " + origin
+        print 'Origin: ' + origin
         return True
 
     def open(self):
-        print 'New connection'
+        self.id = self.request.headers['Sec-WebSocket-Key']
+        self.subprotocol = self.request.headers['Sec-WebSocket-Protocol']
+        if self.subprotocol == 'client-protocol':
+            self.type = 'client'
+            self.application.clients[self.id] = self
+        elif self.subprotocol == 'service-protocol':
+            self.type = 'service'
+            self.application.services[self.id] = self
+        else:
+            self.type = 'default'
+            self.application.connections[self.id] = self
+        print 'New connection: ' + self.id
+        print 'Sub protocol: ' + self.subprotocol + '\n'
 
     def on_message(self, message):
+        print 'Message from: ' + self.id
         print message
         result = json.loads(message)
-        if self.subprotocol == 'echo-protocol':
-            if result["h"]["cmd"] == "print-alive":
-                print_connections()
-        elif self.subprotocol == 'client-protocol':
-            print "I'm a client."
-            if result["h"]["cmd"] == "broadcast":
-                print "start broadcasting"
-                if result["h"]["des"] == "ac":
-                    for conn in clients.values():
-                        #As a client or service I expected to get pure data
-                        #But this server must receive control message
-                        if self != conn:
-                            conn.write_message(json.dumps(result["d"]))
-                if result["h"]["des"] == "as":
-                    print "to all the services."
-                    for conn in services.values():
-                        print json.dumps(result["d"])
-                        conn.write_message(json.dumps(result["d"]))
-            elif result["h"]["cmd"] == "transfer":
-                if clients.get(result["h"]["des"]):
-                    clients[result["h"]["des"]].write_message(json.dumps(result["d"]))
-                if services.get(result["h"]["des"]):
-                    services[result["h"]["des"]].write_message(json.dumps(result["d"]))
-        elif self.subprotocol == 'service-protocol':
-            print "I'm a service"
-            if result["h"]["cmd"] == "broadcast":
-                if result["h"]["des"] == "ac":
-                    for conn in clients.values():
-                        #As a client or service I expected to get pure data
-                        #But this server must receive control message
-                        conn.write_message(json.dumps(result["d"]))
-                if result["h"]["des"] == "as":
-                    for conn in services.values():
-                        if self != conn:
-                            conn.write_message(json.dumps(result["d"]))
+        if result.get('h') and result.get('d'):
+            self._parse_message(result)
+        else:
+            print 'Invalid message'
     
     def on_close(self):
-        if self.subprotocol == "client-protocol":
-            del clients[self.id]
-        elif self.subprotocol == "service-protocol":
-            del services[self.id]
+        print 'Connection closing: ' + self.id
+        if self.subprotocol == 'client-protocol':
+            del self.application.clients[self.id]
+        elif self.subprotocol == 'service-protocol':
+            del self.application.services[self.id]
         else:
-            del connections[self.id]
-        print 'connection closed'
+            del self.application.connections[self.id]
+        print 'Connection closed\n'
 
     def select_subprotocol(self, subprotocols):
         print subprotocols
         if len(subprotocols) == 1:
-            self.subprotocol = subprotocols[0];
-            return self.subprotocol if self.subprotocol in available_subprotocols else None
+            self.subprotocol = subprotocols[0]
+            return self.subprotocol if self.subprotocol in self.application.available_subprotocols else None
         else:
             return None
 
-application = tornado.web.Application([
-    (r'/', WSHandler),
-])
+    def _parse_message(self, mObject):
+        print 'Message format accepted'
+        if self.subprotocol == 'echo-protocol':
+            if mObject['h']['cmd'] == 'print-alive':
+                self.application.print_connections()
+        elif self.subprotocol == 'client-protocol':
+            print 'Client connection accepted'
+            if mObject['h']['cmd'] == 'broadcast':
+                print 'start broadcasting'
+                if mObject['h']['des'] == 'ac':
+                    for conn in self.application.clients.values():
+                        #As a client or service I expected to get pure data
+                        #But this server must receive control message
+                        if self != conn:
+                            conn.write_message(json.dumps(mObject['d']))
+                if mObject['h']['des'] == 'as':
+                    print 'to all the services.\n'
+                    for conn in self.application.services.values():
+                        print 'Target server: ' + conn.id
+                        print json.dumps(mObject['d'])
+                        conn.write_message(json.dumps(mObject['d']))
+            elif mObject['h']['cmd'] == 'transfer':
+                if self.application.clients.get(mObject['h']['des']):
+                    self.application.clients[mObject['h']['des']].write_message(json.dumps(mObject['d']))
+                if self.application.services.get(mObject['h']['des']):
+                    self.application.services[mObject['h']['des']].write_message(json.dumps(mObject['d']))
+        elif self.subprotocol == 'service-protocol':
+            print 'Service connection accepted'
+            if mObject['h']['cmd'] == 'broadcast':
+                if mObject['h']['des'] == 'ac':
+                    for conn in self.application.clients.values():
+                        #As a client or service I expected to get pure data
+                        #But this server must receive control message
+                        conn.write_message(json.dumps(mObject['d']))
+                if mObject['h']['des'] == 'as':
+                    for conn in self.application.services.values():
+                        if self != conn:
+                            conn.write_message(json.dumps(mObject['d']))
+                print 'Finish broadcasting\n'
+
+class Application(tornado.web.Application):
+
+    def __init__(self):
+        
+        self.clients = {}
+        self.services = {}
+        self.connections = {}
+        self.available_subprotocols = ['echo-protocol', 'client-protocol', 'service-protocol']
+
+        handlers = [
+            (r'/', WSHandler),
+        ]
+        tornado.web.Application.__init__(self, handlers)
+
+    def print_connections(self):
+        print 'Alive clients:'
+        print self.clients
+        print 'Alive services:'
+        print self.services
+        print 'Alive others:'
+        print self.connections
+
+    def broadcast(protocol, data):
+        pass
 
 if __name__ == '__main__':
+    application = Application()
     http_server = tornado.httpserver.HTTPServer(application)
     http_server.listen(8080)
     tornado.ioloop.IOLoop.instance().start()
