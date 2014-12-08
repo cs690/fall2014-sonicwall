@@ -176,8 +176,8 @@ We wished by this way, we can explore as wide as we can, to find the best way to
 
 % subsection website (end)
 
-\subsection{Directory Tree} % (fold)
-\label{sub:directory_tree}
+\subsection{Code Files} % (fold)
+\label{sub:code_files}
 
 \dirtree{%
 .1 /.
@@ -188,16 +188,9 @@ We wished by this way, we can explore as wide as we can, to find the best way to
     .2 team.html.
     .2 assets/\DTcomment{Assets for pages above}.
         .3 default.css.
-        .3 *.png/jpg.
+        .3 *.png.
+        .3 *.jpg.
     .2 public/.
-        .3 prepare.rb\DTcomment{Ruby script for preparing data}.
-        .3 geoip.csv\DTcomment{Geography information table}.
-        .3 sfgate.csv\DTcomment{Wireshark data}.
-        .3 sfgate\_summary.csv/json\DTcomment{Wireshark data summary of top 10 connections}.
-        .3 sfgate\_subset.csv/json\DTcomment{Wireshark subset data with top 10 connections}.
-        .3 sfgate\_with\_geoip.csv.
-        .3 nsa6600/\DTcomment{SonicWall data}.
-            .4 merged.csv\DTcomment{SonicWall data merged}.
         .3 demo/\DTcomment{Demo page}.
             .4 index.html.
             .4 style.css.
@@ -208,7 +201,7 @@ We wished by this way, we can explore as wide as we can, to find the best way to
                 .5 sparkcharts.js\DTcomment{Reusable spark chart}.
 }
 
-% subsection directory_tree (end)
+% subsection code_files (end)
 
 \subsection{SLOC} % (fold)
 \label{sub:sloc}
@@ -244,6 +237,25 @@ And the result is in Table~\ref{tab:sloc}.
 \label{sec:other_deliverables}
 % The other deliverables section should contain any data files (XML, JSON, CSV, etc.) being provided, test code, or deliverables that do not fall under another category. Include statistics for these deliverables if possible. For example, "We include ## MB of data files, and ## SLOC of test code with our project."
 
+\subsection{Data Files} % (fold)
+\label{sub:data_files}
+
+\dirtree{%
+.1 /.
+    .2 public/.
+        .3 prepare.rb\DTcomment{Ruby script for preparing data}.
+        .3 geoip.csv (11K)\DTcomment{Geography information table}.
+        .3 sfgate.csv (1.2M)\DTcomment{Wireshark data}.
+        .3 sfgate\_with\_geoip.csv (1.6M)\DTcomment{Wireshark data with geography information mixed in}.
+        .3 sfgate\_summary.csv (3.3K)\DTcomment{Wireshark data summary of top 10 connections in CSV}.
+        .3 sfgate\_summary.json (12K)\DTcomment{Wireshark data summary of top 10 connections in JSON}.
+        .3 sfgate\_subset.csv (8.3K)\DTcomment{Wireshark subset data with top 10 connections in CSV}.
+        .3 sfgate\_subset.json (16K)\DTcomment{Wireshark subset data with top 10 connections in JSON}.
+        .3 nsa6600/\DTcomment{SonicWall data}.
+            .4 merged.csv (240K)\DTcomment{SonicWall data merged}.
+}
+
+% subsection data_files (end)
 
 % section other_deliverables (end)
 
