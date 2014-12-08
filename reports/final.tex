@@ -106,14 +106,14 @@ Our main deliverables are our demo visualizations and the website we created for
 
 \begin{description}[style=nextline]
     \item[\href{http://sjengle.cs.usfca.edu/cs690-sonicwall/public/demo/}{Dashboard}]
-    Figure~\ref{fig:dashboard} aims to create a overview of the network traffic.
-    We limited the result only show a summary of top ten traffic.
+    Figure~\ref{fig:dashboard} aims to create an overview of the network traffic.
+    We limited the result only shows a summary of top ten connections.
     It includes two parts.
     The top one is an area chart shows networking packages over time, separated by protocols.
     Users can click on it to show traffic details at the corresponding time.
-    The bottom one is an sortable table. Each row indicates a different traffic by source, destination and protocol, along with a spark-line to show the trend, and a bar to show the total bytes.
-    When users hover their mouse over any row, the area chart can change to the sub-dataset correspondingly.
-    And also users can select a row or select multiple rows by holding command/option/shift key with a clicking to lock the dataset, then users can move their mouse to the area chart to inspect more details.
+    The bottom one is a sortable table. Each row indicates a different connection by source, destination and protocol, along with a spark-line to show the trend, and a bar to show the total bytes of the connection.
+    By hovering mouse over a row, the area chart can change to the subset data correspondingly.
+    And also, users are allowed to select one single row by a simple click or select multiple rows by holding command/option/shift key with a clicking to lock the dataset, then users can move their mouses to the area chart to inspect more details.
     \begin{figure}[H]
         \begin{center}
             \includegraphics[width=0.9\textwidth]{dashboard.png}
@@ -121,12 +121,12 @@ Our main deliverables are our demo visualizations and the website we created for
         \caption{Dashboard}\label{fig:dashboard}
     \end{figure}
 
-    \item[\href{http://sjengle.cs.usfca.edu/cs690-sonicwall/wsheng/datamaps/}{Data-maps}]
+    \item[\href{http://sjengle.cs.usfca.edu/cs690-sonicwall/wsheng/datamaps/}{Datamaps}]
     Figure~\ref{fig:datamaps} is a map visualization. It shows the traffic on a a map.
-    User can switch map scope between USA and world.
-    Arcs between cities indicate connections and the thickness indicates the volume.
-    Circles indicate traffic volume of the cities. Cyan for source volume and red for destination volume.
-    Users can toggle circles by clicking on legends.
+    User can switch map scope between USA and the world.
+    Arcs between cities indicate connections and thicknesses indicate the volumes.
+    Circles indicate the traffic volume of the city. Cyan for outgoing volume and red for incoming volume.
+    Users can toggle circles by clicking on the legend.
     \begin{figure}[H]
         \begin{center}
             \includegraphics[width=0.9\textwidth]{datamap.png}
@@ -137,8 +137,8 @@ Our main deliverables are our demo visualizations and the website we created for
     \item[\href{http://sjengle.cs.usfca.edu/cs690-sonicwall/kyang/week-1_map_plot_refined/}{Realtime Map Plot}]
     Figure~\ref{fig:realtime} is a map visualization which keeps receiving realtime data from our back-end.
     Lines on the map indicate connections.
-    By hovering on any line, users are allowed to inspect details of that connection with line charts and bar charts.
-    And click to make it horizontal which make it easier to watch.
+    By hovering on any line, users are allowed to inspect details of that connection with two line charts and two bar charts for both directions.
+    And by clicking, to make it horizontal which is easier for users to watch the charts.
     \begin{figure}[H]
         \begin{center}
             \includegraphics[width=0.9\textwidth]{realtime.png}
@@ -152,14 +152,14 @@ Our main deliverables are our demo visualizations and the website we created for
 \subsection{Website} % (fold)
 \label{sub:website}
 
-Because our project is about D3 visualization, we created a website at \url{http://sjengle.cs.usfca.edu/cs690-sonicwall/} to show our work.
+Because our project is about visualizations, we created a website to show our work at \url{http://sjengle.cs.usfca.edu/cs690-sonicwall/} with \href{http://getbootstrap.com/}{Bootstrap}.
 There are several pages on it.
 
 \begin{description}[style=nextline]
     \item[\href{http://sjengle.cs.usfca.edu/cs690-sonicwall/}{Home}]
     This page shows a brief introduction to this project. Why we worked on this project and the basic timeline of the whole process.
     \item[\href{http://sjengle.cs.usfca.edu/cs690-sonicwall/visual.html}{Visualizations}]
-    This page lists all visualizations we created for this project, including all attempts before the final visualization.
+    This page lists all visualizations we created for this project, including all attempts before the final visualizations.
     \item[\href{http://sjengle.cs.usfca.edu/cs690-sonicwall/data.html}{Data}]
     This page shows where did we pick the data for our visualizations, and how we transformed it and mixed geography information to fit our needs.
     \item[\href{http://sjengle.cs.usfca.edu/cs690-sonicwall/tools.html}{Tools}]
@@ -167,14 +167,14 @@ There are several pages on it.
     \item[\href{http://sjengle.cs.usfca.edu/cs690-sonicwall/team.html}{Team}]
     This page lists all team members and sponsors with avatars and biographies.
     \item[\href{http://sjengle.cs.usfca.edu/cs690-sonicwall/deliverables.html}{Deliverables}]
-    This page shows main deliverables including this report, usage video and slides used in the presentation.
+    This page shows main deliverables including this report, usage videos and slides used in the final presentation.
 \end{description}
 
-Our works are mainly in page Visualizations.
-We have seven sections indicate different attempts.
+Our works are mainly in page \href{http://sjengle.cs.usfca.edu/cs690-sonicwall/visual.html}{Visualizations}.
+We have seven sections list different attempts.
 In most sections, every team member has their own attempts.
-By hovering mouse on any attempt, you can see a thumbnail of the visualization.
-We wished by this way, we can explore as wide as we can, to find the best way to visualize the data.
+By hovering mouse on any item, it will show a thumbnail of the visualization correspondingly.
+By this way, we can explore as wide as we could, to find the best way to visualize the data.
 
 % subsection website (end)
 
@@ -206,7 +206,7 @@ We wished by this way, we can explore as wide as we can, to find the best way to
 
 % subsection code_files (end)
 
-\subsection{SLOC} % (fold)
+\subsection{Source Lines of Code} % (fold)
 \label{sub:sloc}
 
 We use a JavaScript tool \href{https://github.com/flosse/sloc}{SLOC} to calculate source-line-of-code:
@@ -215,7 +215,7 @@ We use a JavaScript tool \href{https://github.com/flosse/sloc}{SLOC} to calculat
 sloc . --exclude "(jquery|bootstrap|d3|p5|tip|modernizr|datamaps).*\.(js|css)|.*\.(csv|json)|nsa6600|xihan/lib"
 \end{lstlisting}
 
-This command means when it analytics files, it will exclude files which filename or pathname match the given regular expression.
+This command means when it analytics files, it will exclude files whose filename or pathname matches the given regular expression.
 By this, we remove libraries or data we used or generated in the project to make the result more meaningful and convincing.
 And the result is in Table~\ref{tab:sloc}.
 
@@ -266,6 +266,17 @@ And the result is in Table~\ref{tab:sloc}.
 \label{sec:documentation}
 % The documentation section should describe where to find documentation for your project. List the specific files that provide user documentation (for using your project), and where to find developer documentation (for extending/maintaining your project).
 % If you do not provide documentation, state a strong case for why you do not provide documentation. If you do not have a strong case, you will be docked points on your final report.
+
+The usage videos in the \href{http://sjengle.cs.usfca.edu/cs690-sonicwall/deliverables.html}{Deliverables} page are our user documentations, in which we descript our user interface, our main features, and how to use them.
+Those videos can also be found on YouTube:
+
+\begin{description}
+    \item[Dashboard] \url{http://youtu.be/4Hakf4k9Lig}
+    \item[Realtime Map Plot] \url{http://youtu.be/KNbSRVzx_gY}
+    \item[Data Structure] \url{http://youtu.be/YU_TZmgiooQ}
+\end{description}
+
+We also maintained \href{https://github.com/sjengle/cs690-sonicwall}{README} file for background description and resources links, and \href{https://github.com/sjengle/cs690-sonicwall/wiki}{Wikis} for development progress notes, on the Github repository.
 
 % section documentation (end)
 
