@@ -16,7 +16,7 @@
 \usepackage[colorlinks=true]{hyperref} % hyper-link
 \usepackage{booktabs} % predefined table rules style
 \usepackage{enumitem} % listing environment style
-\usepackage{indentfirst} % indent the first line of a section
+\usepackage{indentfirst} % indent the first line of a sectio
 \usepackage{listings} % code listing environment
 \usepackage{dirtree} % directory tree
 
@@ -58,9 +58,6 @@ data that could be integrated into their Dell SonicWALL Analyzer product.After w
 data format, we decide to  use wireshark data which is similar to the firewall data of Dell
 SonicWALL products, and we generate dashboard,datamaps, and realtime map plot.
 
-\subsection{Dell SonicWALL Analyzer} % (fold)
-\label{sub:dell_sonicwall_analyzer}
-
 \begin{description}[style=nextline]
     \item[\href{http://www.sonicwall.com/us/en/products/Firewall-Analyzer.html}{Analyzer}]
     Figure~\ref{fig:analyzer} is the current visualization of data usage of Dell SonicWALL Analyzer.The analyzer streamlines and summarizes web traffic and network data.We want to generate visualizations that could be interated into the Analyzer product to show near real-time analysis of traffic and network data.
@@ -71,15 +68,8 @@ SonicWALL products, and we generate dashboard,datamaps, and realtime map plot.
         \caption{Analyzer}\label{fig:analyzer}
     \end{figure}
 
-\end{description}
-% subsection sonic_wall_analyzer (end)
-
-\subsection{Wireshark Data} % (fold)
-\label{sub:wireshark_data}
-
-\begin{description}[style=nextline]
     \item[\href{http://sjengle.cs.usfca.edu/cs690-sonicwall/}{Transformation of Data}]
-    Figure~\ref{fig:datastructure} is the transformation of data, the data file from 1.4MB(left side) to 5.8KB(right side). This will significantly improve the network performance.The structure is just as what we use in D3, so much less preprocess in user's browser, which means it's faster.
+    Figure~\ref{fig:datastructure} is the transformation of data, the data file from 1.4MB (left side) to 5.8KB (right side). This will significantly improve the network performance.The structure is just as what we use in D3, so much less preprocess in user's browser, which means it's faster.
 visualizations using these datasets.
        \begin{figure}[H]
         \begin{center}
@@ -88,18 +78,11 @@ visualizations using these datasets.
         \caption{Transformation of Data Structure}\label{fig:datastructure}
     \end{figure}
 
-\end{description}
-
-
-\subsection{Summary of Deliverables} % (fold)
-\label{sub:deliverable}
-
-\begin{description}[style=nextline]
     \item[\href{http://sjengle.cs.usfca.edu/cs690-sonicwall/deliverables.html}{Our Visualizations}]
     Figure~\ref{fig:website} is the website we build for our projects.Using the dataset we generated
-from wireshark data, we generate a datamap(Figure~\ref{fig:datamap}) which shows the connection
+from wireshark data, we generate a datamap (Figure~\ref{fig:datamap}) which shows the connection
 between source and destination nodes, a dashboard (Figure~\ref{fig:dashboard1}) which contains a
-area chart and related sortable table, and a  realtime map plot(Figure~\ref{fig:mapplot1}) which
+area chart and related sortable table, and a realtime map plot (Figure~\ref{fig:mapplot1}) which
 visualizes network connections of realtime data received from backend.
 
     \begin{figure}[H]
@@ -146,7 +129,7 @@ Wanzhang Sheng is a Computer Science graduate student of University of San Franc
 
 Jie Gao is a Computer Science student at University of San Francisco. She has experiences in Java and C. She has built two-layer web service using Java.She used to study Electrical Engineering and has worked as a Information System administrator for over a year.
 
-Xi Han is a Computer Science graduate student of University of San Francisco. He mainly focuses on data mining and data visualization on several fields using C\#, python and javascript libraries. During his internship he was working on SQL error comparison visualization in Honeywell(China). And he also has experiences working on protein molecule visualization using OpenGL under his professor.
+Xi Han is a Computer Science graduate student of University of San Francisco. He mainly focuses on data mining and data visualization on several fields using C\#, python and javascript libraries. During his internship he was working on SQL error comparison visualization in Honeywell (China). And he also has experiences working on protein molecule visualization using OpenGL under his professor.
 
 Kaiming Yang is a Computer Science student at University of San Francisco. He has experiences in many programming languages like C/C++, Java and Python. He used to study physics and worked a lot on scientific computation.
 
