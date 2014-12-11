@@ -8,8 +8,6 @@ import tornado.websocket
 from tornado import httpclient
 from tornado import gen
 
-ds = open("sfgate.csv")
-
 def unwrap_data(message):
     return json.loads(json.loads(message).encode('ascii','ignore'))
 
@@ -27,6 +25,8 @@ def process_message(message):
 @gen.coroutine
 def main():
 
+    ds = open("sfgate.csv")
+
     @gen.coroutine
     def on_message_received(message_future):
         message = yield message_future
@@ -42,7 +42,8 @@ def main():
         time.sleep(0.1)
         line = ds.readline()
         if not line:
-            break
+            ds = open("sfgate.csv")
+            continue
         print line
         client.write_message(wrap_data(line))
 

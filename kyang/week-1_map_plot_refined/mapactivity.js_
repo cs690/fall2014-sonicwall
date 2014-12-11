@@ -52,15 +52,6 @@ redraw_network= false
         }else{
             var nodeint = Object.keys(detail_on[0].nodes),
                nodeinfo = nodeint.map(function(srcint){return detail_on[0].nodes[srcint]})
-			var mx = 0
-			for (var i = 0; i < 2; i++){
-				ni = nodeinfo[i];
-				for (var j = 0; j < category.length; j++)
-					mx = Math.max(mx, Math.max.apply(null, ni[category[j]].data))
-			}
-			if (mx == 0)
-				mx == 1
-			detail_scale.domain([0,mx]);
             for (i = 0; i < 2; i++){
                 var srcloc = projection(geoloc[nodeint[i]].loc),
                     dstloc = projection(geoloc[nodeint[1-i]].loc)
@@ -157,7 +148,7 @@ redraw_network= false
                 }
                 var dx = dstloc[0] - srcloc[0],
                     dy = dstloc[1] - srcloc[1]
-                svg_root.transition().attr('transform',"translate(400," + height/2 + ")rotate(" + -(Math.atan(dy/dx)/Math.PI*180+(dx>0?0:180)) + ")translate("+[-srcloc[0],-srcloc[1]]+")")
+                svg_root.transition().attr('transform',"translate(100," + height/2 + ")rotate(" + -(Math.atan(dy/dx)/Math.PI*180+(dx>0?0:180)) + ")translate("+[-srcloc[0],-srcloc[1]]+")")
             })
         refreshEdge()
     }
@@ -278,6 +269,13 @@ redraw_network= false
             redraw_network = false;
         }
         refreshEdge()
+        var origin_dom = detail_scale.domain()[1],
+                  diff = origin_dom - detail_domain;
+        detail_scale.domain([0, 
+            diff>0
+                ?scale_decay*origin_dom+(1-scale_decay)*detail_domain
+                :(decay*origin_dom+(1-decay)*detail_domain)])
+        detail_domain = 0;
     },record.interval*1000)
     
     // prepare return value
