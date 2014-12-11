@@ -96,7 +96,11 @@ visualizations using these datasets.
 
 \begin{description}[style=nextline]
 	\item[\href{http://sjengle.cs.usfca.edu/cs690-sonicwall/deliverables.html}{Our Visualizations}]
-    Figure~\ref{fig:website} is the website we build for our projects.Using the dataset we generated from wireshark data, we generate a Figure~\ref{fig:datamap} shows the connection between source and destination nodes, a Figure~\ref{fig:dashboard1} which contains a area chart and related sortable table, and Figure~\ref{fig:mapplot1} a realtime map plot which visualizes connection from realtime data received from backend.
+    Figure~\ref{fig:website} is the website we build for our projects.Using the dataset we generated
+from wireshark data, we generate a datamap(Figure~\ref{fig:datamap}) which shows the connection
+between source and destination nodes, a dashboard (Figure~\ref{fig:dashboard1}) which contains a
+area chart and related sortable table, and a  realtime map plot(Figure~\ref{fig:mapplot1}) which
+visualizes network connections of realtime data received from backend.
 
 	\begin{figure}[H]
         \begin{center}
@@ -396,6 +400,18 @@ We also maintained \href{https://github.com/sjengle/cs690-sonicwall}{README} fil
 % What we learned from this project?
 % What are the shortcomings in this project?
 % What can be expected to improve in the future?
+
+During this project, we have learned D3 and basic visualization implementation. We have built
+built some basic visualizations such as barchart and scatterplot before we implement geomap
+visualizations. We have learned that good visualization
+requires informative and interactive implementation based on good understanding of the format of
+dataset. We learn network data formats from Wireshark
+and SonicWALL data, and modify original dataset and generate useful and efficient dataset for
+visualization of D3. There are some improvements for this project. We have created visualizations of
+general network connection, and we could add some analysis in our visualization.There are lots of
+techniques we could learn in the future such as choosing color and generating creative and informative
+visualization.
+
 
 
 
