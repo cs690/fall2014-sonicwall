@@ -1,0 +1,29 @@
+\section{Results}
+Our main goal is to improve the sonic-wall product interface by making several responsive visualizations. The original visualization they use are not good enough, there are some problems like putting two charts in one coordinate, or using unnecessary 3D visualization. Our approaches are to fix the existing problems and to make it better. 
+
+In the final stage, we successfully make one combined area plot with bar chart attached showing selected details, an responsive table with sorting and filtering functions and a real-time geographical visualization to track the network traffic between different locations. These are all created using D3.
+
+Besides, we did some extra works. Since there are functional and performance limitations using D3, we create another P5.js visualization library in order to make more flexible charts. Although those P5 charts we make are not in use currently, this library itself is worth further development. 
+
+We also create a tool for mapping IP address into longitude and latitude information, a data server to transfer any real-time firewall data to the visualization and a simulated data back-end to preprocess or cluster the data.
+
+Current enhancement meets the need already, however, if we have time, we may refine our visualization to pursue more visual consistency by adding more design elements.
+
+\section{Obstacles}
+We face plenty of balks during the entire working period. 
+
+First of all, getting familiar with Javascript. Unlike web science students, we are basically writing projects using Java or Python, at the beginning we don't even know the very essential of this web language. We have to try hard, keep making new simple projects to get use to its syntax and remember the common APIs. 
+
+Then, since D3 is a mature visualization framework, we have to spend lots of time on learning its structure. On the contrary, P5 only provides us very limited graphical functions. If we want to make visualizations using P5, we almost have to start from nothing. These problems among two different tools are about trade-offs between efficiency and functionality. 
+
+Finally, turn the idea of real-time visualization into reality is incredibly hard. Finding a proper way to transfer the data between front and back end takes almost two weeks for us to achieve.
+
+And we make video intro, we create website to put everything, every day we are learning new staffs.
+
+\section{Timeline}
+For the first several weeks, we are working on learning D3, making bar charts and scatter plots using sample datasets to enhance our skills on manipulating all the visualization tools. Then we start trying Tableau and Wireshark to explore the data which is similar to the sonic-wall data. After we understand the basic format of firewall data, we move on preprocessing the detailed information of it, for example, query the domain and geographical information and convert it into the format we can easily use.
+
+Once we finish the data part, we break into four individual one to manage different tasks. Wanzhang Shen is working on the website, Kaiming Yang is making geographical visualization, Michelle Gao is refining the details and Xi Han is creating P5 components. These are the fundamental building blocks we are going to use in the following stages.
+
+In the end, right after we finish the development of front end visualization, we move on generating a new back end to make our map visualization into real-time one. This is quite a new technique so it takes about three weeks to debug and test. Finally we get it work in the last week.
+
