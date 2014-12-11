@@ -54,7 +54,9 @@ Xi Han
 \section{Project Overview} % (fold)
 \label{sec:project_overview}
 In this project, we use D3 to build stand-alone prototype visualizations of Dell SonicWALL firewall
-data that could be integrated into their Dell SonicWALL Analyzer product.We learn SonicWALL data format. We use wireshark data which is similar to the firewall data of Dell SonicWALL products, and generate dashboard,datamaps, and realtime map plot.
+data that could be integrated into their Dell SonicWALL Analyzer product.After we learn SonicWALL
+data format, we decide to  use wireshark data which is similar to the firewall data of Dell
+SonicWALL products, and we generate dashboard,datamaps, and realtime map plot.
 
 \subsection{Dell SonicWALL Analyzer} % (fold)
 \label{sub:dell_sonicwall_analyzer}
@@ -68,6 +70,66 @@ data that could be integrated into their Dell SonicWALL Analyzer product.We lear
         \end{center}
         \caption{Analyzer}\label{fig:analyzer}
     \end{figure}
+
+\end{description}
+% subsection sonic_wall_analyzer (end)
+
+\subsection{Wireshark Data} % (fold)
+\label{sub:wireshark_data}
+
+\begin{description}[style=nextline]
+	\item[\href{http://sjengle.cs.usfca.edu/cs690-sonicwall/}{Transformation of Data}]
+    Figure~\ref{fig:datastructure} is the transformation of data, the data file from 1.4MB(left side) to 5.8KB(right side). This will significantly improve the network performance.The structure is just as what we use in D3, so much less preprocess in user's browser, which means it's faster.
+visualizations using these datasets.
+	   \begin{figure}[H]
+        \begin{center}
+            \includegraphics[width=0.9\textwidth]{datastructure.png}
+        \end{center}
+        \caption{Transformation of Data Structure}\label{fig:datastructure}
+    \end{figure}
+
+\end{description}
+
+
+\subsection{Summary of Deliverables} % (fold)
+\label{sub:deliverable}
+
+\begin{description}[style=nextline]
+	\item[\href{http://sjengle.cs.usfca.edu/cs690-sonicwall/deliverables.html}{Our Visualizations}]
+    Figure~\ref{fig:website} is the website we build for our projects.Using the dataset we generated from wireshark data, we generate a Figure~\ref{fig:datamap} shows the connection between source and destination nodes, a Figure~\ref{fig:dashboard1} which contains a area chart and related sortable table, and Figure~\ref{fig:mapplot1} a realtime map plot which visualizes connection from realtime data received from backend.
+
+	\begin{figure}[H]
+        \begin{center}
+            \includegraphics[width=0.45\textwidth]{website.png}
+        \end{center}
+        \caption{Our Website}\label{fig:website}
+    \end{figure}
+
+	\begin{figure}[H]
+        \begin{center}
+            \includegraphics[width=0.45\textwidth]{datamap.png}
+        \end{center}
+        \caption{Data Map}\label{fig:datamap}
+    \end{figure}
+
+	\begin{figure}[H]
+        \begin{center}
+            \includegraphics[width=0.45\textwidth]{dashboard.png}
+        \end{center}
+        \caption{Dashboard}\label{fig:dashboard1}
+    \end{figure}
+
+	\begin{figure}[H]
+        \begin{center}
+            \includegraphics[width=0.45\textwidth]{realtime.png}
+        \end{center}
+        \caption{Realtime Map Plot}\label{fig:mapplot1}
+    \end{figure}
+
+\end{description}
+
+
+
 
 \section{Team Overview} % (fold)
 \label{sec:team_ovierview}
@@ -85,10 +147,13 @@ Kaiming Yang is a Computer Science student at University of San Francisco. He ha
 
 \subsection{Sponsors} % (fold)
 \label{sub:sponsors}
-Our sponsors are Sophie 
+Our sponsors are Sophie Engle and Carrie GAtes.
+
+Sophie Engle is an Assistant Professor in the Department of Computer Science at the University of San Francisco. Sophie Engle is also the Graduate Director for the Masters in Science in Computer Science (MSCS) program, and teach courses for the Masters in Science in Analytics (MSAN) program. She is the mentor and one of sponsors of this project.
+
+Carrie Gates is the Chief Scientist at Dell Research. She received her PhD in May, 2006, and spent the last three years of her degree working at CERT, Carnegie Mellon University, where she performed research in network security. She have also worked on access control for WebSphere while at the IBM Toronto Centre for Advanced Studies (CAS). Previous to her PhD studies, she have six years of experience in systems administration and management. She is one of sponsors of this project.
 
 
-\end{description} 
 
 
 
