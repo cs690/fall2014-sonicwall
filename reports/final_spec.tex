@@ -1,8 +1,18 @@
 \section{Requirements}
 Design and build a replacement of original
 \section{Design}
-We came up with three visualizations, each of them is targeting a use case of firewall 
-administration. 
+The basic idea of our design is that visualizations begin with relativly simple and general information, the detailed information can be requested by some intuitive interactions. We came up with three visualizations, each of them is targeting a use case of firewall administration. 
 \subsection{Dashboard}
-Dashboard is way for firewall administrators to grasp the status of a time span in the 
-past. This visualization contains two parts: Time
+Dashboard is way for firewall administrators to grasp the status of a time span in the past. This visualization contains two views for same set of data: summary table and time plot.
+
+The summary table shows the traffic over sources. Each row represents the traffic from a different source, with the domain of the source, geometry location of the source and the protocol it use. Each row also include a spark bar indicate the total traffic of the time span and a spark line indicate the traffic distribution over time. Only top few sources are shown to save screen space.
+
+The time plot is a stacked area chart which shows the traffic of protocols overtime. Protocols are represented by colors, which indicated by a legend.
+
+User can query more detailed information by some simple and intuitive interactions. For the time plot, clicking on an item of the legend should toggle the visibility of that item; reorder the legend items by drag and drop should also reorder the chart. When user move mouse over the area chart, the chart under the mouse should be high-lighted, and clicking mouse on area chart leads to a pop-up chart that shows the distribution and traffic of protocols at that time. For the summary table, click on title of each column should sort that column. User may also select one or more rows which would change the domain of the time plot.
+
+\subsection{Datamap}
+Datamap tries to visualize the traffic based on geometric locations. IPs are plotted on a map as a circle, where the size indicate the traffic volume and color distinguish the incoming and out coming data. Arcs on the map means the activities between IPs, where the thickness shows the traffic volume between the IPs.
+
+\subsection{Real-time Map Plot}
+Real-time map plot will help administrators to track events on real time, such as identifying DDOS attack. Like datamap, IPs and activities are visualized as circles and lines on a map, but size and thickness no longer carry information. Instead, the color of a edge would turn to green if there are any activities between two IPs and keep grey if there are no activities. When moving mouse over an edge, two real-time chart will pop-up and lined with the edge to show the detailed traffic between two IPs in past few seconds. To get a better view of the real-time chart, user can click on the edge to rotate chart to right angle.
