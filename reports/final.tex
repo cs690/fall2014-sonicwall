@@ -20,6 +20,12 @@
 \usepackage{listings} % code listing environment
 \usepackage{dirtree} % directory tree
 
+% Disable pagebreak after a chapter
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{}{}{}
+\makeatother
+
 % Font Setting
 % \usepackage{fontspec}
 % \setmainfont{Times New Roman}
