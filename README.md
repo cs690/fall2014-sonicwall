@@ -64,10 +64,10 @@ cs690-sonicwall
 
 GitHub repository for the "Visualizing SonicWall Firewall Data" group in CS 690.
 
-Home page: http://sjengle.cs.usfca.edu/cs690-sonicwall/
+Home page: http://cs690.github.io/fall2014-sonicwall/
 
 Examples:
-* http://sjengle.cs.usfca.edu/cs690-sonicwall/wsheng/
-* http://sjengle.cs.usfca.edu/cs690-sonicwall/kyang/
-* http://sjengle.cs.usfca.edu/cs690-sonicwall/Michelle/
-* http://sjengle.cs.usfca.edu/cs690-sonicwall/xihan/
+* http://cs690.github.io/fall2014-sonicwall/wsheng/
+* http://cs690.github.io/fall2014-sonicwall/kyang/
+* http://cs690.github.io/fall2014-sonicwall/Michelle/
+* http://cs690.github.io/fall2014-sonicwall/xihan/
